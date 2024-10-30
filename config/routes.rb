@@ -1,8 +1,8 @@
 Rails.application.routes.draw do
-  get "cats/" => "cats#index"
-  get "cats/:slug" => "cats#show"
-  get "m/:id" => "m#show"
-  get "/" => "home#index"
+  get 'cats/index', to: 'cats#index', as: 'cats_index'
+  get 'cats/show', to: 'cats#show', as: 'cats_show'
+  get 'm/show', to: 'm#show', as: 'm_show'
+  get 'home/index', to: 'home#index', as: 'home_index'
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
