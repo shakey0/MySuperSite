@@ -1,0 +1,10 @@
+{
+  "dev": {
+    "port": 3036,
+    "host": "localhost"
+  },
+  "build": {
+    "outDir": "public/vite"
+  },
+  "sourceCodeDir": "app/frontend"
+}

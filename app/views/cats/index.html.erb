@@ -1,1 +1,5 @@
-<h1>Hello kitties!</h1>
+<% content_for :head do %>
+  <%= vite_javascript_tag 'cats.jsx' %>
+<% end %>
+
+<div id="cats-root"></div>
