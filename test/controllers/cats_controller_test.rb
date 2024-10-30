@@ -7,7 +7,7 @@ class CatsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should get show" do
-    get cats_show_url
+    get cats_show_url(slug: "slug")
     assert_response :success
   end
 end
