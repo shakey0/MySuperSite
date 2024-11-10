@@ -59,6 +59,17 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
 
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.14'
+
+      - name: Install npm dependencies
+        run: npm install
+
+      - name: Build Vite assets
+        run: bin/vite build
+
       - name: Run tests
         env:
           RAILS_ENV: test
