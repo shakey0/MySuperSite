@@ -4,7 +4,8 @@
     "host": "localhost"
   },
   "build": {
-    "outDir": "public/vite"
+    "outDir": "public/vite",
+    "manifest": true
   },
   "sourceCodeDir": "app/frontend"
 }
