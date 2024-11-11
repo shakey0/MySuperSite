@@ -1,2 +1,5 @@
-<h1>Hello messages!</h1>
-<%= @id %>
+<% content_for :head do %>
+  <%= vite_javascript_tag 'm.jsx' %>
+<% end %>
+
+<div id="m-root"></div>

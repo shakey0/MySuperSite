@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   get "cats/", to: "cats#index", as: "cats_index"
   get "cats/:slug", to: "cats#show", as: "cats_show"
   get "m/:id", to: "m#show", as: "m_show"
+  get "m_data", to: "m#m_data", as: "m_m_data"
   get "/", to: "home#index", as: "home_index"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
