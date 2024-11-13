@@ -19,7 +19,7 @@ class MController < ApplicationController
     if secret =~ /[^a-zA-Z0-9]/
       return {}
     end
-  
+
     file_path = Rails.root.join("persistent_disk", "m", "#{secret}.json")
     if File.exist?(file_path)
       file_content = File.read(file_path)
@@ -27,5 +27,5 @@ class MController < ApplicationController
     else
       user_data = {}
     end
-  end  
+  end
 end
