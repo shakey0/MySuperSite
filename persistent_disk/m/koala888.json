@@ -1,0 +1,29 @@
+{
+    "convos": [
+        {
+            "start_time": "2024-11-13 11:39:00.000000",
+            "messages": [
+                {
+                    "direction": "from",
+                    "message": "Hi there!"
+                },
+                {
+                    "direction": "to",
+                    "message": "Hello!"
+                },
+                {
+                    "direction": "from",
+                    "message": "How are you?"
+                },
+                {
+                    "direction": "to",
+                    "message": "I'm good, thanks. How are you?"
+                },
+                {
+                    "direction": "from",
+                    "message": "I'm good too, thanks."
+                }
+            ]
+        }
+    ]
+}

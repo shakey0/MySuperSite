@@ -1,0 +1,33 @@
+{
+    "convos": [
+        {
+            "start_time": "2024-11-13 11:39:00.000000",
+            "messages": [
+                {
+                    "direction": "from",
+                    "message": "Can you hear me?"
+                },
+                {
+                    "direction": "to",
+                    "message": "Yes, I can hear you."
+                },
+                {
+                    "direction": "from",
+                    "message": "Can you see me?"
+                },
+                {
+                    "direction": "to",
+                    "message": "Yes, I can see you."
+                },
+                {
+                    "direction": "from",
+                    "message": "Can you let me in?"
+                },
+                {
+                    "direction": "to",
+                    "message": "I'm sorry, I can't do that."
+                }
+            ]
+        }
+    ]
+}
