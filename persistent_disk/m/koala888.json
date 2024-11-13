@@ -1,7 +1,8 @@
 {
     "convos": [
         {
-            "start_time": "2024-11-13 11:39:00.000000",
+            "seen": true,
+            "start_time": "2024-11-13 12:39:00.000000",
             "messages": [
                 {
                     "direction": "from",
