@@ -20,7 +20,7 @@ class MUserData
       if convo.present?
         convo["messages"] << { "message" => message, "direction" => "from" }
       else
-        convos << { "messages" => [{ "message" => message, "direction" => "from" }], "start_time" => Time.now.to_s, "seen" => false }
+        convos << { "messages" => [ { "message" => message, "direction" => "from" } ], "start_time" => Time.now.to_s, "seen" => false }
       end
       user_data["convos"] = convos
 
