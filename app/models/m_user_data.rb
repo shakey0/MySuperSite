@@ -12,7 +12,7 @@ class MUserData
     end
   end
 
-  def self.save(secret, user_data, message, direction="from")
+  def self.save(secret, user_data, message, direction = "from")
     begin
       # Get the convo within the last hour
       convos = user_data["convos"] || []
