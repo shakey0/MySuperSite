@@ -2,8 +2,13 @@ Rails.application.routes.draw do
   get "cats", to: "cats#index", as: "cats_index"
   get "cats/:slug", to: "cats#show", as: "cats_show"
   get "m/:id", to: "m#show", as: "m_show"
+  get "m_admin", to: "m#admin_index", as: "m_admin_index"
+  get "m_admin/:id", to: "m#admin_show", as: "m_admin_show"
   get "m_data", to: "m#m_data", as: "m_m_data"
   post "m", to: "m#update", as: "m_update"
+  post "m_admin", to: "m#admin_update", as: "m_admin_update"
+  get "m_password_form", to: "m#password_form", as: "m_password_form"
+  post "m_password_auth", to: "m#password_auth", as: "m_password_auth"
   get "/", to: "home#index", as: "home_index"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

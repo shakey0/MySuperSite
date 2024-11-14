@@ -12,15 +12,19 @@ class MUserData
     end
   end
 
-  def self.save(secret, user_data, message)
+  def self.save(secret, user_data, message, direction="from")
     begin
       # Get the convo within the last hour
       convos = user_data["convos"] || []
       convo = convos.find { |c| Time.parse(c["start_time"]) > 1.hour.ago || !c["seen"] } || {}
       if convo.present?
-        convo["messages"] << { "message" => message, "direction" => "from" }
+        convo["messages"] << { "message" => message, "direction" => direction }
+        if direction == "to" && convo["seen"] == false
+          convo["start_time"] = Time.now.strftime("%Y-%m-%d %H:%M:%S.%6N")
+          convo["seen"] = true
+        end
       else
-        convos << { "messages" => [ { "message" => message, "direction" => "from" } ], "start_time" => Time.now.strftime("%Y-%m-%d %H:%M:%S.%6N"), "seen" => false }
+        convos << { "messages" => [ { "message" => message, "direction" => direction } ], "start_time" => Time.now.strftime("%Y-%m-%d %H:%M:%S.%6N"), "seen" => false }
       end
       user_data["convos"] = convos
 
@@ -33,5 +37,9 @@ class MUserData
 
       false
     end
+  end
+
+  def self.collect_filenames
+    Dir.glob(Rails.root.join("persistent_disk", "m", "*.json")).map { |f| File.basename(f, ".json") }
   end
 end
