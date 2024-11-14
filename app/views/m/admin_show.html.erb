@@ -1,3 +1,5 @@
+<h1 style="margin: 0"><%= @secret %></h1>
+
 <div id="data"></div>
 
 <%= form_tag('/m_admin', method: :post) do %>
@@ -43,6 +45,9 @@
           currentConvo.forEach(item => {
             const itemElement = document.createElement('p');
             itemElement.textContent = item.message;
+            if (item.direction === "to") {
+              itemElement.style.color = 'grey';
+            }
             dataDiv.appendChild(itemElement);
           });
         } else {
