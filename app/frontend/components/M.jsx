@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
+import MMessageForm from './m_utils/m_message_form';
 
 export default function Home() {
   const [messages, setMessages] = useState([]);
-  const [showCurrentForm, setShowCurrentForm] = useState(false);
-  const [showNewForm, setShowNewForm] = useState(false);
+  const [showForm, setShowForm] = useState(false);
   const [secret, setSecret] = useState('');
 
   useEffect(() => {
@@ -15,7 +15,7 @@ export default function Home() {
       try {
         const response = await fetch(`/m_data?secret=${secretFromURL}`);
         const data = await response.json();
-        if (data.status === 'success') {
+        if (data.outcome === 'success') {
           let currentConvo = null;
           for (let i = 0; i < data.data.convos.length; i++) {
             // If the convo start_time is up to an hour ago
@@ -27,12 +27,10 @@ export default function Home() {
           }
           if (currentConvo !== null) {
             setMessages(currentConvo);
-            setShowCurrentForm(true);
-            setShowNewForm(false);
+            setShowForm(true);
           } else {
             setMessages([{ direction: 'none', message: 'No messages in the last hour' }]);
-            setShowCurrentForm(false);
-            setShowNewForm(true);
+            setShowForm(true);
           }
         } else {
           setMessages([{ direction: 'invalid', message: "That's not a secret code." }]);
@@ -57,19 +55,8 @@ export default function Home() {
           <li key={index}>{message}</li>
         ))}
       </ul>
-      {showCurrentForm && (
-        <form action="/m" method="post">
-          <input type="hidden" name="secret" value={secret} />
-          <input type="text" name="message" />
-          <button type="submit">Send</button>
-        </form>
-      )}
-      {showNewForm && (
-        <form action="/m/new" method="post">
-          <input type="hidden" name="secret" value={secret} />
-          <input type="text" name="message" />
-          <button type="submit">Send message</button>
-        </form>
+      {showForm && (
+        <MMessageForm secret={secret} />
       )}
     </div>
   )
