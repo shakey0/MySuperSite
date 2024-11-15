@@ -20,7 +20,7 @@ export default function M({ admin }) {
           let currentConvo = null;
           for (let i = 0; i < data.data.convos.length; i++) {
             // If the convo start_time is up to an hour ago
-            const convoStartTime = Date.parse(data.data.convos[i].start_time.replace(" ", "T"));
+            const convoStartTime = Date.parse(data.data.convos[i].start_time.replace(" ", "T") + "Z");
             if (convoStartTime > Date.now() - 3600000 || data.data.convos[i].seen === false) {
               currentConvo = data.data.convos[i].messages;
               break;
