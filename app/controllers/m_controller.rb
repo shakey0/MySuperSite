@@ -9,7 +9,7 @@ class MController < ApplicationController
   end
 
   def admin_show
-    @secret = params[:id]
+    @admin = "admin"
   end
 
   def m_data
@@ -37,8 +37,8 @@ class MController < ApplicationController
     secret = params[:secret]
     user_data = MUserData.load(secret)
     if user_data.present?
-      result = MUserData.save(secret, user_data, params[:reply], direction="to")
-      redirect_to m_admin_show_path(id: secret)
+      result = MUserData.save(secret, user_data, params[:message], direction="to")
+      render json: { outcome: result ? "success" : "error" }
     else
       render json: { outcome: "failed" }
     end

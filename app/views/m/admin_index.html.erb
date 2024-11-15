@@ -1,5 +1,5 @@
-<div style="padding: 20px 0">
-  <% @filenames.each do |filename| %>
-    <a href="m_admin/<%= filename %>" style="padding: 10px"><%= filename %></a>
-  <% end %>
-</div>
+<% content_for :head do %>
+  <%= vite_javascript_tag 'm_admin_index.jsx' %>
+<% end %>
+
+<div id="m-admin-index-root" data-filenames="<%= @filenames.to_json %>"></div>

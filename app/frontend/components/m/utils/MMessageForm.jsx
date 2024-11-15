@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import './MMessageForm.scoped.scss';
 
-function MMessageForm({ secret }) {
+function MMessageForm({ secret, admin }) {
   const [message, setMessage] = useState('');
+
+  const route = admin ? '/m_admin' : '/m';
 
   const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
@@ -10,7 +12,7 @@ function MMessageForm({ secret }) {
     event.preventDefault();
 
     try {
-      const response = await fetch('/m', {
+      const response = await fetch(route, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import MMessageForm from './m_utils/MMessageForm';
+import MMessageForm from './utils/MMessageForm';
 import './M.scoped.scss';
 
-export default function M() {
+export default function M({ admin }) {
   const [messages, setMessages] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [secret, setSecret] = useState('');
@@ -59,7 +59,7 @@ export default function M() {
         ))}
       </div>
       {showForm && (
-        <MMessageForm secret={secret} />
+        <MMessageForm secret={secret} admin={admin} />
       )}
     </div>
   )
