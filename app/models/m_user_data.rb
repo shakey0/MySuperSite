@@ -20,11 +20,11 @@ class MUserData
       if convo.present?
         convo["messages"] << { "message" => message, "direction" => direction }
         if direction == "to" && convo["seen"] == false
-          convo["start_time"] = Time.now.strftime("%Y-%m-%d %H:%M:%S.%6N")
+          convo["start_time"] = Time.now.utc.strftime("%Y-%m-%d %H:%M:%S.%6N")
           convo["seen"] = true
         end
       else
-        convos << { "messages" => [ { "message" => message, "direction" => direction } ], "start_time" => Time.now.strftime("%Y-%m-%d %H:%M:%S.%6N"), "seen" => false }
+        convos << { "messages" => [ { "message" => message, "direction" => direction } ], "start_time" => Time.now.utc.strftime("%Y-%m-%d %H:%M:%S.%6N"), "seen" => false }
       end
       user_data["convos"] = convos
 
