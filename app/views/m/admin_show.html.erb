@@ -1,12 +1,14 @@
-<h1 style="margin: 0"><%= @secret %></h1>
+<div style="display: flex; flex-direction: column; align-items: center; font-family: sans-serif">
+  <h1 style="margin: 10px 0"><%= @secret %></h1>
 
-<div id="data"></div>
+  <div id="data" style="font-size: 1.1rem; width: 600px; max-width: 100%"></div>
 
-<%= form_tag('/m_admin', method: :post) do %>
-  <%= hidden_field_tag :secret, @secret %>
-  <%= text_field_tag :reply %>
-  <%= submit_tag 'Submit' %>
-<% end %>
+  <%= form_tag('/m_admin', method: :post, style: 'all: inherit; width: 100%') do %>
+    <%= hidden_field_tag :secret, @secret %>
+    <%= text_area_tag :reply, nil, rows: 8, style: 'width: 100%; display: block; max-width: 600px; padding: 10px; font-family: inherit; font-size: 1.1rem; resize: vertical;' %>
+    <%= submit_tag 'Submit', style: 'margin: 10px 0; padding: 10px; font-size: 1.2rem' %>
+  <% end %>
+</div>
 
 <script>
   const pathParts = window.location.pathname.split('/');
