@@ -1,0 +1,74 @@
+// Base styles for the M component page with a cyberpunk theme
+.main-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Orbitron', sans-serif;
+  padding: 20px;
+  @media (max-width: 500px) {
+    padding: 10px;
+  }
+  background: linear-gradient(135deg, #050505, #1a1a2e);
+  color: #f0f0f0;
+  min-height: 100vh;
+
+  h1 {
+    @media (max-width: 500px) {
+      margin: 12.5px 0;
+    }
+    font-size: 2rem;
+    color: #0ff;
+    text-shadow: 0 0 2px #0ff, 0 0 5px #00f0ff;
+    margin-bottom: 20px;
+  }
+
+  .messages-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+
+    p {
+      width: 600px;
+      max-width: 100%;
+      @media (max-width: 500px) {
+        margin: 12.5px 0;
+      }
+      padding: 10px 15px;
+      border-radius: 5px;
+      font-size: 1.1rem;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+
+      &.message-from {
+        background-color: #0d1b2a;
+        color: #00d9ff;
+        border: 1px solid #00d9ff;
+        text-shadow: 0 0 2px #00d9ff, 0 0 5px #00bcd4;
+      }
+
+      &.message-to {
+        background-color: #251a4f;
+        color: #ffaaf7;
+        border: 1px solid #ff00e5;
+        text-shadow: 0 0 2px #ff00e5, 0 0 5px #ff4081;
+        text-align: right;
+      }
+
+      &.message-none {
+        background-color: #2a2a2a;
+        color: #bdbdbd;
+        border: 1px solid #757575;
+        text-align: center;
+        font-style: italic;
+      }
+
+      &.message-invalid {
+        background-color: #330d0d;
+        color: #ff4d4d;
+        border: 1px solid #ff0000;
+        text-shadow: 0 0 2px #ff4d4d, 0 0 5px #ff0000;
+        text-align: center;
+      }
+    }
+  }
+}

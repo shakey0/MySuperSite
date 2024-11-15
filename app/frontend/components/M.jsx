@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import MMessageForm from './m_utils/m_message_form';
+import MMessageForm from './m_utils/MMessageForm';
+import './M.scoped.scss';
 
-export default function Home() {
+export default function M() {
   const [messages, setMessages] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [secret, setSecret] = useState('');
@@ -48,13 +49,15 @@ export default function Home() {
   }, []);
 
   return (
-    <div>
-      <h1>Messages for secret: {secret}</h1>
-      <ul>
+    <div className="main-container">
+      {messages[0]?.direction !== 'invalid' && (
+        <h1>Secret chat: {secret}</h1>
+      )}
+      <div className="messages-container">
         {messages.map(({ message, direction }, index) => (
-          <li key={index}>{message}</li>
+          <p key={index} className={`message-${direction}`}>{message}</p>
         ))}
-      </ul>
+      </div>
       {showForm && (
         <MMessageForm secret={secret} />
       )}

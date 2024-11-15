@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import './MMessageForm.scoped.scss';
 
 function MMessageForm({ secret }) {
   const [message, setMessage] = useState('');
@@ -37,13 +38,13 @@ function MMessageForm({ secret }) {
     <form onSubmit={handleSubmit}>
       <input type="hidden" name="authenticity_token" value={csrfToken} />
       <input type="hidden" name="secret" value={secret} />
-      <input
-        type="text"
+      <textarea
         name="message"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
+        rows="8"
       />
-      <button type="submit">Send message</button>
+      <button type="submit" className="submit-message">Send message</button>
     </form>
   );
 }

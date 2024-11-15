@@ -1,7 +1,7 @@
 <div style="display: flex; flex-direction: column; align-items: center; font-family: sans-serif">
   <h1 style="margin: 10px 0"><%= @secret %></h1>
 
-  <div id="data" style="font-size: 1.1rem; width: 600px; max-width: 100%"></div>
+  <div id="data" style="font-size: 1.1rem; width: 600px; max-width: 100%; padding: 10px"></div>
 
   <%= form_tag('/m_admin', method: :post, style: 'all: inherit; width: 100%') do %>
     <%= hidden_field_tag :secret, @secret %>
