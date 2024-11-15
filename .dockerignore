@@ -46,6 +46,3 @@
 # Ignore Docker-related files
 /.dockerignore
 /Dockerfile*
-
-# Ignore all persistent_disk files
-/persistent_disk/*
