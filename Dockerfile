@@ -27,14 +27,25 @@ FROM base AS build
 
 # Install packages needed to build gems
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential git pkg-config && \
+    apt-get install --no-install-recommends -y build-essential git pkg-config curl && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
+# Install Node.js 20.x
+RUN curl -sL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install --no-install-recommends -y nodejs
+
+# Install yarn globally
+RUN npm install -g yarn
 
 # Install application gems
 COPY Gemfile Gemfile.lock ./
 RUN bundle install && \
     rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
     bundle exec bootsnap precompile --gemfile
+
+# Install npm dependencies (required for Vite)
+COPY package.json yarn.lock ./
+RUN yarn install
 
 # Copy application code
 COPY . .
