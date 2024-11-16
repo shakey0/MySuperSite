@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   get "m/:id", to: "m#show", as: "m_show"
   get "m_admin", to: "m#admin_index", as: "m_admin_index"
   get "m_admin/:id", to: "m#admin_show", as: "m_admin_show"
-  get "m_data", to: "m#m_data", as: "m_m_data"
+  get "m_data", to: "m#data", as: "m_data"
   post "m", to: "m#update", as: "m_update"
   post "m_admin", to: "m#admin_update", as: "m_admin_update"
   get "m_password_form", to: "m#password_form", as: "m_password_form"

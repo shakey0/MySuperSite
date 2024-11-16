@@ -46,7 +46,7 @@ form {
       box-shadow: 0 0 10px #ff00e5, 0 0 20px #00d9ff;
     }
 
-    &:active {
+    &.active {
       transform: scale(0.95);
       box-shadow: 0 0 5px #ff00e5, 0 0 10px #00d9ff inset;
     }

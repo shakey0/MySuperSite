@@ -12,7 +12,7 @@ class MController < ApplicationController
     @admin = "admin"
   end
 
-  def m_data
+  def data
     secret = params[:secret]
     user_data = MUserData.load(secret)
     if user_data.present?
@@ -51,7 +51,15 @@ class MController < ApplicationController
     correct_password = ENV["M_ADMIN_PASSWORD"]
 
     if params[:password] == correct_password
-      cookies[:m_admin_password] = { value: correct_password, expires: 1.year.from_now }
+      file_data = get_all_auth_data
+      file_content = file_data["file_content"]
+      file_path = file_data["file_path"]
+
+      secure_string = SecureRandom.alphanumeric(32)
+      file_content["m_admin_cookie"] = secure_string
+      File.write(file_path, file_content.to_json)
+
+      cookies[:m_admin] = { value: secure_string, expires: 1.year.from_now }
       redirect_to session.delete(:return_to) || admin_index_path
     else
       flash[:alert] = "Incorrect password. Please try again."
@@ -62,11 +70,19 @@ class MController < ApplicationController
   private
 
   def require_password
-    correct_password = ENV["M_ADMIN_PASSWORD"]
-    return true if cookies[:m_admin_password] == correct_password
+    m_admin_cookie = cookies[:m_admin]
+    file_content = get_all_auth_data["file_content"]
+    return true if m_admin_cookie == file_content["m_admin_cookie"]
 
     # Store the target path and redirect to password form
     session[:return_to] = request.fullpath
     redirect_to m_password_form_path
+  end
+
+  def get_all_auth_data
+    all_auth_data = ENV["ALL_AUTH_DATA"]
+    file_path = Rails.root.join("persistent_disk", "#{all_auth_data}.json")
+    file_content = File.read(file_path)
+    { "file_content" => JSON.parse(file_content), "file_path" => file_path }
   end
 end

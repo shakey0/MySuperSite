@@ -3,6 +3,7 @@ import './MMessageForm.scoped.scss';
 
 function MMessageForm({ secret, admin }) {
   const [message, setMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const route = admin ? '/m_admin' : '/m';
 
@@ -10,6 +11,12 @@ function MMessageForm({ secret, admin }) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    if (!message.trim()) {
+      return;
+    }
+
+    setIsSubmitting(true);
 
     try {
       const response = await fetch(route, {
@@ -21,7 +28,7 @@ function MMessageForm({ secret, admin }) {
         body: JSON.stringify({
           authenticity_token: csrfToken,
           secret: secret,
-          message: message,
+          message: message.trim(),
         }),
       });
       const data = await response.json();
@@ -33,6 +40,19 @@ function MMessageForm({ secret, admin }) {
       }
     } catch (error) {
       console.error('Error submitting form:', error);
+    } finally {
+      setTimeout(() => {
+        setIsSubmitting(false);
+      }, 200);
+    }
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      if (!event.shiftKey && !event.ctrlKey) {
+        handleSubmit(event);
+      }
     }
   };
 
@@ -44,9 +64,16 @@ function MMessageForm({ secret, admin }) {
         name="message"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
+        onKeyDown={handleKeyDown}
         rows="8"
       />
-      <button type="submit" className="submit-message">Send message</button>
+      <button 
+        type="submit" 
+        className={`submit-message ${isSubmitting ? 'active' : ''}`}
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? 'Sending...' : 'Send message'}
+      </button>
     </form>
   );
 }
