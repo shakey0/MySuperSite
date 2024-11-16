@@ -1,4 +1,4 @@
 
 export default function Cats() {
-  return <div>Hello wicked cats!</div>;
+  return <div>Hello cats!</div>;
 }

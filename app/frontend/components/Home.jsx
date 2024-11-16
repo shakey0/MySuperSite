@@ -1,4 +1,4 @@
 
 export default function Home() {
-  return <div>Hello homes!</div>;
+  return <div>Hello world!</div>;
 }
