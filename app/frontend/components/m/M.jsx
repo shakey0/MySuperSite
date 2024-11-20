@@ -11,24 +11,6 @@ export default function M({ admin }) {
   const latestMessagesRef = useRef(messages);
 
   useEffect(() => {
-    const adjustViewport = () => {
-      const height = window.visualViewport?.height || window.innerHeight;
-      document.documentElement.style.setProperty('--vh', `${height * 0.01}px`);
-    };
-  
-    if (window.visualViewport) {
-      adjustViewport(); // Set initial value
-      window.visualViewport.addEventListener('resize', adjustViewport);
-    }
-  
-    return () => {
-      if (window.visualViewport) {
-        window.visualViewport.removeEventListener('resize', adjustViewport);
-      }
-    };
-  }, []);  
-
-  useEffect(() => {
     latestMessagesRef.current = messages;
   }, [messages]);
 
@@ -80,11 +62,16 @@ export default function M({ admin }) {
         <h1>Secret chat: {secret}</h1>
       )}
       <div className="messages-container">
-        {messages.map(({ message, direction }, index) => (
-          <p key={index} className={`message-${direction}`}>{message}</p>
+        {messages.length > 2 && 
+          messages.slice(0, -2).map(({ message, direction }, index) => (
+            <p key={index} className={`message-${direction}`}>{message}</p>
+          ))
+        }
+        <div ref={messagesEndRef}></div>
+        {messages.slice(-2).map(({ message, direction }, index) => (
+          <p key={messages.length - 2 + index} className={`message-${direction}`}>{message}</p>
         ))}
       </div>
-      <div ref={messagesEndRef}></div>
       {showForm && (
         <MMessageForm secret={secret} admin={admin} />
       )}

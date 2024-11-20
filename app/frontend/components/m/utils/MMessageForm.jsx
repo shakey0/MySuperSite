@@ -68,7 +68,7 @@ function MMessageForm({ secret, admin }) {
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         onKeyDown={handleKeyDown}
-        rows="8"
+        rows="6"
       />
       <button 
         type="submit" 
