@@ -11,6 +11,24 @@ export default function M({ admin }) {
   const latestMessagesRef = useRef(messages);
 
   useEffect(() => {
+    const adjustViewport = () => {
+      const height = window.visualViewport?.height || window.innerHeight;
+      document.documentElement.style.setProperty('--vh', `${height * 0.01}px`);
+    };
+  
+    if (window.visualViewport) {
+      adjustViewport(); // Set initial value
+      window.visualViewport.addEventListener('resize', adjustViewport);
+    }
+  
+    return () => {
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', adjustViewport);
+      }
+    };
+  }, []);  
+
+  useEffect(() => {
     latestMessagesRef.current = messages;
   }, [messages]);
 
