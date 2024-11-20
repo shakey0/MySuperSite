@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client';
-import Home from '../components/Home';
+import Home from '../components/home/Home';
 
 document.addEventListener('DOMContentLoaded', () => {
   const rootElement = document.getElementById('home-root');

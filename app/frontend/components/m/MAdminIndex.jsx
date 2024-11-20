@@ -1,3 +1,4 @@
+import './M.base.scoped.scss';
 import './MAdminIndex.scoped.scss';
 
 export default function MAdminIndex({ filenames }) {

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import './M.base.scoped.scss';
 import './MPasswordForm.scoped.scss';
 
 const PasswordAuthForm = () => {
