@@ -1,7 +1,7 @@
 class MUserData
   def self.load(secret)
     return {} unless secret =~ /\A[a-zA-Z0-9]+\z/
-  
+
     redis_key = "convo:#{secret}"
     convo = $redis.get(redis_key)
     if convo.nil?
@@ -15,7 +15,7 @@ class MUserData
     convo = JSON.parse(convo) if convo.is_a?(String)
     convo || {}
   end
-  
+
   def self.load_from_json(secret)
     user_data = load_all(secret)
     return nil if user_data.nil?
@@ -26,7 +26,7 @@ class MUserData
     current_convo || {}
   end
 
-  def self.load_all(secret)  
+  def self.load_all(secret)
     file_path = path(secret)
     return nil unless File.exist?(file_path)
 
@@ -48,7 +48,7 @@ class MUserData
         end
       else
         convo = {
-          "messages" => [{ "message" => message, "direction" => direction }],
+          "messages" => [ { "message" => message, "direction" => direction } ],
           "start_time" => Time.now.utc.strftime("%Y-%m-%d %H:%M:%S.%6N"),
           "seen" => (direction == "to")
         }
