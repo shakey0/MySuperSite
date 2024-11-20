@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import './MMessageForm.scoped.scss';
 
 function MMessageForm({ secret, admin }) {
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const textareaRef = useRef(null);
 
   const route = admin ? '/m_admin' : '/m';
 
@@ -35,6 +36,7 @@ function MMessageForm({ secret, admin }) {
 
       if (data.outcome === 'success') {
         setMessage('');
+        textareaRef.current.focus();
       } else {
         console.error('Error submitting form:', data.outcome);
       }
@@ -61,6 +63,7 @@ function MMessageForm({ secret, admin }) {
       <input type="hidden" name="authenticity_token" value={csrfToken} />
       <input type="hidden" name="secret" value={secret} />
       <textarea
+        ref={textareaRef}
         name="message"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
