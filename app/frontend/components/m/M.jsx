@@ -66,10 +66,10 @@ export default function M({ admin }) {
           <p key={index} className={`message-${direction}`}>{message}</p>
         ))}
       </div>
+      <div ref={messagesEndRef}></div>
       {showForm && (
         <MMessageForm secret={secret} admin={admin} />
       )}
-      <div ref={messagesEndRef}></div>
     </div>
   )
 }
