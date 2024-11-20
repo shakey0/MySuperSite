@@ -14,9 +14,9 @@ class MController < ApplicationController
 
   def data
     secret = params[:secret]
-    user_data = MUserData.load(secret)
-    if user_data.present?
-      render json: { outcome: "success", data: user_data }
+    convo = MUserData.load(secret)
+    if !convo.nil?
+      render json: { outcome: "success", convo: convo }
     else
       render json: { outcome: "failed" }
     end
@@ -24,9 +24,9 @@ class MController < ApplicationController
 
   def update
     secret = params[:secret]
-    user_data = MUserData.load(secret)
-    if user_data.present?
-      result = MUserData.save(secret, user_data, params[:message])
+    convo = MUserData.load(secret)
+    if !convo.nil?
+      result = MUserData.save(secret, params[:message])
       render json: { outcome: result ? "success" : "error" }
     else
       render json: { outcome: "failed" }
@@ -35,9 +35,9 @@ class MController < ApplicationController
 
   def admin_update
     secret = params[:secret]
-    user_data = MUserData.load(secret)
-    if user_data.present?
-      result = MUserData.save(secret, user_data, params[:message], direction="to")
+    convo = MUserData.load(secret)
+    if !convo.nil?
+      result = MUserData.save(secret, params[:message], direction="to")
       render json: { outcome: result ? "success" : "error" }
     else
       render json: { outcome: "failed" }

@@ -17,17 +17,9 @@ export default function M({ admin }) {
         const response = await fetch(`/m_data?secret=${secretFromURL}`);
         const data = await response.json();
         if (data.outcome === 'success') {
-          let currentConvo = null;
-          for (let i = 0; i < data.data.convos.length; i++) {
-            // If the convo start_time is up to an hour ago
-            const convoStartTime = Date.parse(data.data.convos[i].start_time.replace(" ", "T") + "Z");
-            if (convoStartTime > Date.now() - 3600000 || data.data.convos[i].seen === false) {
-              currentConvo = data.data.convos[i].messages;
-              break;
-            }
-          }
-          if (currentConvo !== null) {
-            setMessages(currentConvo);
+          const currentConvo = data.convo;
+          if (currentConvo?.messages?.length) {
+            setMessages(currentConvo.messages);
             setShowForm(true);
           } else {
             setMessages([{ direction: 'none', message: 'No messages in the last hour' }]);
@@ -43,7 +35,7 @@ export default function M({ admin }) {
     };
 
     fetchData();
-    const intervalId = setInterval(fetchData, 2000);
+    const intervalId = setInterval(fetchData, 1000);
 
     return () => clearInterval(intervalId);
   }, []);
