@@ -36,6 +36,7 @@
 
 # Miscellaneous
 side.rb
+side.py
 
 # Vite Ruby
 /public/vite*
