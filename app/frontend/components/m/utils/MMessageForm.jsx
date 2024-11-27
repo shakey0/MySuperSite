@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import './MMessageForm.scoped.scss';
 
 function MMessageForm({ secret, admin }) {
@@ -9,6 +9,39 @@ function MMessageForm({ secret, admin }) {
   const route = admin ? '/m_admin' : '/m';
 
   const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+  // Resend unsent message if it exists
+  useEffect(() => {
+    const unsentMessage = sessionStorage.getItem('unsentMessage');
+    if (unsentMessage) {
+      sessionStorage.removeItem('unsentMessage');
+
+      const resendMessage = async () => {
+        try {
+          const response = await fetch(route, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-Token': csrfToken,
+            },
+            body: JSON.stringify({
+              authenticity_token: csrfToken,
+              secret: secret,
+              message: unsentMessage,
+            }),
+          });
+
+          if (!response.ok) {
+            console.error('Error resending message:', response.statusText);
+          }
+        } catch (error) {
+          console.error('Error resending message:', error);
+        }
+      };
+
+      resendMessage();
+    }
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -32,8 +65,15 @@ function MMessageForm({ secret, admin }) {
           message: message.trim(),
         }),
       });
-      const data = await response.json();
 
+      if (response.status === 422) {
+        // Store the message temporarily and reload the page
+        sessionStorage.setItem('unsentMessage', message.trim());
+        window.location.reload();
+        return;
+      }
+
+      const data = await response.json();
       if (data.outcome === 'success') {
         setMessage('');
         textareaRef.current.focus();
