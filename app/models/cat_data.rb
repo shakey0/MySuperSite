@@ -1,6 +1,6 @@
 class CatData
   def self.load_all(cat)
-    file_path = path(cat)
+    file_path = data_path(cat)
     return nil unless File.exist?(file_path)
 
     begin
@@ -29,7 +29,7 @@ class CatData
     file_data
   end
 
-  def self.path(cat)
+  def self.data_path(cat)
     Rails.root.join("persistent_disk", "cats", cat, "#{cat}.json")
   end
 

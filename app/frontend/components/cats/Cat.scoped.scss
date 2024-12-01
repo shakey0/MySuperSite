@@ -1,0 +1,139 @@
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Protest+Revolution&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&family=Yuji+Mai&display=swap');
+
+body {
+  background: #dddddd; // Change to a tabby cat pattern
+  font-size: 1.2rem;
+  font-family: 'Josefin Sans', sans-serif;
+  color: #0f0f0f;
+}
+
+.page-container {
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .container {
+    display: flex;
+    width: 100%;
+    background: #f0f0f0;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+    border-radius: 40px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .header-container {
+    display: flex;
+    justify-content: center;
+    max-width: 800px;
+
+    .title {
+      text-align: center;
+      margin: 0;
+
+      @media (max-width: 440px) {
+        font-size: 2.2rem;
+      }
+
+      @media (max-width: 400px) {
+        font-size: 2rem;
+      }
+
+      @media (max-width: 360px) {
+        font-size: 1.8rem;
+      }
+    }
+  }
+
+  .info-container {
+    display: flex;
+    max-width: 1280px;
+    justify-content: space-between;
+
+    @media (max-width: 1000px) {
+      flex-direction: column;
+
+      .info-right {
+        order: -1;
+        display: flex;
+        justify-content: center;
+        margin-bottom: 24px;
+      }
+    }
+
+    .info-left {
+      display: flex;
+      flex-direction: column;
+      padding: 8px;
+      padding-right: 24px;
+      gap: 20px;
+
+      .info-data {
+        display: flex;
+        gap: 20px;
+
+        &.long {
+          @media (max-width: 1200px) and (min-width: 1000px), (max-width: 768px) and (min-width: 500px) {
+            flex-direction: column;
+            gap: 10px;
+          }
+        }
+
+        p {
+          margin: 0;
+        }
+
+        .key {
+          font-style: italic;
+          min-width: 150px;
+        }
+
+        .value {
+          font-weight: bold;
+          min-width: 250px;
+        }
+
+        @media (max-width: 500px) {
+          flex-direction: column;
+          gap: 10px;
+
+          .key {
+            min-width: 0;
+          }
+
+          .value {
+            min-width: 0;
+          }
+        }
+      }
+    }
+
+    .info-right {
+      .image-box {
+        display: flex;
+        width: fit-content;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+        border-radius: 16px;
+
+        img {
+          @media (min-width: 1000px) {
+            max-width: 40vw;
+          }
+          max-height: 440px;
+          border-radius: 16px;
+
+          @media (max-width: 1360px) and (min-width: 1000px) {
+            max-width: calc(15vw + (25vw * ((100vw - 1080px) / 280)));
+          }
+
+          @media (max-width: 1000px) {
+            max-width: 100%;
+          }
+        }
+      }
+    }
+  }
+}

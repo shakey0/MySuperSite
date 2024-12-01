@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   get "cats", to: "cats#index", as: "cats_index"
   get "cats/:slug", to: "cats#show", as: "cats_show"
   get "cats/:slug/data", to: "cats#data", as: "cats_data"
+  get "cats/photo/:slug/:filename", to: "cats#photo", constraints: { filename: /.+/ }
 
   get "m/:id", to: "m#show", as: "m_show"
   get "m_admin", to: "m#admin_index", as: "m_admin_index"

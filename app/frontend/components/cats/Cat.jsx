@@ -1,18 +1,18 @@
 import { useEffect, useState } from 'react';
+import './Cat.scoped.scss';
 
 export default function Cats() {
   const [infoData, setInfoData] = useState({});
   const [rawData, setRawData] = useState({});
+  const slug = window.location.pathname.split('/').pop();
 
   useEffect(() => {
-    const slug = window.location.pathname.split('/').pop();
-    console.log(slug);
-
     const fetchData = async () => {
       try {
         const response = await fetch(`/cats/${slug}/data`);
         const data = await response.json();
         if (data) {
+          console.log('Data:', data);
           setRawData(data);
           const sortedData = {
             ["Known as"]: data.known_as,
@@ -28,12 +28,9 @@ export default function Cats() {
             [`${data.first_name}'s story`]: data.story,
           });
           setInfoData(sortedData);
-          // REMOVE THIS LATER
-          for (const [key, value] of Object.entries(sortedData)) {
-            console.log(`${key}: ${value}`);
-          }
         } else {
           console.warn('No data:', data);
+          setRawData({ "first_name": `There's no cat named ${slug.charAt(0).toUpperCase() + slug.slice(1)}` });
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -45,36 +42,32 @@ export default function Cats() {
 
   return (
     <div className="page-container">
-      <div className="header-container">
-        <div className="header-left">
-          <h1 className="title">Sophie Larna Shakespeare</h1>
-          <div className="info-data">
-            <p className="key">Known as: </p>
-            <p className="value">Mental Sophie</p>
-          </div>
-          <div className="info-data">
-            <p className="key">Born on: </p>
-            <p className="value">10th July 2010</p>
-          </div>
-          <div className="info-data">
-            <p className="key">Age in cat years: </p>
-            <p className="value">70</p>
-          </div>
-          <div className="info-data">
-            <p className="key">Likes eating: </p>
-            <p className="value">Lick-e-Lix</p>
-          </div>
-          <div className="info-data">
-            <p className="key">Likes to: </p>
-            <p className="value">Wake everyone up at 5am</p>
-          </div>
-          <div className="info-data">
-            <p className="key">Sophie's story: </p>
-            <p className="value">A piece of string</p>
-          </div>
+      <div className="container header-container">
+      <h1 className="title">
+        {rawData && rawData.first_name ? (
+          <>
+            {rawData.first_name}
+            {rawData.middle_name && ` ${rawData.middle_name}`}
+            {rawData.last_name && ` ${rawData.last_name}`}
+          </>
+        ) : (
+          "Loading..."
+        )}
+      </h1>
+      </div>
+      <div className="container info-container">
+        <div className="info-left">
+          {Object.entries(infoData).map(([key, value], index) => (
+            <div className={`info-data ${key.includes('to') || key.includes('story') ? 'long' : ''}`} key={index}>
+              <p className="key">{key}</p>
+              <p className="value">{value}</p>
+            </div>
+          ))}
         </div>
-        <div className="header-right">
-
+        <div className="info-right">
+          <div className="image-box">
+            {rawData.profile_photo && <img src={`/cats/photo/${slug}/${rawData.profile_photo}`} alt="Cat" />}
+          </div>
         </div>
       </div>
     </div>
