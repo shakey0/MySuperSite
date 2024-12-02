@@ -15,7 +15,7 @@ class CatsController < ApplicationController
     slug = params[:slug] || "default"
     filename = params[:filename] || "default.jpg"
 
-    if !(slug.match?(/\A[a-z_]+\z/) && filename.match?(/\A[a-zA-Z0-9_-]+\.(jpg|webp)\z/))
+    unless slug.match?(/\A[a-z_]+\z/) && filename.match?(/\A[a-zA-Z0-9_-]+\.(jpg|webp)\z/)
       render plain: "Invalid slug or filename", status: :bad_request
       return
     end
@@ -24,6 +24,11 @@ class CatsController < ApplicationController
     safe_filename = Pathname.new(filename).cleanpath.to_s
 
     file_path = Rails.root.join("persistent_disk", "cats", safe_slug, "photos", safe_filename)
+
+    unless file_path.realpath.to_s.start_with?(Rails.root.join("persistent_disk", "cats").to_s)
+      render plain: "Invalid file path", status: :bad_request
+      return
+    end
 
     if File.exist?(file_path)
       send_file file_path, disposition: "inline"

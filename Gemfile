@@ -52,5 +52,3 @@ group :test do
 end
 
 gem "vite_rails"
-
-gem 'brakeman', require: false
