@@ -9,6 +9,19 @@ body {
 
 .page-container {
   padding: 40px;
+
+  @media (max-width: 1000px) {
+    padding: 30px;
+  }
+
+  @media (max-width: 768px) {
+    padding: 20px;
+  }
+
+  @media (max-width: 500px) {
+    padding: 10px;
+  }
+
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -21,6 +34,10 @@ body {
     border-radius: 40px;
     padding: 24px;
     margin-bottom: 24px;
+
+    @media (max-width: 500px) {
+      margin-bottom: 12px;
+    }
   }
 
   .header-container {
@@ -67,6 +84,11 @@ body {
       flex-direction: column;
       padding: 8px;
       padding-right: 24px;
+
+      @media (max-width: 500px) {
+        padding: 0;
+      }
+
       gap: 20px;
 
       .info-data {
