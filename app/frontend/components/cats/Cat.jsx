@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import './Cat.scoped.scss';
+import CatPatternBackground from './CatPatternBackground';
 
 export default function Cats() {
   const [infoData, setInfoData] = useState({});
@@ -12,7 +13,6 @@ export default function Cats() {
         const response = await fetch(`/cats/${slug}/data`);
         const data = await response.json();
         if (data) {
-          console.log('Data:', data);
           setRawData(data);
           const sortedData = {
             ["Known as"]: data.known_as,
@@ -41,35 +41,37 @@ export default function Cats() {
   }, []);
 
   return (
-    <div className="page-container">
-      <div className="container header-container">
-      <h1 className="title">
-        {rawData && rawData.first_name ? (
-          <>
-            {rawData.first_name}
-            {rawData.middle_name && ` ${rawData.middle_name}`}
-            {rawData.last_name && ` ${rawData.last_name}`}
-          </>
-        ) : (
-          "Loading..."
-        )}
-      </h1>
-      </div>
-      <div className="container info-container">
-        <div className="info-left">
-          {Object.entries(infoData).map(([key, value], index) => (
-            <div className={`info-data ${key.includes('to') || key.includes('story') ? 'long' : ''}`} key={index}>
-              <p className="key">{key}</p>
-              <p className="value">{value}</p>
-            </div>
-          ))}
+    <CatPatternBackground color1="#777777" color2="#444444">
+      <div className="page-container">
+        <div className="container header-container">
+        <h1 className="title">
+          {rawData && rawData.first_name ? (
+            <>
+              {rawData.first_name}
+              {rawData.middle_name && ` ${rawData.middle_name}`}
+              {rawData.last_name && ` ${rawData.last_name}`}
+            </>
+          ) : (
+            "Loading..."
+          )}
+        </h1>
         </div>
-        <div className="info-right">
-          <div className="image-box">
-            {rawData.profile_photo && <img src={`/cats/photo/${slug}/${rawData.profile_photo}`} alt="Cat" />}
+        <div className="container info-container">
+          <div className="info-left">
+            {Object.entries(infoData).map(([key, value], index) => (
+              <div className={`info-data ${key.includes('to') || key.includes('story') ? 'long' : ''}`} key={index}>
+                <p className="key">{key}</p>
+                <p className="value">{value}</p>
+              </div>
+            ))}
+          </div>
+          <div className="info-right">
+            <div className="image-box">
+              {rawData.profile_photo && <img src={`/cats/photo/${slug}/${rawData.profile_photo}`} alt="Cat" />}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </CatPatternBackground>
   )
 }
