@@ -34,8 +34,8 @@ export default function Cats() {
           }
           Object.assign(sortedData, {
             [`${lang === 'cn' ? enToCn["age_in_cat_years"] : "Age in cat years"}`]: data.age_in_cat_years,
-            [`${lang === 'cn' ? enToCn["likes_eating"] : "Like" + (data.likes_eating ? "d" : "s") + " eating"}`]: data.likes_eating,
-            [`${lang === 'cn' ? enToCn["likes_to"] : "Like" + (data.likes_to ? "d" : "s") + " to"}`]: data.likes_to,
+            [`${lang === 'cn' ? enToCn["likes_eating"] : "Like" + (data.passed_in ? "d" : "s") + " eating"}`]: data.likes_eating,
+            [`${lang === 'cn' ? enToCn["likes_to"] : "Like" + (data.passed_in ? "d" : "s") + " to"}`]: data.likes_to,
             [`${data.first_name + (lang === 'cn' ? enToCn["story"] : "'s story")}`]: data.story,
           });
           setInfoData(sortedData);
@@ -50,6 +50,8 @@ export default function Cats() {
 
     fetchData();
   }, []);
+
+  console.log('sortedData:', infoData);
 
   return (
     <CatPatternBackground color1="#777777" color2="#444444">
