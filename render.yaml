@@ -1,0 +1,12 @@
+services:
+  - name: my-super-site
+    type: web
+    env: docker
+    plan: starter
+    dockerfilePath: ./Dockerfile
+    build:
+      args:
+        - RAILS_MASTER_KEY
+    envVars:
+      - key: RAILS_MASTER_KEY
+        value: ${RAILS_MASTER_KEY}
