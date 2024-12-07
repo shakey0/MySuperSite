@@ -2,15 +2,27 @@ import { useEffect, useState } from 'react';
 import './Cat.scoped.scss';
 import CatPatternBackground from './CatPatternBackground';
 
+const englishToChinese = {
+  "Known as": "名字",
+  "Born on": "出生日期",
+  "Passed in": "去世日期",
+  "Age in cat years": "猫咪年龄",
+  "Likes eating": "喜欢吃",
+  "Liked eating": "喜欢吃",
+  "Likes to": "喜欢",
+  "Liked to": "喜欢",
+};
+
 export default function Cats() {
   const [infoData, setInfoData] = useState({});
   const [rawData, setRawData] = useState({});
   const slug = window.location.pathname.split('/').pop();
+  const lang = new URLSearchParams(window.location.search).get('lang') || 'en';
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`/cats/${slug}/data`);
+        const response = await fetch(`/cats/${slug}/data?lang=${lang}`);
         const data = await response.json();
         if (data) {
           setRawData(data);
@@ -60,7 +72,11 @@ export default function Cats() {
           <div className="info-left">
             {Object.entries(infoData).map(([key, value], index) => (
               <div className={`info-data ${key.includes('to') || key.includes('story') ? 'long' : ''}`} key={index}>
-                <p className="key">{key}</p>
+                {key.includes("'s story") && lang === 'cn' ? (
+                  <p className="key">{rawData.first_name}的故事</p>
+                ) : (
+                  <p className="key">{lang === 'cn' ? englishToChinese[key] : key}</p>
+                )}
                 <p className="value">{value}</p>
               </div>
             ))}

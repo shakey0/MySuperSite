@@ -1,6 +1,16 @@
-import { useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 
 const CatPatternBackground = ({ color1, color2, children }) => {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCount(prevCount => prevCount + 1);
+    }, 20000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   const canvasRef = useRef(null);
 
   const drawBlotch = (ctx, x, y, color, size) => {
@@ -43,7 +53,7 @@ const CatPatternBackground = ({ color1, color2, children }) => {
       const color = Math.random() > 0.5 ? color1 : color2;
       drawBlotch(ctx, x, y, color, size);
     }
-  }, [color1, color2]);
+  }, [color1, color2, count]);
 
   console.log('canvasRef', canvasRef);
 

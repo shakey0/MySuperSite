@@ -1,6 +1,6 @@
 class CatData
-  def self.load_all(cat)
-    file_path = data_path(cat)
+  def self.load_all(cat, lang="en")
+    file_path = data_path(cat, lang)
     return nil unless File.exist?(file_path)
 
     begin
@@ -11,12 +11,12 @@ class CatData
 
     born_on = file_data["born_on"]
     born_on_date = Time.parse(born_on)
-    born_on_formatted = born_on_date.strftime("%d#{born_on_date.day.ordinal} %B %Y")
+    born_on_formatted = lang == "cn" ? born_on_date.strftime("%Y年%m月%d日") : born_on_date.strftime("%d#{born_on_date.day.ordinal} %B %Y")
     passed_in = file_data["passed_in"]
     if passed_in
       age_in_human_years = (Time.parse(passed_in) - born_on_date) / 60 / 60 / 24 / 365
       passed_in_date = Time.parse(passed_in)
-      file_data["passed_in"] = passed_in_date.strftime("%B %Y")
+      file_data["passed_in"] = lang == "cn" ? passed_in_date.strftime("%Y年%m月") : passed_in_date.strftime("%B %Y")
     else
       age_in_human_years = (Time.now - born_on_date) / 60 / 60 / 24 / 365
       file_data.delete("passed_in")
@@ -29,8 +29,9 @@ class CatData
     file_data
   end
 
-  def self.data_path(cat)
-    Rails.root.join("persistent_disk", "cats", cat, "#{cat}.json")
+  def self.data_path(cat, lang)
+    filename = lang == "cn" ? "#{cat}__cn__.json" : "#{cat}.json"
+    Rails.root.join("persistent_disk", "cats", cat, filename)
   end
 
   def self.human_to_cat_years(human_years)

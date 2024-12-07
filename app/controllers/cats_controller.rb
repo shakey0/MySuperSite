@@ -7,7 +7,27 @@ class CatsController < ApplicationController
 
   def data
     slug = params[:slug]
-    cat_data = CatData.load_all(slug)
+    lang = params[:lang] || "en"
+
+    cat_data = CatData.load_all(slug, lang)
+
+    # ----------------------------
+    # TRANSLATIONS EXPERIMENT
+
+    # strings_to_translate = {
+    #   known_as: cat_data["known_as"],
+    #   likes_eating: cat_data["likes_eating"],
+    #   likes_to: cat_data["likes_to"],
+    #   story: cat_data["story"]
+    # }
+
+    # service = CatTranslationService.new(ENV['OPENAI_API_KEY'])
+    # translated_json = service.translate(strings_to_translate)
+
+    # custom_logger = Logger.new(Rails.root.join('log', 'custom.log'))
+    # custom_logger.info("Translated JSON: #{translated_json}")
+    # ----------------------------
+
     render json: cat_data
   end
 
