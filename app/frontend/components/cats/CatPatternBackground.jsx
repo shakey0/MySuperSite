@@ -43,7 +43,7 @@ const CatPatternBackground = ({ color1, color2, children }) => {
       const color = Math.random() > 0.5 ? color1 : color2;
       drawBlotch(ctx, x, y, color, size);
     }
-  }, [color1, color2]);  
+  }, [color1, color2]);
 
   console.log('canvasRef', canvasRef);
 
@@ -52,7 +52,8 @@ const CatPatternBackground = ({ color1, color2, children }) => {
       <canvas
         ref={canvasRef}
         style={{
-          position: "absolute",
+          position: "fixed",
+          backgroundColor: "white",
           top: 0,
           left: 0,
           width: "100%",
