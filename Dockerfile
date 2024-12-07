@@ -54,6 +54,7 @@ COPY . .
 RUN bundle exec bootsnap precompile app/ lib/
 
 # Precompiling assets for production requiring secret RAILS_MASTER_KEY
+ARG RAILS_MASTER_KEY
 RUN RAILS_MASTER_KEY=${RAILS_MASTER_KEY} ./bin/rails assets:precompile
 
 
