@@ -1,5 +1,5 @@
 class CatData
-  def self.load_all(cat, lang="en")
+  def self.load_all(cat, lang = "en")
     file_path = data_path(cat, lang)
     return nil unless File.exist?(file_path)
 

@@ -53,4 +53,4 @@ end
 
 gem "vite_rails"
 
-gem 'httparty'
+gem "httparty"
