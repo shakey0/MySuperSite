@@ -2,15 +2,14 @@ import { useEffect, useState } from 'react';
 import './Cat.scoped.scss';
 import CatPatternBackground from './CatPatternBackground';
 
-const englishToChinese = {
-  "Known as": "名字",
-  "Born on": "出生日期",
-  "Passed in": "去世日期",
-  "Age in cat years": "猫咪年龄",
-  "Likes eating": "喜欢吃",
-  "Liked eating": "喜欢吃",
-  "Likes to": "喜欢",
-  "Liked to": "喜欢",
+const enToCn = {
+  "known_as": "名字",
+  "born_on": "出生日期",
+  "passed_in": "去世日期",
+  "age_in_cat_years": "猫咪年龄",
+  "likes_eating": "喜欢吃",
+  "likes_to": "喜欢",
+  "story": "的故事",
 };
 
 export default function Cats() {
@@ -27,17 +26,17 @@ export default function Cats() {
         if (data) {
           setRawData(data);
           const sortedData = {
-            ["Known as"]: data.known_as,
-            ["Born on"]: data.born_on,
+            [`${lang === 'cn' ? enToCn["known_as"] : "Known as"}`]: data.known_as,
+            [`${lang === 'cn' ? enToCn["born_on"] : "Born on"}`]: data.born_on,
           };
           if (data.passed_in) {
-            sortedData["Passed in"] = data.passed_in;
+            sortedData[`${lang === 'cn' ? enToCn["passed_in"] : "Passed in"}`] = data.passed_in;
           }
           Object.assign(sortedData, {
-            ["Age in cat years"]: data.age_in_cat_years,
-            [`Like${data.passed_in ? "d" : "s"} eating`]: data.likes_eating,
-            [`Like${data.passed_in ? "d" : "s"} to`]: data.likes_to,
-            [`${data.first_name}'s story`]: data.story,
+            [`${lang === 'cn' ? enToCn["age_in_cat_years"] : "Age in cat years"}`]: data.age_in_cat_years,
+            [`${lang === 'cn' ? enToCn["likes_eating"] : "Like" + (data.likes_eating ? "d" : "s") + " eating"}`]: data.likes_eating,
+            [`${lang === 'cn' ? enToCn["likes_to"] : "Like" + (data.likes_to ? "d" : "s") + " to"}`]: data.likes_to,
+            [`${data.first_name + (lang === 'cn' ? enToCn["story"] : "'s story")}`]: data.story,
           });
           setInfoData(sortedData);
         } else {
@@ -72,11 +71,7 @@ export default function Cats() {
           <div className="info-left">
             {Object.entries(infoData).map(([key, value], index) => (
               <div className={`info-data ${key.includes('to') || key.includes('story') ? 'long' : ''}`} key={index}>
-                {key.includes("'s story") && lang === 'cn' ? (
-                  <p className="key">{rawData.first_name}的故事</p>
-                ) : (
-                  <p className="key">{lang === 'cn' ? englishToChinese[key] : key}</p>
-                )}
+                <p className="key">{key}</p>
                 <p className="value">{value}</p>
               </div>
             ))}
