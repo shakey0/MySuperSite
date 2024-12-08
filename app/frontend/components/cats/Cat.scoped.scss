@@ -151,6 +151,11 @@ body {
           @media (min-width: 1000px) {
             max-width: 40vw;
           }
+
+          @media (min-width: 1600px) {
+            max-width: 640px;
+          }
+
           max-height: 440px;
           border-radius: 16px;
 

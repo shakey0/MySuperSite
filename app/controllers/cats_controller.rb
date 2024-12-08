@@ -57,7 +57,10 @@ class CatsController < ApplicationController
     file_path = Rails.root.join("persistent_disk", "cats", folder, "photos", photo)
 
     if File.exist?(file_path)
-      send_file file_path, disposition: "inline"
+      send_file file_path,
+                disposition: "inline",
+                type: "image/jpeg", # REMOVE jpg LATER and change to "image/webp"
+                cache_control: "public, max-age=#{1.year.to_i}, immutable"
     else
       render plain: "File not found", status: :not_found
     end

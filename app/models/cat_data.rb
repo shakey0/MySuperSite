@@ -6,7 +6,11 @@ class CatData
     begin
       file_data = JSON.parse(File.read(file_path))
     rescue JSON::ParserError => e
-      return nil
+      if lang != "en"
+        return load_all(cat, "en")
+      else
+        return nil
+      end
     end
 
     born_on = file_data["born_on"]

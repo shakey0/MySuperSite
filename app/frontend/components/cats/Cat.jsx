@@ -12,6 +12,15 @@ const enToCn = {
   "story": "的故事",
 };
 
+function capitalizeTitle(slug) {
+  const excludedWords = new Set(['and', 'of']);
+  return slug
+    .replace(/_/g, ' ')
+    .split(' ')
+    .map(word => excludedWords.has(word) ? word : word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
 export default function Cats() {
   const [infoData, setInfoData] = useState({});
   const [rawData, setRawData] = useState({});
@@ -41,7 +50,7 @@ export default function Cats() {
           setInfoData(sortedData);
         } else {
           console.warn('No data:', data);
-          setRawData({ "first_name": `There's no cat named ${slug.charAt(0).toUpperCase() + slug.slice(1)}` });
+          setRawData({ "first_name": `There's no cat profile named ${capitalizeTitle(slug)}` });
         }
       } catch (error) {
         console.error('Error fetching data:', error);
