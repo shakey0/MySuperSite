@@ -4,8 +4,13 @@ class CatData
     return nil unless File.exist?(file_path)
 
     begin
-      file_data = JSON.parse(File.read(file_path))
-    rescue JSON::ParserError => e
+      file_data = FileLockService.read_file_with_lock(file_path)
+    rescue => e
+      puts "Error occurred: #{e.class} - #{e.message}"
+      return nil
+    end
+
+    if file_data.nil?
       if lang != "en"
         return load_all(cat, "en")
       else
@@ -13,22 +18,43 @@ class CatData
       end
     end
 
-    born_on = file_data["born_on"]
-    born_on_date = Time.parse(born_on)
-    born_on_formatted = lang == "cn" ? born_on_date.strftime("%Y年%m月%d日") : born_on_date.strftime("%d#{born_on_date.day.ordinal} %B %Y")
+    born_on = file_data["born_on"] # !!! Will be a list of dates separated by commas. Will need to separate them and process below in a loop !!!
+    born_on_dates = born_on.split(",")
+    parsed_born_on_dates = born_on_dates.map do |date|
+      Time.parse(date)
+    end
+
     passed_in = file_data["passed_in"]
     if passed_in
-      age_in_human_years = (Time.parse(passed_in) - born_on_date) / 60 / 60 / 24 / 365
-      passed_in_date = Time.parse(passed_in)
-      file_data["passed_in"] = lang == "cn" ? passed_in_date.strftime("%Y年%m月") : passed_in_date.strftime("%B %Y")
+      ages_in_human_years = parsed_born_on_dates.map do |born_on_date|
+        (Time.parse(passed_in) - born_on_date) / 60 / 60 / 24 / 365
+      end
+
+      passed_in_dates = passed_in.split(",")
+      parsed_passed_in_dates = passed_in_dates.map do |date|
+        Time.parse(date)
+      end
+      formatted_passed_in_dates = parsed_passed_in_dates.map do |date|
+        lang == "cn" ? date.strftime("%Y年%m月") : date.strftime("%B %Y")
+      end
+      file_data["passed_in"] = formatted_passed_in_dates.join(" & ")
     else
-      age_in_human_years = (Time.now - born_on_date) / 60 / 60 / 24 / 365
+      ages_in_human_years = parsed_born_on_dates.map do |born_on_date|
+        (Time.now - born_on_date) / 60 / 60 / 24 / 365
+      end
+
       file_data.delete("passed_in")
     end
 
-    file_data["born_on"] = born_on_formatted
-    age_in_cat_years = human_to_cat_years(age_in_human_years)
-    file_data["age_in_cat_years"] = age_in_cat_years.to_i
+    ages_in_cat_years = ages_in_human_years.map do |age_in_human_years|
+      human_to_cat_years(age_in_human_years).to_i
+    end
+    file_data["age_in_cat_years"] = ages_in_cat_years.join(" & ")
+
+    formatted_born_on_dates = parsed_born_on_dates.map do |date|
+      lang == "cn" ? date.strftime("%Y年%m月%d日") : date.strftime("%d#{date.day.ordinal} %B %Y")
+    end
+    file_data["born_on"] = formatted_born_on_dates.join(" & ")
 
     file_data
   end
