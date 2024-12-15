@@ -24,6 +24,7 @@ function capitalizeTitle(slug) {
 export default function Cats() {
   const [infoData, setInfoData] = useState({});
   const [rawData, setRawData] = useState({});
+  const [tab, setTab] = useState('videos');
   const slug = window.location.pathname.split('/').pop();
   const lang = new URLSearchParams(window.location.search).get('lang') || 'en';
 
@@ -61,6 +62,7 @@ export default function Cats() {
   }, []);
 
   console.log('sortedData:', infoData);
+  console.log('rawData:', rawData);
 
   return (
     <CatPatternBackground color1="#777777" color2="#444444">
@@ -92,6 +94,39 @@ export default function Cats() {
               {rawData.profile_photo && <img src={`/cats/photo/${slug}/${rawData.profile_photo}`} alt="Cat" />}
             </div>
           </div>
+        </div>
+        <div className="container tabs-container">
+          <button className={`tab left ${tab === 'videos' ? 'active' : ''}`} onClick={() => setTab('videos')}><h1>Videos</h1></button>
+          <button className={`tab right ${tab === 'albums' ? 'active' : ''}`} onClick={() => setTab('albums')}><h1>Albums</h1></button>
+        </div>
+        <div className={`flex-wrap-container ${tab === 'videos' ? 'active' : ''}`}>
+          {rawData.videos && rawData.videos.map((video, index) => (
+            <div className="container video-container" key={index}>
+              <video controls>
+                <source src={`/cats/video/${slug}/${video.video}`} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          ))}
+        </div>
+        <div className={`flex-wrap-container ${tab === 'albums' ? 'active' : ''}`}>
+          {rawData.albums &&
+            rawData.albums.map((album, index) => {
+              const coverPhoto = album.photos.find((photo) => photo.order === 1);
+
+              return (
+                <div className="container album-container" key={index}>
+                  <h3>{album.name}</h3>
+                  <div className="cover-photo">
+                    {coverPhoto ? (
+                      <img src={`/cats/photo/${slug}/${coverPhoto.name}`} alt={`Album: ${album.name}`} />
+                    ) : (
+                      <p>No cover photo available</p>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
         </div>
       </div>
     </CatPatternBackground>

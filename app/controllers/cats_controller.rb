@@ -68,6 +68,43 @@ class CatsController < ApplicationController
     end
   end
 
+  def video
+    slug = params[:slug] || "default"
+    filename = params[:filename] || "default.mp4"
+
+    unless slug.match?(/\A[a-z_]+\z/) && filename.match?(/\A[a-zA-Z0-9_-]+\.(mp4)\z/)
+      render plain: "Invalid slug or filename", status: :bad_request
+      return
+    end
+
+    folders = registered_cat_list
+    folder = folders.find { |f| f == slug }
+    unless folder
+      render plain: "Cat not found", status: :not_found
+      return
+    end
+
+    videos = videos_list_for_cat(folder)
+    video = videos.find { |v| v == filename }
+    unless video
+      render plain: "Video not found", status: :not_found
+      return
+    end
+
+    file_path = Rails.root.join("persistent_disk", "cats", folder, "videos", video)
+
+    if File.exist?(file_path)
+      response.headers["Cache-Control"] = "public, max-age=#{1.year.to_i}, immutable"
+
+      send_file file_path,
+                disposition: "inline",
+                type: "video/mp4",
+                cache_control: nil
+    else
+      render plain: "File not found", status: :not_found
+    end
+  end
+
   private
 
   def registered_cat_list
@@ -98,5 +135,20 @@ class CatsController < ApplicationController
 
     $redis.setex("photos_list_#{cat}", 10.minutes, photos_list.to_json)
     photos_list
+  end
+
+  def videos_list_for_cat(cat)
+    videos_list = $redis.get("videos_list_#{cat}")
+    if videos_list
+      return JSON.parse(videos_list)
+    end
+
+    base_path = Rails.root.join("persistent_disk", "cats", cat, "videos")
+    videos_list = Dir.entries(base_path).select do |entry|
+      entry.match?(/\A[a-zA-Z0-9_-]+\.(mp4)\z/)
+    end
+
+    $redis.setex("videos_list_#{cat}", 10.minutes, videos_list.to_json)
+    videos_list
   end
 end

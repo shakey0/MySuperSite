@@ -18,7 +18,7 @@ class CatData
       end
     end
 
-    born_on = file_data["born_on"] # !!! Will be a list of dates separated by commas. Will need to separate them and process below in a loop !!!
+    born_on = file_data["born_on"]
     born_on_dates = born_on.split(",")
     parsed_born_on_dates = born_on_dates.map do |date|
       Time.parse(date)
