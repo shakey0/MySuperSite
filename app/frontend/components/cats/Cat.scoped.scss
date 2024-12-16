@@ -34,6 +34,10 @@ body {
       justify-content: center;
       gap: 24px;
       margin-bottom: 24px;
+
+      @media (max-width: 500px) {
+        gap: 12px;
+      }
     }
   }
 
@@ -211,6 +215,11 @@ body {
         border-top-left-radius: 40px;
         border-bottom-left-radius: 40px;
 
+        @media (max-width: 500px) {
+          border-top-left-radius: 20px;
+          border-bottom-left-radius: 20px;
+        }
+
         &.active {
           box-shadow: 0 0 8px rgba(0, 0, 0, 0.6),
                       0 0 4px rgba(240, 240, 240, 0.4),
@@ -222,6 +231,11 @@ body {
       &.right {
         border-top-right-radius: 40px;
         border-bottom-right-radius: 40px;
+
+        @media (max-width: 500px) {
+          border-top-right-radius: 20px;
+          border-bottom-right-radius: 20px;
+        }
 
         &.active {
           box-shadow: 0 0 4px rgba(240, 240, 240, 0.4),
@@ -249,6 +263,7 @@ body {
       max-height: 96vh;
       max-width: 84vw;
       border-radius: 16px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
     }
   }
 
@@ -258,6 +273,8 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 12px;
+    cursor: pointer;
+    transition: transform 0.3s;
 
     h3 {
       margin: 0;
@@ -274,12 +291,17 @@ body {
 
       max-height: 360px;
       border-radius: 16px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
 
       img {
         max-width: 100%;
         max-height: 100%;
         border-radius: 16px;
       }
+    }
+
+    &:hover {
+      transform: scale(1.05);
     }
   }
 }

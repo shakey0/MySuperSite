@@ -1,7 +1,23 @@
 *, *::before, *::after {
   box-sizing: border-box;
+  scrollbar-color: #ccc #f0f0f0;
+  scrollbar-width: thin;
+}
+
+@media (max-width: 768px) {
+  * {
+    scrollbar-width: none; /* For Firefox */
+    -ms-overflow-style: none; /* For IE and Edge (old versions) */
+  }
+  *::-webkit-scrollbar {
+    display: none; /* For Chrome, Safari, and Edge */
+  }
 }
 
 body {
   margin: 0;
+}
+
+.no-scroll {
+  overflow: hidden;
 }

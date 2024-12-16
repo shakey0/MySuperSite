@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import './Cat.scoped.scss';
 import CatPatternBackground from './CatPatternBackground';
+import AlbumModal from './utils/AlbumModal';
 
 const enToCn = {
   "known_as": "名字",
@@ -25,6 +26,9 @@ export default function Cats() {
   const [infoData, setInfoData] = useState({});
   const [rawData, setRawData] = useState({});
   const [tab, setTab] = useState('videos');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedAlbum, setSelectedAlbum] = useState(null);
+
   const slug = window.location.pathname.split('/').pop();
   const lang = new URLSearchParams(window.location.search).get('lang') || 'en';
 
@@ -61,6 +65,18 @@ export default function Cats() {
     fetchData();
   }, []);
 
+  const openAlbumModal = (album) => {
+    setSelectedAlbum(album);
+    setIsModalOpen(true);
+    document.body.classList.add('no-scroll');
+  };
+
+  const closeAlbumModal = () => {
+    setSelectedAlbum(null);
+    setIsModalOpen(false);
+    document.body.classList.remove('no-scroll');
+  };
+
   console.log('sortedData:', infoData);
   console.log('rawData:', rawData);
 
@@ -68,18 +84,19 @@ export default function Cats() {
     <CatPatternBackground color1="#777777" color2="#444444">
       <div className="page-container">
         <div className="container header-container">
-        <h1 className="title">
-          {rawData && rawData.first_name ? (
-            <>
-              {rawData.first_name}
-              {rawData.middle_name && ` ${rawData.middle_name}`}
-              {rawData.last_name && ` ${rawData.last_name}`}
-            </>
-          ) : (
-            "Loading..."
-          )}
-        </h1>
+          <h1 className="title">
+            {rawData && rawData.first_name ? (
+              <>
+                {rawData.first_name}
+                {rawData.middle_name && ` ${rawData.middle_name}`}
+                {rawData.last_name && ` ${rawData.last_name}`}
+              </>
+            ) : (
+              "Loading..."
+            )}
+          </h1>
         </div>
+
         <div className="container info-container">
           <div className="info-left">
             {Object.entries(infoData).map(([key, value], index) => (
@@ -89,16 +106,19 @@ export default function Cats() {
               </div>
             ))}
           </div>
+
           <div className="info-right">
             <div className="image-box">
               {rawData.profile_photo && <img src={`/cats/photo/${slug}/${rawData.profile_photo}`} alt="Cat" />}
             </div>
           </div>
         </div>
+
         <div className="container tabs-container">
-          <button className={`tab left ${tab === 'videos' ? 'active' : ''}`} onClick={() => setTab('videos')}><h1>Videos</h1></button>
-          <button className={`tab right ${tab === 'albums' ? 'active' : ''}`} onClick={() => setTab('albums')}><h1>Albums</h1></button>
+          <button className={`tab left ${tab === 'videos' ? 'active' : ''}`} onClick={() => setTab('videos')}><h1>{lang === 'cn' ? '视频' : 'Videos'}</h1></button>
+          <button className={`tab right ${tab === 'albums' ? 'active' : ''}`} onClick={() => setTab('albums')}><h1>{lang === 'cn' ? '相册' : 'Albums'}</h1></button>
         </div>
+
         <div className={`flex-wrap-container ${tab === 'videos' ? 'active' : ''}`}>
           {rawData.videos && rawData.videos.map((video, index) => (
             <div className="container video-container" key={index}>
@@ -109,13 +129,14 @@ export default function Cats() {
             </div>
           ))}
         </div>
+
         <div className={`flex-wrap-container ${tab === 'albums' ? 'active' : ''}`}>
           {rawData.albums &&
             rawData.albums.map((album, index) => {
               const coverPhoto = album.photos.find((photo) => photo.order === 1);
 
               return (
-                <div className="container album-container" key={index}>
+                <div className="container album-container" key={index} onClick={() => openAlbumModal(album)}>
                   <h3>{album.name}</h3>
                   <div className="cover-photo">
                     {coverPhoto ? (
@@ -129,6 +150,25 @@ export default function Cats() {
             })}
         </div>
       </div>
+
+      <AlbumModal isOpen={isModalOpen} onClose={closeAlbumModal}>
+        {selectedAlbum && (
+          <div className="album-modal-content">
+            <h2>{selectedAlbum.name}</h2>
+            <p>{selectedAlbum.description}</p>
+            <div className={`album-photos${selectedAlbum.photos.length < 2 ? '-1' : selectedAlbum.photos.length < 3 ? ' two' : ''}`}>
+              {selectedAlbum.photos.map((photo, idx) => (
+                <img
+                  key={idx}
+                  src={`/cats/photo/${slug}/${photo.name}`}
+                  alt={`Photo ${idx + 1} from ${selectedAlbum.name}`}
+                  className="album-photo"
+                />
+              ))}
+            </div>
+          </div>
+        )}
+      </AlbumModal>
     </CatPatternBackground>
   )
 }
