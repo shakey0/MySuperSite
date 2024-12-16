@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import './Cat.scoped.scss';
 import CatPatternBackground from './CatPatternBackground';
 import AlbumModal from './utils/AlbumModal';
+import PhotoModal from './utils/PhotoModal';
 
 const enToCn = {
   "known_as": "名字",
@@ -28,6 +29,8 @@ export default function Cats() {
   const [tab, setTab] = useState('videos');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAlbum, setSelectedAlbum] = useState(null);
+  const [isPhotoOpen, setIsPhotoOpen] = useState(false);
+  const [selectedPhoto, setSelectedPhoto] = useState(null);
 
   const slug = window.location.pathname.split('/').pop();
   const lang = new URLSearchParams(window.location.search).get('lang') || 'en';
@@ -75,6 +78,16 @@ export default function Cats() {
     setSelectedAlbum(null);
     setIsModalOpen(false);
     document.body.classList.remove('no-scroll');
+  };
+
+  const openPhotoModal = (photo) => {
+    setSelectedPhoto(photo);
+    setIsPhotoOpen(true);
+  };
+
+  const closePhotoModal = () => {
+    setSelectedPhoto(null);
+    setIsPhotoOpen(false);
   };
 
   console.log('sortedData:', infoData);
@@ -163,12 +176,21 @@ export default function Cats() {
                   src={`/cats/photo/${slug}/${photo.name}`}
                   alt={`Photo ${idx + 1} from ${selectedAlbum.name}`}
                   className="album-photo"
+                  onClick={() => openPhotoModal(photo)}
                 />
               ))}
             </div>
           </div>
         )}
       </AlbumModal>
+
+      <PhotoModal isOpen={isPhotoOpen} onClose={closePhotoModal}>
+        {selectedPhoto && (
+          <div className="photo-modal-content">
+            <img src={`/cats/photo/${slug}/${selectedPhoto.name}`} alt="Selected" />
+          </div>
+        )}
+      </PhotoModal>
     </CatPatternBackground>
   )
 }
