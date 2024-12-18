@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import './Cat.scoped.scss';
 import CatPatternBackground from './CatPatternBackground';
 import AlbumModal from './utils/AlbumModal';
@@ -56,6 +56,9 @@ export default function Cats() {
             [`${data.first_name + (lang === 'cn' ? enToCn["story"] : "'s story")}`]: data.story,
           });
           setInfoData(sortedData);
+          if (!data.videos) {
+            setTab('albums');
+          }
         } else {
           console.warn('No data:', data);
           setRawData({ "first_name": `There's no cat profile named ${capitalizeTitle(slug)}` });
@@ -68,27 +71,69 @@ export default function Cats() {
     fetchData();
   }, []);
 
-  const openAlbumModal = (album) => {
+  const openAlbumModal = (album, track = true) => {
     setSelectedAlbum(album);
     setIsModalOpen(true);
     document.body.classList.add('no-scroll');
+    if (track) history.pushState({album}, "");
   };
 
-  const closeAlbumModal = () => {
+  const closeAlbumModal = (track = true) => {
     setSelectedAlbum(null);
     setIsModalOpen(false);
     document.body.classList.remove('no-scroll');
+    if (track) history.back();
   };
 
-  const openPhotoModal = (photo) => {
+  const openPhotoModal = (photo, track = true) => {
     setSelectedPhoto(photo);
     setIsPhotoOpen(true);
+    if (track) history.pushState({photo}, "");
   };
 
-  const closePhotoModal = () => {
+  const closePhotoModal = (track = true) => {
     setSelectedPhoto(null);
     setIsPhotoOpen(false);
+    if (track) history.back();
   };
+
+  const toggleTab = (tab) => {
+    setTab(tab);
+    history.pushState({tab}, "");
+  };
+
+  useEffect(() => {
+    const handlePopState = (event) => {
+      const data = event.state;
+      if (data && (data.album || data.photo)) {
+        if (data.album) {
+          closePhotoModal(false);
+          openAlbumModal(data.album, false);
+        } else if (data.photo) {
+          openPhotoModal(data.photo, false);
+        }
+      } else {
+        closeAlbumModal(false);
+        closePhotoModal(false);
+
+        if (data && data.tab) {
+          setTab(data.tab);
+        } else {
+          if (rawData.videos) {
+            setTab('videos');
+          } else {
+            setTab('albums');
+          }
+        }
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [rawData]);
 
   console.log('sortedData:', infoData);
   console.log('rawData:', rawData);
@@ -128,8 +173,8 @@ export default function Cats() {
         </div>
 
         <div className="container tabs-container">
-          <button className={`tab left ${tab === 'videos' ? 'active' : ''}`} onClick={() => setTab('videos')}><h1>{lang === 'cn' ? '视频' : 'Videos'}</h1></button>
-          <button className={`tab right ${tab === 'albums' ? 'active' : ''}`} onClick={() => setTab('albums')}><h1>{lang === 'cn' ? '相册' : 'Albums'}</h1></button>
+          <button className={`tab left ${tab === 'videos' ? 'active' : ''}`} onClick={() => toggleTab('videos')}><h1>{lang === 'cn' ? '视频' : 'Videos'}</h1></button>
+          <button className={`tab right ${tab === 'albums' ? 'active' : ''}`} onClick={() => toggleTab('albums')}><h1>{lang === 'cn' ? '相册' : 'Albums'}</h1></button>
         </div>
 
         <div className={`flex-wrap-container ${tab === 'videos' ? 'active' : ''}`}>

@@ -257,6 +257,7 @@ body {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    height: fit-content;
     gap: 24px;
 
     video {
@@ -272,6 +273,7 @@ body {
     flex-wrap: wrap;
     flex-direction: column;
     align-items: center;
+    height: fit-content;
     gap: 12px;
     cursor: pointer;
     transition: transform 0.3s;
@@ -289,7 +291,8 @@ body {
         max-width: 640px;
       }
 
-      max-height: 360px;
+      max-height: 440px;
+      overflow-y: hidden;
       border-radius: 16px;
       box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
 

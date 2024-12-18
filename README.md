@@ -22,3 +22,7 @@ Things you may want to cover:
 * Deployment instructions
 
 * ...
+
+
+NEW LAW: (MUST IMPLEMENT EVEYTHING IN HERE!)
+https://chatgpt.com/c/67620c39-2008-8004-901e-2b99a9f7120d

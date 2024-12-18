@@ -33,9 +33,9 @@ class CatsController < ApplicationController
 
   def photo
     slug = params[:slug] || "default"
-    filename = params[:filename] || "default.jpg"
+    filename = params[:filename] || "default.webp"
 
-    unless slug.match?(/\A[a-z_]+\z/) && filename.match?(/\A[a-zA-Z0-9_-]+\.(jpg|webp)\z/) # REMOVE jpg LATER
+    unless slug.match?(/\A[a-z_]+\z/) && filename.match?(/\A[a-zA-Z0-9_-]+\.(webp)\z/)
       render plain: "Invalid slug or filename", status: :bad_request
       return
     end
@@ -61,7 +61,7 @@ class CatsController < ApplicationController
 
       send_file file_path,
                 disposition: "inline",
-                type: "image/jpeg", # REMOVE jpg LATER and change to "image/webp"
+                type: "image/webp",
                 cache_control: nil
     else
       render plain: "File not found", status: :not_found
@@ -130,7 +130,7 @@ class CatsController < ApplicationController
 
     base_path = Rails.root.join("persistent_disk", "cats", cat, "photos")
     photos_list = Dir.entries(base_path).select do |entry|
-      entry.match?(/\A[a-zA-Z0-9_-]+\.(jpg|webp)\z/) # REMOVE jpg LATER
+      entry.match?(/\A[a-zA-Z0-9_-]+\.(webp)\z/)
     end
 
     $redis.setex("photos_list_#{cat}", 10.minutes, photos_list.to_json)

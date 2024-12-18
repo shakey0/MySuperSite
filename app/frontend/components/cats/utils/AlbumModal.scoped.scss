@@ -73,11 +73,15 @@
   }
 
   .album-photos-1 {
+    margin: 0 5px 5px;
+    width: calc(100% - 10px);
+
     img {
       width: 100%;
       max-width: 1280px;
       max-height: 640px;
       border-radius: 16px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
       cursor: pointer;
     }
   }
@@ -94,8 +98,9 @@
       }
     }
 
+    margin: 0 5px 5px;
     gap: 16px;
-    width: 100%;
+    width: calc(100% - 10px);
     flex-grow: 1;
 
     @media (max-width: 540px) {
@@ -107,6 +112,7 @@
       height: 100%;
       object-fit: cover;
       border-radius: 16px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
       cursor: pointer;
     }
   }
