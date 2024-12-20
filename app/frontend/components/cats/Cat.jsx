@@ -3,6 +3,7 @@ import './Cat.scoped.scss';
 import CatPatternBackground from './CatPatternBackground';
 import AlbumModal from './utils/AlbumModal';
 import PhotoModal from './utils/PhotoModal';
+import ExpandableText from '../shared/ExpandableText';
 
 const enToCn = {
   "known_as": "名字",
@@ -61,7 +62,7 @@ export default function Cats() {
           }
         } else {
           console.warn('No data:', data);
-          setRawData({ "first_name": `There's no cat profile named ${capitalizeTitle(slug)}` });
+          window.location.href = '/cats';
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -135,8 +136,8 @@ export default function Cats() {
     };
   }, [rawData]);
 
-  console.log('sortedData:', infoData);
-  console.log('rawData:', rawData);
+  // console.log('sortedData:', infoData);
+  // console.log('rawData:', rawData);
 
   return (
     <CatPatternBackground color1="#777777" color2="#444444">
@@ -160,7 +161,11 @@ export default function Cats() {
             {Object.entries(infoData).map(([key, value], index) => (
               <div className={`info-data ${key.includes('to') || key.includes('story') ? 'long' : ''}`} key={index}>
                 <p className="key">{key}</p>
-                <p className="value">{value}</p>
+                {key.includes('story') && typeof value === 'string' && value.length > 150 ? (
+                  <ExpandableText value={value} className="value story" buttonClassName="expand-button" limit={150} truncateBelow={120} />
+                ) : (
+                  <p className="value">{value}</p>
+                )}
               </div>
             ))}
           </div>
@@ -180,6 +185,7 @@ export default function Cats() {
         <div className={`flex-wrap-container ${tab === 'videos' ? 'active' : ''}`}>
           {rawData.videos && rawData.videos.map((video, index) => (
             <div className="container video-container" key={index}>
+              <p>{video.description}</p>
               <video controls>
                 <source src={`/cats/video/${slug}/${video.video}`} type="video/mp4" />
                 Your browser does not support the video tag.
@@ -229,7 +235,13 @@ export default function Cats() {
         )}
       </AlbumModal>
 
-      <PhotoModal isOpen={isPhotoOpen} onClose={closePhotoModal}>
+      <PhotoModal
+        isOpen={isPhotoOpen}
+        onClose={closePhotoModal}
+        selectPhoto={setSelectedPhoto}
+        selectedPhoto={selectedPhoto}
+        photos={selectedAlbum ? selectedAlbum.photos : []}
+      >
         {selectedPhoto && (
           <div className="photo-modal-content">
             <img src={`/cats/photo/${slug}/${selectedPhoto.name}`} alt="Selected" />
