@@ -14,11 +14,11 @@ export default function PhotoModal({ isOpen, onClose, selectPhoto, selectedPhoto
     if (hasTouch) {
       const timeoutId = setTimeout(() => {
         setHideArrows(true);
-      }, 1500);
+      }, 2500);
   
       return () => clearTimeout(timeoutId);
     }
-  }, []);
+  }, [isOpen]);
 
   useEffect(() => {
     if (!isOpen) return;
