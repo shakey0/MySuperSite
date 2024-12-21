@@ -21,7 +21,7 @@ export default function PhotoModal({ isOpen, onClose, selectPhoto, selectedPhoto
 
     const hideControlsAfterInactivity = () => {
       const now = Date.now();
-      if (now - lastInteractionRef.current >= 2000) {
+      if (now - lastInteractionRef.current >= 1500) {
         setShowControls(false);
       }
     };
