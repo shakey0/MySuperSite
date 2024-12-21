@@ -1,9 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Protest+Revolution&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&family=Yuji+Mai&display=swap');
+@import './CatColors.scss';
 
 body {
   font-size: 1.2rem;
   font-family: 'Josefin Sans', sans-serif;
-  color: #0f0f0f;
+  color: var(--black);
 }
 
 .page-container {
@@ -44,8 +45,8 @@ body {
   .container {
     display: flex;
     // background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.9), rgba(255, 223, 191, 0.9), rgba(255, 255, 255, 0.9), rgba(247, 223, 199, 0.9), rgba(255, 255, 255, 0.9), rgba(223, 223, 223, 0.9), rgba(255, 255, 255, 0.9));
-    background: rgba(255, 255, 255, 0.9);
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+    background: var(--pure-white-90);
+    box-shadow: var(--dark-shadow);
     border-radius: 40px;
     padding: 24px;
 
@@ -145,7 +146,7 @@ body {
               cursor: pointer;
               border: none;
               background: none;
-              color: #333;
+              color: var(--darkish);
               font-family: inherit;
               font-style: italic;
               font-weight: bold;
@@ -178,7 +179,7 @@ body {
         width: fit-content;
         justify-content: center;
         align-items: center;
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+        box-shadow: var(--dark-shadow);
         border-radius: 16px;
 
         @media (max-width: 500px) {
@@ -244,10 +245,10 @@ body {
         }
 
         &.active {
-          box-shadow: 0 0 8px rgba(0, 0, 0, 0.6),
-                      0 0 4px rgba(240, 240, 240, 0.4),
-                      0 0 4px rgba(240, 240, 240, 0.4),
-                      0 0 4px rgba(2240, 240, 240, 0.4);
+          box-shadow: var(--dark-shadow),
+                      var(--light-shadow-small),
+                      var(--light-shadow-small),
+                      var(--light-shadow-small);
         }
       }
 
@@ -261,15 +262,15 @@ body {
         }
 
         &.active {
-          box-shadow: 0 0 4px rgba(240, 240, 240, 0.4),
-                      0 0 8px rgba(0, 0, 0, 0.6),
-                      0 0 4px rgba(240, 240, 240, 0.4),
-                      0 0 4px rgba(240, 240, 240, 0.4);
+          box-shadow: var(--light-shadow-small),
+                      var(--dark-shadow),
+                      var(--light-shadow-small),
+                      var(--light-shadow-small);
         }
       }
 
       &.active {
-        background: #e0e0e0;
+        background: var(--very-light-gray);
         text-decoration: underline;
         text-decoration-thickness: 1px;
         z-index: 2;
@@ -297,7 +298,7 @@ body {
       max-height: 96vh;
       max-width: 84vw;
       border-radius: 16px;
-      box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+      box-shadow: var(--dark-shadow);
     }
   }
 
@@ -327,7 +328,7 @@ body {
       max-height: 440px;
       overflow-y: hidden;
       border-radius: 16px;
-      box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+      box-shadow: var(--dark-shadow);
 
       img {
         max-width: 100%;

@@ -6,22 +6,34 @@ export default function PhotoModal({ isOpen, onClose, selectPhoto, selectedPhoto
   const lastInteractionRef = useRef(Date.now());
   const touchStartXRef = useRef(null);
   const touchEndXRef = useRef(null);
+  const [isTouch, setIsTouch] = useState(false);
+  const [hideArrows, setHideArrows] = useState(false);
+
+  useEffect(() => {
+    const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+    setIsTouch(hasTouch);
+
+    if (hasTouch) {
+      // Hide arrows after 1.5 seconds on touch devices
+      setTimeout(() => {
+        setHideArrows(true);
+      }, 1500);
+    }
+  }, []);
 
   useEffect(() => {
     if (!isOpen) return;
 
     const handleInteraction = () => {
-      const now = Date.now();
-      lastInteractionRef.current = now;
+      lastInteractionRef.current = Date.now();
 
       if (!showControls) {
-        setShowControls(true); // Update state only if controls are hidden
+        setShowControls(true); // Show controls when there's interaction
       }
     };
 
     const hideControlsAfterInactivity = () => {
-      const now = Date.now();
-      if (now - lastInteractionRef.current >= 1500) {
+      if (Date.now() - lastInteractionRef.current >= 1500) {
         setShowControls(false);
       }
     };
@@ -39,27 +51,22 @@ export default function PhotoModal({ isOpen, onClose, selectPhoto, selectedPhoto
 
       const deltaX = touchStartXRef.current - touchEndXRef.current;
 
-      if (Math.abs(deltaX) > 50) { // Only trigger swipe if the user swipes more than 50px
-        if (deltaX > 0) {
-          nextPhoto(); // Swipe left
-        } else {
-          prevPhoto(); // Swipe right
-        }
+      if (Math.abs(deltaX) > 50) { // Only trigger swipe if swipe distance is > 50px
+        deltaX > 0 ? nextPhoto() : prevPhoto(); // Swipe left or right
       }
 
-      // Reset values
+      // Reset swipe coordinates
       touchStartXRef.current = null;
       touchEndXRef.current = null;
     };
 
-    // Attach listeners for user interaction
     window.addEventListener('mousemove', handleInteraction);
     window.addEventListener('touchstart', handleInteraction);
     window.addEventListener('touchstart', handleTouchStart);
     window.addEventListener('touchmove', handleTouchMove);
     window.addEventListener('touchend', handleTouchEnd);
 
-    // Start a loop to periodically check inactivity
+    // Check inactivity every 100ms
     const interval = setInterval(hideControlsAfterInactivity, 100);
 
     return () => {
@@ -76,25 +83,17 @@ export default function PhotoModal({ isOpen, onClose, selectPhoto, selectedPhoto
 
   const nextPhoto = () => {
     if (!photos || !selectedPhoto) return;
-    const currentPhoto = photos.find(photo => photo.order === selectedPhoto.order);
-    const orderNum = currentPhoto.order;
-    let nextPhoto = photos.find(photo => photo.order === orderNum + 1);
-    if (!nextPhoto) {
-      nextPhoto = photos.find(photo => photo.order === 1);
-    }
+    const currentPhoto = photos.find((photo) => photo.order === selectedPhoto.order);
+    let nextPhoto = photos.find((photo) => photo.order === currentPhoto.order + 1) || photos.find((photo) => photo.order === 1);
     selectPhoto(nextPhoto);
-  }
+  };
 
   const prevPhoto = () => {
     if (!photos || !selectedPhoto) return;
-    const currentPhoto = photos.find(photo => photo.order === selectedPhoto.order);
-    const orderNum = currentPhoto.order
-    let prevPhoto = photos.find(photo => photo.order === orderNum - 1);
-    if (!prevPhoto) {
-      prevPhoto = photos.find(photo => photo.order === photos.length);
-    }
+    const currentPhoto = photos.find((photo) => photo.order === selectedPhoto.order);
+    let prevPhoto = photos.find((photo) => photo.order === currentPhoto.order - 1) || photos.find((photo) => photo.order === photos.length);
     selectPhoto(prevPhoto);
-  }
+  };
 
   return (
     <div className="photo-overlay">
@@ -103,8 +102,8 @@ export default function PhotoModal({ isOpen, onClose, selectPhoto, selectedPhoto
           <button className="photo-close" onClick={onClose}>×</button>
         </div>
         {photos.length > 1 && <>
-          <button className={`arrow left ${showControls ? '' : 'hidden'}`} onClick={prevPhoto}>&lt;</button>
-          <button className={`arrow right ${showControls ? '' : 'hidden'}`} onClick={nextPhoto}>&gt;</button>
+          <button className={`arrow left ${showControls && !hideArrows ? '' : 'hidden'}`} onClick={prevPhoto}>&lt;</button>
+          <button className={`arrow right ${showControls && !hideArrows ? '' : 'hidden'}`} onClick={nextPhoto}>&gt;</button>
         </>}
         {children}
       </div>
