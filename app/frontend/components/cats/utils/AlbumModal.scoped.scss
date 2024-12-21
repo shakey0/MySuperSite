@@ -71,6 +71,11 @@
 
   p {
     margin: 0;
+    margin-right: 60px;
+
+    @media (max-width: 500px) {
+      margin-right: 0;
+    }
   }
 
   .album-photos-1 {

@@ -6,18 +6,17 @@ export default function PhotoModal({ isOpen, onClose, selectPhoto, selectedPhoto
   const lastInteractionRef = useRef(Date.now());
   const touchStartXRef = useRef(null);
   const touchEndXRef = useRef(null);
-  const [isTouch, setIsTouch] = useState(false);
   const [hideArrows, setHideArrows] = useState(false);
 
   useEffect(() => {
     const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
-    setIsTouch(hasTouch);
 
     if (hasTouch) {
-      // Hide arrows after 1.5 seconds on touch devices
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         setHideArrows(true);
       }, 1500);
+  
+      return () => clearTimeout(timeoutId);
     }
   }, []);
 
