@@ -41,9 +41,9 @@ export default function PhotoModal({ isOpen, onClose, selectPhoto, selectedPhoto
 
       if (Math.abs(deltaX) > 50) { // Only trigger swipe if the user swipes more than 50px
         if (deltaX > 0) {
-          prevPhoto(); // Swipe left
+          nextPhoto(); // Swipe left
         } else {
-          nextPhoto(); // Swipe right
+          prevPhoto(); // Swipe right
         }
       }
 
@@ -70,7 +70,7 @@ export default function PhotoModal({ isOpen, onClose, selectPhoto, selectedPhoto
       window.removeEventListener('touchend', handleTouchEnd);
       clearInterval(interval);
     };
-  }, [isOpen, showControls]);
+  }, [isOpen, showControls, selectedPhoto, photos]);
 
   if (!isOpen) return null;
 
