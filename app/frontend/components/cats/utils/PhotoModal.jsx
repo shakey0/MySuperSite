@@ -3,20 +3,29 @@ import './PhotoModal.scoped.scss';
 
 export default function PhotoModal({ isOpen, onClose, selectPhoto, selectedPhoto, photos, children }) {
   const [showControls, setShowControls] = useState(true);
+  const [hideArrows, setHideArrows] = useState(false);
   const lastInteractionRef = useRef(Date.now());
   const touchStartXRef = useRef(null);
   const touchEndXRef = useRef(null);
-  const [hideArrows, setHideArrows] = useState(false);
+  const hasTouch = useRef(
+    'ontouchstart' in window || 
+    navigator.maxTouchPoints > 0 || 
+    navigator.msMaxTouchPoints > 0
+  );
 
   useEffect(() => {
-    const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+    if (isOpen) {
+      setShowControls(true);
+      setHideArrows(false);
 
-    if (hasTouch) {
-      const timeoutId = setTimeout(() => {
-        setHideArrows(true);
-      }, 2500);
-  
-      return () => clearTimeout(timeoutId);
+      if (hasTouch.current) {
+        // Show arrows initially for 2.5 seconds on touch devices
+        const timeoutId = setTimeout(() => {
+          setHideArrows(true);
+        }, 2500);
+
+        return () => clearTimeout(timeoutId);
+      }
     }
   }, [isOpen]);
 
