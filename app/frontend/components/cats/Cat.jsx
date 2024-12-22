@@ -34,6 +34,10 @@ export default function Cats() {
   const [selectedPhoto, setSelectedPhoto] = useState(null);
 
   const slug = window.location.pathname.split('/').pop();
+  if (!slug && window.location.pathname.endsWith('/')) {
+    const fixed_slug = window.location.pathname.split('/')[window.location.pathname.split('/').length - 2];
+    window.location.href = `/cats/${fixed_slug}`;
+  }
   const lang = new URLSearchParams(window.location.search).get('lang') || 'en';
 
   useEffect(() => {

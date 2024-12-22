@@ -1,3 +1,9 @@
 body {
   background-color: black;
 }
+
+@media (prefers-color-scheme: dark) {
+  *, *::before, *::after {
+    scrollbar-color: #222 #0f0f0f;
+  }
+}
