@@ -37,7 +37,9 @@ function adjustColor(inputColor, maxDarknessLevel = 0.8, minLightnessLevel = 0.8
 export default function AlbumModal({ isOpen, onClose, colors, children }) {
   if (!isOpen) return null;
 
-  const { color_1, color_2 } = colors;
+  let { color_1, color_2 } = colors;
+  if (!color_1) color_1 = 'gray';
+
   const modalContentBackground = { style: { background: `linear-gradient(to bottom right, white` } };
 
   for (let i = 1; i <= 4; i++) {
