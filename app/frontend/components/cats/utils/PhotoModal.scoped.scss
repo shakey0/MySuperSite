@@ -43,9 +43,14 @@
     font-weight: 700;
     font-family: 'Arial', sans-serif;
     color: var(--darkish);
+    padding: 0 2px;
     background: none;
     border: none;
     cursor: pointer;
+
+    @media (max-width: 500px) {
+      padding: 0 6px;
+    }
   }
 
   @media (max-width: 500px) {
@@ -64,7 +69,6 @@
   transform: translateY(-50%);
   font-size: 96px;
   font-weight: 700;
-  font-family: 'Josefin Sans', sans-serif;
   color: var(--dark-gray-60);
   background: none;
   border: none;

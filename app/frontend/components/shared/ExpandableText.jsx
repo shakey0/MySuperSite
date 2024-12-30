@@ -38,7 +38,7 @@ const ExpandableText = ({ value, className, buttonClassName, limit, truncateBelo
             {!isExpanded && <span> . . .</span>}
             <button
               onClick={() => setIsExpanded(!isExpanded)}
-              className={buttonClassName}
+              className={`${isExpanded ? 'active' : ''} ${buttonClassName}`}
             >
               {isExpanded ? 'Read less' : 'Read more'}
             </button>

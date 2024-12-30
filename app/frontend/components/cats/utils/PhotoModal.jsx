@@ -105,14 +105,14 @@ export default function PhotoModal({ isOpen, onClose, selectPhoto, selectedPhoto
 
   return (
     <div className="photo-overlay">
+      {photos.length > 1 && <>
+        <button className={`arrow left ${showControls && !hideArrows ? '' : 'hidden'}`} onClick={prevPhoto}>&lt;</button>
+        <button className={`arrow right ${showControls && !hideArrows ? '' : 'hidden'}`} onClick={nextPhoto}>&gt;</button>
+      </>}
       <div className="photo-content">
         <div className={`photo-close-box ${showControls ? '' : 'hidden'}`}>
           <button className="photo-close" onClick={onClose}>×</button>
         </div>
-        {photos.length > 1 && <>
-          <button className={`arrow left ${showControls && !hideArrows ? '' : 'hidden'}`} onClick={prevPhoto}>&lt;</button>
-          <button className={`arrow right ${showControls && !hideArrows ? '' : 'hidden'}`} onClick={nextPhoto}>&gt;</button>
-        </>}
         {children}
       </div>
     </div>

@@ -15,15 +15,6 @@ const enToCn = {
   "story": "的故事",
 };
 
-function capitalizeTitle(slug) {
-  const excludedWords = new Set(['and', 'of']);
-  return slug
-    .replace(/_/g, ' ')
-    .split(' ')
-    .map(word => excludedWords.has(word) ? word : word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
-}
-
 export default function Cats() {
   const [infoData, setInfoData] = useState({});
   const [rawData, setRawData] = useState({});
@@ -143,8 +134,18 @@ export default function Cats() {
   // console.log('sortedData:', infoData);
   // console.log('rawData:', rawData);
 
+  if (!rawData.first_name) {
+    return (
+      <div className="page-container">
+        <div className="container header-container">
+          <h1 className="title">Loading...</h1>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <CatPatternBackground color1="#777777" color2="#444444">
+    <CatPatternBackground colors={rawData.colors} loaded={rawData.first_name ? true : false}>
       <div className="page-container">
         <div className="container header-container">
           <h1 className="title">
@@ -219,7 +220,7 @@ export default function Cats() {
         </div>
       </div>
 
-      <AlbumModal isOpen={isModalOpen} onClose={closeAlbumModal}>
+      <AlbumModal isOpen={isModalOpen} onClose={closeAlbumModal} colors={rawData.colors}>
         {selectedAlbum && (
           <div className="album-modal-content">
             <h2>{selectedAlbum.name}</h2>
