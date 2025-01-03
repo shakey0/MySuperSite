@@ -2,18 +2,17 @@
   color-scheme: only light;
 
   --pure-white: #fff;
-  --very-light-gray: #e0e0e0;
+  --white: #f0f0f0;
   --pure-black: #000;
   --black: #0f0f0f;
   --darkish: #333;
 
   --pure-white-90: rgba(255, 255, 255, 0.9);
-  --pure-white-80: rgba(255, 255, 255, 0.8);
   --white-50: rgba(240, 240, 240, 0.5);
   --dark-gray-60: rgba(51, 51, 51, 0.6);
   --pure-black-60: rgba(0, 0, 0, 0.6);
 
-  --dark-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+  --dark-shadow-small: 0 0 4px rgba(0, 0, 0, 0.6);
   --light-shadow-small: 0 0 4px rgba(255, 255, 255, 0.6);
-  --light-shadow-large: 0 0 16px rgba(255, 255, 255, 0.6);
+  --light-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
 }

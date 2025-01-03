@@ -1,4 +1,5 @@
 @import '../CatColors.scss';
+@import '../CatVars.scss';
 
 .photo-overlay {
   position: fixed;
@@ -39,14 +40,12 @@
   z-index: 1001;
 
   .photo-close {
+    @extend %button-default;
     font-size: 60px;
     font-weight: 700;
     font-family: 'Arial', sans-serif;
     color: var(--darkish);
     padding: 0 2px;
-    background: none;
-    border: none;
-    cursor: pointer;
 
     @media (max-width: 500px) {
       padding: 0 6px;
@@ -64,15 +63,14 @@
 }
 
 .arrow {
+  @extend %button-default;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   font-size: 96px;
   font-weight: 700;
   color: var(--dark-gray-60);
-  background: none;
-  border: none;
-  cursor: pointer;
+
   z-index: 1001;
   text-shadow: var(--light-shadow-small);
 

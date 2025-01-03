@@ -1,0 +1,16 @@
+%center-row {
+  display: flex;
+  justify-content: center;
+}
+
+%center-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+%button-default {
+  cursor: pointer;
+  border: none;
+  background: none;
+}

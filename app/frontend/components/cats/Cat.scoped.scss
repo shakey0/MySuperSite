@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Protest+Revolution&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&family=Yuji+Mai&display=swap');
 @import './CatColors.scss';
+@import './CatVars.scss';
 
 body {
   font-size: 1.2rem;
@@ -8,6 +9,7 @@ body {
 }
 
 .page-container {
+  @extend %center-column;
   padding: 40px;
 
   @media (max-width: 1000px) {
@@ -22,17 +24,12 @@ body {
     padding: 10px;
   }
 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
   .flex-wrap-container {
     display: none;
 
     &.active {
-      display: flex;
+      @extend %center-row;
       flex-wrap: wrap;
-      justify-content: center;
       gap: 24px;
       margin-bottom: 24px;
 
@@ -44,7 +41,8 @@ body {
 
   .container {
     display: flex;
-    box-shadow: var(--dark-shadow);
+    background: var(--pure-white-90);
+    box-shadow: var(--dark-shadow-small);
     border-radius: 40px;
     padding: 24px;
 
@@ -56,9 +54,7 @@ body {
   }
 
   .header-container {
-    display: flex;
-    justify-content: center;
-    background: var(--pure-white-90);
+    @extend %center-row;
     width: 100%;
     max-width: 800px;
     margin-bottom: 24px;
@@ -83,9 +79,8 @@ body {
 
   .info-container {
     display: flex;
-    background: var(--pure-white-90);
-    max-width: 1280px;
     justify-content: space-between;
+    max-width: 1280px;
     margin-bottom: 24px;
 
     @media (max-width: 1000px) {
@@ -131,10 +126,10 @@ body {
         }
 
         .value {
-          font-weight: bold;
-          min-width: 250px;
           display: flex;
           align-items: center;
+          font-weight: bold;
+          min-width: 250px;
 
           &.story {
             flex-direction: column;
@@ -143,9 +138,7 @@ body {
             gap: 8px;
 
             .expand-button {
-              cursor: pointer;
-              border: none;
-              background: none;
+              @extend %button-default;
               color: var(--darkish);
               font-style: italic;
               font-weight: bold;
@@ -180,11 +173,10 @@ body {
 
     .info-right {
       .image-box {
-        display: flex;
+        @extend %center-row;
         width: fit-content;
-        justify-content: center;
         align-items: center;
-        box-shadow: var(--dark-shadow);
+        box-shadow: var(--dark-shadow-small);
         border-radius: 16px;
 
         @media (max-width: 500px) {
@@ -221,7 +213,6 @@ body {
 
   .tabs-container {
     display: flex;
-    background: var(--pure-white-80);
     width: 100%;
     max-width: 800px;
     margin-top: 12px;
@@ -229,11 +220,9 @@ body {
     padding: 0;
 
     .tab {
+      @extend %button-default;
       flex: 1;
       padding: 20px 20px 18px;
-      cursor: pointer;
-      border: none;
-      background: none;
 
       h1 {
         margin: 0;
@@ -250,7 +239,7 @@ body {
         }
 
         &.active {
-          box-shadow: var(--dark-shadow),
+          box-shadow: var(--dark-shadow-small),
                       var(--light-shadow-small),
                       var(--light-shadow-small),
                       var(--light-shadow-small);
@@ -268,14 +257,14 @@ body {
 
         &.active {
           box-shadow: var(--light-shadow-small),
-                      var(--dark-shadow),
+                      var(--dark-shadow-small),
                       var(--light-shadow-small),
                       var(--light-shadow-small);
         }
       }
 
       &.active {
-        background: var(--very-light-gray);
+        background: var(--white);
         text-decoration: underline;
         text-decoration-thickness: 1px;
         z-index: 2;
@@ -285,12 +274,10 @@ body {
   }
 
   .video-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: var(--pure-white-90);
+    @extend %center-column;
     height: fit-content;
     width: min-content;
+    border-radius: 20px;
     gap: 16px;
 
     p {
@@ -303,18 +290,15 @@ body {
     video {
       max-height: 96vh;
       max-width: 84vw;
-      border-radius: 16px;
-      box-shadow: var(--dark-shadow);
+      border-radius: 8px;
+      box-shadow: var(--dark-shadow-small);
     }
   }
 
   .album-container {
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: column;
-    align-items: center;
-    background: var(--pure-white-80);
+    @extend %center-column;
     height: fit-content;
+    border-radius: 20px;
     gap: 12px;
     cursor: pointer;
     transition: transform 0.3s;
@@ -334,13 +318,13 @@ body {
 
       max-height: 440px;
       overflow-y: hidden;
-      border-radius: 16px;
-      box-shadow: var(--dark-shadow);
+      border-radius: 8px;
+      box-shadow: var(--dark-shadow-small);
 
       img {
         max-width: 100%;
         max-height: 100%;
-        border-radius: 16px;
+        border-radius: 8px;
       }
     }
 

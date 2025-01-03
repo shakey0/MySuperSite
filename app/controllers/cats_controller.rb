@@ -3,6 +3,7 @@ class CatsController < ApplicationController
   end
 
   def show
+    # https://chatgpt.com/c/67771186-0b5c-8004-81f4-8bde975c28ca - SET COOKIES FOR IMAGES VIA CLOUDFRONT
   end
 
   def data
