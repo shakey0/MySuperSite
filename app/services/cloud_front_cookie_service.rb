@@ -3,7 +3,7 @@ require "time"
 require "json"
 
 class CloudFrontCookieService
-  def initialize(key_pair_id:, private_key_path:, domain: ".shakey0.co.uk", path: "/*", expiry_duration: 3600)
+  def initialize(key_pair_id:, private_key_path:, domain: "cats.shakey0.co.uk", path: "/*", expiry_duration: 3600)
     @key_pair_id = key_pair_id
     @private_key_path = private_key_path
     @domain = domain
