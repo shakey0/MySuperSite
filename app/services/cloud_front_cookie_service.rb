@@ -46,7 +46,7 @@ class CloudFrontCookieService
 
   def format_individual_cookies(cookies, expiry_time)
     cookies.map do |name, value|
-      "#{name}=#{value}; Path=#{@path}; Domain=#{@domain}; #{@flags} Expires=#{expiry_time.httpdate}"
+      "#{name}=#{value}" # ; Path=#{@path}; Domain=#{@domain}; #{@flags} Expires=#{expiry_time.httpdate}"
     end
   end
 end
