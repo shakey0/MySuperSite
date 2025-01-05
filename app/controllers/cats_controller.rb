@@ -3,17 +3,7 @@ class CatsController < ApplicationController
   end
 
   def show
-    # Check if the cookies are already set
-    cookies_set = cookies[:CloudFront_Signature] && cookies[:CloudFront_Key_Pair_Id] && cookies[:CloudFront_Policy]
-    unless cookies_set
-      cloud_front_cookie_service = CloudFrontCookieService.new(key_pair_id: "CATS_MEDIA_ID", private_key_path: "CATS_MEDIA_KEY")
-      signed_cookies = cloud_front_cookie_service.generate_signed_cookies("https://cats.shakey0.co.uk/*")
-
-      signed_cookies.each do |cookie_string|
-        name, value = cookie_string.split("=", 2)
-        cookies[name] = { value: value, expires: 1.hour.from_now, secure: true, httponly: true, domain: ".shakey0.co.uk" }
-      end
-    end
+    set_cloudfront_cookies
   end
 
   def data
@@ -99,6 +89,16 @@ class CatsController < ApplicationController
   end
 
   private
+
+  def set_cloudfront_cookies
+    cloud_front_cookie_service = CloudFrontCookieService.new(key_pair_id: "CATS_MEDIA_ID", private_key_path: "CATS_MEDIA_KEY")
+    signed_cookies = cloud_front_cookie_service.generate_signed_cookies("https://cats.shakey0.co.uk/*")
+
+    signed_cookies.each do |cookie_string|
+      name, value = cookie_string.split("=", 2)
+      cookies[name] = { value: value, expires: 7.days.from_now, secure: true, httponly: true, domain: ".shakey0.co.uk" }
+    end
+  end
 
   def registered_cat_list
     folders = $redis.get("registered_cat_folders")

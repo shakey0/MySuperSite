@@ -3,13 +3,10 @@ require "time"
 require "json"
 
 class CloudFrontCookieService
-  def initialize(key_pair_id:, private_key_path:, domain: ".shakey0.co.uk", path: "/*", expiry_duration: 3600)
+  def initialize(key_pair_id:, private_key_path:, expiry_duration: 3600)
     @key_pair_id = key_pair_id
     @private_key_path = private_key_path
-    @domain = domain
-    @path = path
     @expiry_duration = expiry_duration
-    @flags = "Secure; HttpOnly;"
 
     init_signer
   end
@@ -46,7 +43,7 @@ class CloudFrontCookieService
 
   def format_individual_cookies(cookies, expiry_time)
     cookies.map do |name, value|
-      "#{name}=#{value}" # ; Path=#{@path}; Domain=#{@domain}; #{@flags} Expires=#{expiry_time.httpdate}"
+      "#{name}=#{value}"
     end
   end
 end
