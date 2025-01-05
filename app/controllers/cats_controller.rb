@@ -11,7 +11,7 @@ class CatsController < ApplicationController
 
       signed_cookies.each do |cookie_string|
         name, value = cookie_string.split("=", 2)
-        cookies[name] = value
+        cookies[name] = { value: value, expires: 1.hour.from_now, secure: true, httponly: true, domain: ".shakey0.co.uk" }
       end
     end
   end
