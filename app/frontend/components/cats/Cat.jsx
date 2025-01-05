@@ -131,9 +131,6 @@ export default function Cats() {
     };
   }, [rawData]);
 
-  // console.log('sortedData:', infoData);
-  // console.log('rawData:', rawData);
-
   if (!rawData.first_name) {
     return (
       <div className="page-container">
@@ -177,7 +174,7 @@ export default function Cats() {
 
           <div className="info-right">
             <div className="image-box">
-              {rawData.profile_photo && <img src={`/cats/photo/${slug}/${rawData.profile_photo}`} alt="Cat" />}
+              {rawData.profile_photo && <img src={`https://cats.shakey0.co.uk/${slug}/photos/${rawData.profile_photo}`} alt="Cat" />}
             </div>
           </div>
         </div>
@@ -192,7 +189,7 @@ export default function Cats() {
             <div className="container video-container" key={index}>
               <p>{video.description}</p>
               <video controls>
-                <source src={`/cats/video/${slug}/${video.video}`} type="video/mp4" />
+                <source src={`https://cats.shakey0.co.uk/${slug}/videos/${video.video}`} type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
             </div>
@@ -209,7 +206,7 @@ export default function Cats() {
                   <h3>{album.name}</h3>
                   <div className="cover-photo">
                     {coverPhoto ? (
-                      <img src={`/cats/photo/${slug}/${coverPhoto.name}`} alt={`Album: ${album.name}`} />
+                      <img src={`https://cats.shakey0.co.uk/${slug}/photos/${coverPhoto.name}`} alt={`Album: ${album.name}`} />
                     ) : (
                       <p>No cover photo available</p>
                     )}
@@ -229,7 +226,7 @@ export default function Cats() {
               {selectedAlbum.photos.map((photo, idx) => (
                 <img
                   key={idx}
-                  src={`/cats/photo/${slug}/${photo.name}`}
+                  src={`https://cats.shakey0.co.uk/${slug}/photos/${photo.name}`}
                   alt={`Photo ${idx + 1} from ${selectedAlbum.name}`}
                   className="album-photo"
                   onClick={() => openPhotoModal(photo)}
@@ -249,7 +246,7 @@ export default function Cats() {
       >
         {selectedPhoto && (
           <div className="photo-modal-content">
-            <img src={`/cats/photo/${slug}/${selectedPhoto.name}`} alt="Selected" />
+            <img src={`https://cats.shakey0.co.uk/${slug}/photos/${selectedPhoto.name}`} alt="Selected" />
           </div>
         )}
       </PhotoModal>

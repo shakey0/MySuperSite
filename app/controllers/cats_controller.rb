@@ -3,7 +3,17 @@ class CatsController < ApplicationController
   end
 
   def show
-    # https://chatgpt.com/c/67771186-0b5c-8004-81f4-8bde975c28ca - SET COOKIES FOR IMAGES VIA CLOUDFRONT
+    # Check if the cookies are already set
+    cookies_set = cookies[:CloudFront_Signature] && cookies[:CloudFront_Key_Pair_Id] && cookies[:CloudFront_Policy]
+    unless cookies_set
+      cloud_front_cookie_service = CloudFrontCookieService.new(key_pair_id: "CATS_MEDIA_ID", private_key_path: "CATS_MEDIA_KEY")
+      signed_cookies = cloud_front_cookie_service.generate_signed_cookies("https://cats.shakey0.co.uk/*")
+
+      signed_cookies.each do |cookie_string|
+        name, value = cookie_string.split("=", 2)
+        cookies[name] = value
+      end
+    end
   end
 
   def data
@@ -11,24 +21,6 @@ class CatsController < ApplicationController
     lang = params[:lang] || "en"
 
     cat_data = CatData.load_all(slug, lang)
-
-    # ----------------------------
-    # TRANSLATIONS EXPERIMENT
-
-    # strings_to_translate = {
-    #   known_as: cat_data["known_as"],
-    #   likes_eating: cat_data["likes_eating"],
-    #   likes_to: cat_data["likes_to"],
-    #   story: cat_data["story"]
-    # }
-
-    # service = CatTranslationService.new(ENV['OPENAI_API_KEY'])
-    # translated_json = service.translate(strings_to_translate)
-
-    # custom_logger = Logger.new(Rails.root.join('log', 'custom.log'))
-    # custom_logger.info("Translated JSON: #{translated_json}")
-    # ----------------------------
-
     render json: cat_data
   end
 
