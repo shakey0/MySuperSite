@@ -185,7 +185,7 @@ export default function Cats() {
         </div>
 
         <div className={`flex-wrap-container ${tab === 'videos' ? 'active' : ''}`}>
-          {rawData.videos && rawData.videos.map((video, index) => (
+          {rawData.videos && rawData.videos.sort((a, b) => a.order - b.order).map((video, index) => (
             <div className="container video-container" key={index}>
               <p>{video.description}</p>
               <video controls>
@@ -198,7 +198,8 @@ export default function Cats() {
 
         <div className={`flex-wrap-container ${tab === 'albums' ? 'active' : ''}`}>
           {rawData.albums &&
-            rawData.albums.map((album, index) => {
+            rawData.albums.sort((a, b) => a.order - b.order).map((album, index) => {
+              
               const coverPhoto = album.photos.find((photo) => photo.order === 1);
 
               return (
@@ -223,7 +224,7 @@ export default function Cats() {
             <h2>{selectedAlbum.name}</h2>
             <p>{selectedAlbum.description}</p>
             <div className={`album-photos${selectedAlbum.photos.length < 2 ? '-1' : selectedAlbum.photos.length < 3 ? ' two' : ''}`}>
-              {selectedAlbum.photos.map((photo, idx) => (
+              {selectedAlbum.photos.sort((a, b) => a.order - b.order).map((photo, idx) => (
                 <img
                   key={idx}
                   src={`https://cats.shakey0.co.uk/${slug}/photos/${photo.name}`}
