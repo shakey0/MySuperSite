@@ -4,6 +4,7 @@ import CatPatternBackground from './CatPatternBackground';
 import AlbumModal from './utils/AlbumModal';
 import PhotoModal from './utils/PhotoModal';
 import ExpandableText from '../shared/ExpandableText';
+import ResponsiveGallery from './utils/ResponsiveGallery';
 
 const enToCn = {
   "known_as": "名字",
@@ -149,6 +150,8 @@ export default function Cats() {
     return isFromDomain ? `https://cats.shakey0.co.uk/${slug}/${mediaType}s/${item}` : `/cats/${mediaType}/${slug}/${item}`;
   }
 
+  const imagesAs = rawData.albums ? {en: 'Albums', cn: '相册'} : {en: 'Photos', cn: '照片'};
+
   return (
     <CatPatternBackground colors={rawData.colors} loaded={rawData.first_name ? true : false}>
       <div className="page-container">
@@ -195,7 +198,7 @@ export default function Cats() {
 
         <div className="container tabs-container">
           <button className={`tab left ${tab === 'videos' ? 'active' : ''}`} onClick={() => toggleTab('videos')}><h1>{lang === 'cn' ? '视频' : 'Videos'}</h1></button>
-          <button className={`tab right ${tab === 'albums' ? 'active' : ''}`} onClick={() => toggleTab('albums')}><h1>{lang === 'cn' ? '相册' : 'Albums'}</h1></button>
+          <button className={`tab right ${tab === 'albums' ? 'active' : ''}`} onClick={() => toggleTab('albums')}><h1>{lang === 'cn' ? imagesAs.cn : imagesAs.en}</h1></button>
         </div>
 
         <div className={`flex-wrap-container ${tab === 'videos' ? 'active' : ''}`}>
@@ -209,27 +212,35 @@ export default function Cats() {
             </div>
           ))}
         </div>
+        
+        {rawData.albums ? (
+          <div className={`flex-wrap-container ${tab === 'albums' ? 'active' : ''}`}>
+            {rawData.albums &&
+              rawData.albums.sort((a, b) => a.order - b.order).map((album, index) => {
+                
+                const coverPhoto = album.photos.find((photo) => photo.order === 1);
 
-        <div className={`flex-wrap-container ${tab === 'albums' ? 'active' : ''}`}>
-          {rawData.albums &&
-            rawData.albums.sort((a, b) => a.order - b.order).map((album, index) => {
-              
-              const coverPhoto = album.photos.find((photo) => photo.order === 1);
-
-              return (
-                <div className="container album-container" key={index} onClick={() => openAlbumModal(album)}>
-                  <p>{album.name}</p>
-                  <div className="cover-photo">
-                    {coverPhoto ? (
-                      <img src={mediaUrl(coverPhoto.name)} alt={`Album: ${album.name}`} />
-                    ) : (
-                      <p>No cover photo available</p>
-                    )}
+                return (
+                  <div className="container album-container" key={index} onClick={() => openAlbumModal(album)}>
+                    <p>{album.name}</p>
+                    <div className="cover-photo">
+                      {coverPhoto ? (
+                        <img src={mediaUrl(coverPhoto.name)} alt={`Album: ${album.name}`} />
+                      ) : (
+                        <p>No cover photo available</p>
+                      )}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-        </div>
+                );
+              })}
+          </div>
+        ) : (
+          <div className={`container photos-container ${tab === 'albums' ? 'active' : ''}`}>
+            {rawData.photos && (
+              <ResponsiveGallery photos={rawData.photos} mediaUrl={mediaUrl} openPhotoModal={openPhotoModal} />
+            )}
+          </div>
+        )}
       </div>
 
       <AlbumModal isOpen={isModalOpen} onClose={closeAlbumModal} colors={rawData.colors}>
@@ -237,17 +248,7 @@ export default function Cats() {
           <div className="album-modal-content">
             <h3>{selectedAlbum.name}</h3>
             <p>{selectedAlbum.description}</p>
-            <div className={`album-photos${selectedAlbum.photos.length < 2 ? '-1' : selectedAlbum.photos.length < 3 ? ' two' : ''}`}>
-              {selectedAlbum.photos.sort((a, b) => a.order - b.order).map((photo, idx) => (
-                <img
-                  key={idx}
-                  src={mediaUrl(photo.name)}
-                  alt={`Photo ${photo.order} from ${selectedAlbum.name}`}
-                  className="album-photo"
-                  onClick={() => openPhotoModal(photo)}
-                />
-              ))}
-            </div>
+            <ResponsiveGallery photos={selectedAlbum.photos} mediaUrl={mediaUrl} openPhotoModal={openPhotoModal} />
           </div>
         )}
       </AlbumModal>
