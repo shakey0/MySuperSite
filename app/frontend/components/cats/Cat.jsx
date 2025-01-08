@@ -52,7 +52,7 @@ export default function Cats() {
             [`${data.first_name + (lang === 'cn' ? enToCn["story"] : "'s story")}`]: data.story,
           });
           setInfoData(sortedData);
-          if (!data.videos) {
+          if (data.videos.length === 0) {
             setTab('albums');
           }
         } else {
@@ -115,7 +115,7 @@ export default function Cats() {
         if (data && data.tab) {
           setTab(data.tab);
         } else {
-          if (rawData.videos) {
+          if (rawData.videos.length > 0) {
             setTab('videos');
           } else {
             setTab('albums');
@@ -139,6 +139,14 @@ export default function Cats() {
         </div>
       </div>
     );
+  }
+
+  const mediaUrl = (item) => {
+    if (!item) return;
+    const type = item.split('.').pop();
+    const mediaType = type === 'mp4' ? 'video' : 'photo';
+    const isFromDomain = window.location.href.includes('shakey0.co.uk');
+    return isFromDomain ? `https://cats.shakey0.co.uk/${slug}/${mediaType}s/${item}` : `/cats/${mediaType}/${slug}/${item}`;
   }
 
   return (
@@ -174,7 +182,13 @@ export default function Cats() {
 
           <div className="info-right">
             <div className="image-box">
-              {rawData.profile_photo && <img src={`https://cats.shakey0.co.uk/${slug}/photos/${rawData.profile_photo}`} alt="Cat" />}
+              {rawData.profile_photo && (
+                <img
+                  src={mediaUrl(rawData.profile_photo)}
+                  alt={`${rawData.first_name}`}
+                  onClick={() => openPhotoModal({"name": rawData.profile_photo, "order": 1})}
+                />
+              )}
             </div>
           </div>
         </div>
@@ -189,7 +203,7 @@ export default function Cats() {
             <div className="container video-container" key={index}>
               <p>{video.description}</p>
               <video controls>
-                <source src={`https://cats.shakey0.co.uk/${slug}/videos/${video.video}`} type="video/mp4" />
+                <source src={mediaUrl(video.video)} type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
             </div>
@@ -204,10 +218,10 @@ export default function Cats() {
 
               return (
                 <div className="container album-container" key={index} onClick={() => openAlbumModal(album)}>
-                  <h3>{album.name}</h3>
+                  <p>{album.name}</p>
                   <div className="cover-photo">
                     {coverPhoto ? (
-                      <img src={`https://cats.shakey0.co.uk/${slug}/photos/${coverPhoto.name}`} alt={`Album: ${album.name}`} />
+                      <img src={mediaUrl(coverPhoto.name)} alt={`Album: ${album.name}`} />
                     ) : (
                       <p>No cover photo available</p>
                     )}
@@ -221,14 +235,14 @@ export default function Cats() {
       <AlbumModal isOpen={isModalOpen} onClose={closeAlbumModal} colors={rawData.colors}>
         {selectedAlbum && (
           <div className="album-modal-content">
-            <h2>{selectedAlbum.name}</h2>
+            <h3>{selectedAlbum.name}</h3>
             <p>{selectedAlbum.description}</p>
             <div className={`album-photos${selectedAlbum.photos.length < 2 ? '-1' : selectedAlbum.photos.length < 3 ? ' two' : ''}`}>
               {selectedAlbum.photos.sort((a, b) => a.order - b.order).map((photo, idx) => (
                 <img
                   key={idx}
-                  src={`https://cats.shakey0.co.uk/${slug}/photos/${photo.name}`}
-                  alt={`Photo ${idx + 1} from ${selectedAlbum.name}`}
+                  src={mediaUrl(photo.name)}
+                  alt={`Photo ${photo.order} from ${selectedAlbum.name}`}
                   className="album-photo"
                   onClick={() => openPhotoModal(photo)}
                 />
@@ -247,7 +261,7 @@ export default function Cats() {
       >
         {selectedPhoto && (
           <div className="photo-modal-content">
-            <img src={`https://cats.shakey0.co.uk/${slug}/photos/${selectedPhoto.name}`} alt="Selected" />
+            <img src={mediaUrl(selectedPhoto.name)} alt={`Photo ${selectedPhoto.order} from ${selectedAlbum?.name || ""}`} />
           </div>
         )}
       </PhotoModal>

@@ -52,7 +52,7 @@ class CatData
     file_data["age_in_cat_years"] = ages_in_cat_years.join(" & ")
 
     formatted_born_on_dates = parsed_born_on_dates.map do |date|
-      lang == "cn" ? date.strftime("%Y年%m月%d日") : date.strftime("%d#{date.day.ordinal} %B %Y")
+      lang == "cn" ? date.strftime("%Y年%m月%d日") : date.strftime("%e#{date.day.ordinal} %B %Y")
     end
     file_data["born_on"] = formatted_born_on_dates.join(" & ")
 

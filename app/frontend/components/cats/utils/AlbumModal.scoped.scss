@@ -33,24 +33,24 @@
   position: absolute;
   top: 0;
   right: 0;
-  padding: 0 16px;
+  padding: 0 12px;
   border-radius: 20px;
   z-index: 1001;
 
   .modal-close {
     @extend %button-default;
-    font-size: 60px;
+    font-size: 48px;
     font-weight: 700;
     font-family: 'Arial', sans-serif;
     color: var(--darkish);
     padding: 0 2px;
 
-    @media (max-width: 500px) {
-      padding: 0 6px;
+    @media (max-width: 768px) {
+      padding: 0 8px;
     }
   }
 
-  @media (max-width: 500px) {
+  @media (max-width: 768px) {
     padding: 0 4px;
 
     .modal-close {
@@ -63,11 +63,11 @@
   display: flex;
   flex-direction: column;
   max-height: 86vh;
-  gap: 16px;
+  gap: 12px;
   overflow-y: auto;
 
-  h2 {
-    margin: 4px 60px 0 0;
+  h3 {
+    margin: 0 60px 0 0;
   }
 
   p {
