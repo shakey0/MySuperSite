@@ -32,13 +32,13 @@ const CatPatternBackground = ({ colors, children }) => {
   const canvasRef4 = useRef(null);
   let { color_1, color_1_pattern, color_1_pattern_percent, color_2, color_2_pattern, color_2_pattern_percent, white_percent } = colors || {};
   if (!color_1) {
-    color_1 = 'gray';
-    color_1_pattern = 'black';
-    color_1_pattern_percent = 40;
-    color_2 = null;
-    color_2_pattern = null;
-    color_2_pattern_percent = 0;
-    white_percent = 30;
+    color_1 = 'ginger';
+    color_1_pattern = 'dark_ginger';
+    color_1_pattern_percent = 20;
+    color_2 = 'light_blonde';
+    color_2_pattern = 'black';
+    color_2_pattern_percent = 10;
+    white_percent = 10;
   }
 
   useEffect(() => {

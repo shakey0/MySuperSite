@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import './Cat.scoped.scss';
 import CatPatternBackground from './utils/CatPatternBackground';
 import AlbumModal from './utils/AlbumModal';

@@ -1,5 +1,11 @@
 class CatsController < ApplicationController
   def index
+    set_cloudfront_cookies
+  end
+
+  def index_data
+    cats_data = CatData.load_cats
+    render json: cats_data
   end
 
   def show

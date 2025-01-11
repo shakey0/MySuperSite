@@ -79,4 +79,17 @@ class CatData
       24 + (human_years - 2) * 4
     end
   end
+
+  def self.load_cats
+    path = Rails.root.join("persistent_disk", "cats", "cats.json")
+
+    begin
+      file_data = FileLockService.read_file_with_lock(path)
+    rescue => e
+      puts "Error occurred: #{e.class} - #{e.message}"
+      return nil
+    end
+
+    file_data
+  end
 end
