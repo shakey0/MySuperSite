@@ -158,6 +158,12 @@ export default function Cats() {
     };
   }, [rawData]);
 
+  useEffect(() => {
+    if (rawData.photos && !selectedAlbum) {
+      setSelectedAlbum({ name: rawData.first_name, photos: rawData.photos, description: "All photos" });
+    }
+  }, [rawData.photos, selectedAlbum]);
+
   if (!rawData.first_name) {
     return (
       <div className="page-container">

@@ -3,7 +3,7 @@ import './ResponsiveGallery.scoped.scss';
 
 const ResponsiveGallery = ({ photos, mediaUrl, openPhotoModal }) => {
   const [processedPhotos, setProcessedPhotos] = useState([]);
-  const [containerWidth, setContainerWidth] = useState(1280);
+  const [containerWidth, setContainerWidth] = useState(1600);
 
   const getColumnCountAndMaxWidth = (width, numPhotos) => {
     if (width >= 1440 && numPhotos >= 4) return { columnCount: 4, maxWidth: width / 3 };
@@ -50,7 +50,7 @@ const ResponsiveGallery = ({ photos, mediaUrl, openPhotoModal }) => {
 
   useEffect(() => {
     const updateWidth = () => {
-      const viewportWidth = Math.min(window.innerWidth, 1280);
+      const viewportWidth = Math.min(window.innerWidth, 1600);
       setContainerWidth(viewportWidth);
     };
 
