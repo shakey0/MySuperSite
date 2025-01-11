@@ -1,10 +1,36 @@
 import { useEffect, useState, useRef } from 'react';
 import './Cat.scoped.scss';
-import CatPatternBackground from './CatPatternBackground';
+import CatPatternBackground from './utils/CatPatternBackground';
 import AlbumModal from './utils/AlbumModal';
 import PhotoModal from './utils/PhotoModal';
 import ExpandableText from '../shared/ExpandableText';
 import ResponsiveGallery from './utils/ResponsiveGallery';
+import Masonry from 'react-masonry-css';
+
+function MasonryLayout({ type, children }) {
+  const videosBreakpoint = {
+    default: 3,
+    1280: 2,
+    768: 1,
+  };
+
+  const albumsBreakpoint = {
+    default: 4,
+    1440: 3,
+    1024: 2,
+    768: 1,
+  };
+
+  return (
+    <Masonry
+      breakpointCols={type === 'videos' ? videosBreakpoint : albumsBreakpoint}
+      className="masonry-grid"
+      columnClassName="masonry-grid-column"
+    >
+      {children}
+    </Masonry>
+  );
+}
 
 const enToCn = {
   "known_as": "名字",
@@ -201,7 +227,8 @@ export default function Cats() {
           <button className={`tab right ${tab === 'albums' ? 'active' : ''}`} onClick={() => toggleTab('albums')}><h1>{lang === 'cn' ? imagesAs.cn : imagesAs.en}</h1></button>
         </div>
 
-        <div className={`flex-wrap-container ${tab === 'videos' ? 'active' : ''}`}>
+        <div className={`media-container videos ${tab === 'videos' ? 'active' : ''}`}>
+          <MasonryLayout type="videos">
           {rawData.videos && rawData.videos.sort((a, b) => a.order - b.order).map((video, index) => (
             <div className="container video-container" key={index}>
               <p>{video.description}</p>
@@ -211,28 +238,32 @@ export default function Cats() {
               </video>
             </div>
           ))}
+          </MasonryLayout>
         </div>
         
         {rawData.albums ? (
-          <div className={`flex-wrap-container ${tab === 'albums' ? 'active' : ''}`}>
-            {rawData.albums &&
-              rawData.albums.sort((a, b) => a.order - b.order).map((album, index) => {
-                
-                const coverPhoto = album.photos.find((photo) => photo.order === 1);
+          <div className={`media-container albums ${tab === 'albums' ? 'active' : ''}`}>
+            <MasonryLayout type="albums">
+              {rawData.albums &&
+                rawData.albums.sort((a, b) => a.order - b.order).map((album, index) => {
+                  
+                  const coverPhoto = album.photos.find((photo) => photo.order === 1);
 
-                return (
-                  <div className="container album-container" key={index} onClick={() => openAlbumModal(album)}>
-                    <p>{album.name}</p>
-                    <div className="cover-photo">
-                      {coverPhoto ? (
-                        <img src={mediaUrl(coverPhoto.name)} alt={`Album: ${album.name}`} />
-                      ) : (
-                        <p>No cover photo available</p>
-                      )}
+                  return (
+                    <div className="container album-container" key={index} onClick={() => openAlbumModal(album)}>
+                      <p>{album.name}</p>
+                      <div className="cover-photo">
+                        {coverPhoto ? (
+                          <img src={mediaUrl(coverPhoto.name)} alt={`Album: ${album.name}`} />
+                        ) : (
+                          <p>No cover photo available</p>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })
+              }
+            </MasonryLayout>
           </div>
         ) : (
           <div className={`container photos-container ${tab === 'albums' ? 'active' : ''}`}>

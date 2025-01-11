@@ -1,6 +1,6 @@
 import './AlbumModal.scoped.scss';
 import Color from "color";
-import getHexColor from "../getHexColor";
+import getHexColor from "./getHexColor";
 
 function adjustColor(inputColor, maxDarknessLevel = 0.85, minLightnessLevel = 0.85) {
   try {

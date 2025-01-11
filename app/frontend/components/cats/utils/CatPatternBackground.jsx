@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import RandomNumberInRange from "../shared/RandomNumberInRange";
+import RandomNumberInRange from "../../shared/RandomNumberInRange";
 import Color from "color";
 import getHexColor from "./getHexColor";
 

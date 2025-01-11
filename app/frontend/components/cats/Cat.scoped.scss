@@ -24,18 +24,30 @@ body {
     padding: 10px;
   }
 
-  .flex-wrap-container {
+  .media-container {
     display: none;
 
-    &.active {
-      @extend %center-row;
-      flex-wrap: wrap;
-      gap: 24px;
-      margin-bottom: 24px;
+    &.videos {
+      max-width: 1440px;
+    }
 
-      @media (max-width: 500px) {
-        gap: 12px;
-      }
+    &.albums {
+      max-width: 1660px;
+    }
+
+    &.active {
+      display: block;
+    }
+
+    .masonry-grid {
+      display: flex;
+      gap: 16px;
+    }
+    
+    .masonry-grid-column {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
   }
 
@@ -278,6 +290,7 @@ body {
     @extend %center-column;
     height: fit-content;
     border-radius: 20px;
+    gap: 12px;
 
     p {
       margin: 0;
@@ -288,11 +301,9 @@ body {
   }
 
   .video-container {
-    width: min-content;
-    gap: 16px;
-
     video {
-      max-height: 96vh;
+      max-height: 86vh;
+      width: 100%;
       max-width: 84vw;
       border-radius: 8px;
       box-shadow: var(--dark-shadow-small);
@@ -300,38 +311,35 @@ body {
   }
 
   .album-container {
-    gap: 12px;
     cursor: pointer;
     transition: transform 0.3s;
 
     .cover-photo {
       display: flex;
       align-items: center;
-      max-width: 360px;
-
-      @media (max-width: 915px) {
-        max-width: 640px;
-      }
-
-      max-height: 440px;
       overflow-y: hidden;
+      max-height: 86vh;
       border-radius: 8px;
       box-shadow: var(--dark-shadow-small);
 
       img {
         max-width: 100%;
-        max-height: 100%;
         border-radius: 8px;
       }
     }
 
     &:hover {
-      transform: scale(1.05);
+      transform: scale(1.02);
     }
   }
 
   .photos-container {
-    display: flex;
+    display: none;
+
+    &.active {
+      display: flex;
+    }
+
     flex-wrap: wrap;
     max-width: 1280px;
     border-radius: 20px;
