@@ -105,7 +105,7 @@ export default function PhotoModal({ isOpen, onClose, selectPhoto, selectedPhoto
 
   return (
     <div className="photo-overlay">
-      {photos.length > 1 && <>
+      {photos.length > 1 && !selectedPhoto.profile && <>
         <button className={`arrow left ${showControls && !hideArrows ? '' : 'hidden'}`} onClick={prevPhoto}>&lt;</button>
         <button className={`arrow right ${showControls && !hideArrows ? '' : 'hidden'}`} onClick={nextPhoto}>&gt;</button>
       </>}

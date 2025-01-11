@@ -221,7 +221,7 @@ export default function Cats() {
                 <img
                   src={mediaUrl(rawData.profile_photo)}
                   alt={`${rawData.first_name}`}
-                  onClick={() => openPhotoModal({"name": rawData.profile_photo, "order": 1})}
+                  onClick={() => openPhotoModal({"name": rawData.profile_photo, "order": 0, "profile": true})}
                 />
               )}
             </div>
