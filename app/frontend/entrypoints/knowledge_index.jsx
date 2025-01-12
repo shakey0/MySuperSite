@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client';
-import KnowledgeIndex from '../components/brain/knowledge/knowledge_index';
+import KnowledgeIndex from '../components/brain/knowledge/KnowledgeIndex';
 
 document.addEventListener('DOMContentLoaded', () => {
   const rootElement = document.getElementById('knowledge-index-root');

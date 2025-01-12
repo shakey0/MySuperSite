@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client';
-import KnowledgeShow from '../components/brain/knowledge/knowledge_show';
+import KnowledgeShow from '../components/brain/knowledge/KnowledgeShow';
 
 document.addEventListener('DOMContentLoaded', () => {
   const rootElement = document.getElementById('knowledge-show-root');

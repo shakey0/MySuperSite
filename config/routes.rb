@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   get "brain", to: "brain#index", as: "brain_index"
+  get "brain/auth", to: "brain#auth", as: "brain_auth"
 
   namespace :brain do
     get "knowledge", to: "knowledge#index", as: "knowledge_index"
