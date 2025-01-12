@@ -35,8 +35,6 @@
 /config/master.key
 
 # Miscellaneous
-side.rb
-side_b.rb
 
 # Vite Ruby
 /public/vite*
