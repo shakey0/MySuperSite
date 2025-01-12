@@ -1,4 +1,11 @@
 Rails.application.routes.draw do
+  get "brain", to: "brain#index", as: "brain_index"
+
+  namespace :brain do
+    get "knowledge", to: "knowledge#index", as: "knowledge_index"
+    get "knowledge/:slug", to: "knowledge#show", as: "knowledge_show"
+  end  
+
   get "cats", to: "cats#index", as: "cats_index"
   get "cats/index_data", to: "cats#index_data", as: "cats_index_data"
   get "cats/:slug", to: "cats#show", as: "cats_show"
