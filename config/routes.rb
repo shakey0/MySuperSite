@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   namespace :brain do
     get "knowledge", to: "knowledge#index", as: "knowledge_index"
     get "knowledge/:slug", to: "knowledge#show", as: "knowledge_show"
-  end  
+  end
 
   get "cats", to: "cats#index", as: "cats_index"
   get "cats/index_data", to: "cats#index_data", as: "cats_index_data"
