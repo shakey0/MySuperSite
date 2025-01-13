@@ -1,3 +1,5 @@
+import './BrainFeatures.scss';
+
 export default function Brain() {
   return (
     <div>

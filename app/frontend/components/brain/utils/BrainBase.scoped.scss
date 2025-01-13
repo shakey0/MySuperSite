@@ -1,0 +1,31 @@
+@import '../BrainColors.scss';
+
+.brain-base {
+  background: linear-gradient(to bottom right, var(--dark-background-start), var(--dark-background-end));
+  height: 100vh;
+  padding: 4px;
+
+  .brain-base__header {
+    display: flex;
+    justify-content: center;
+    position: sticky;
+    padding: 16px;
+    background: var(--darker-background);
+    color: var(--whiter-orange);
+    border: 2px solid var(--cyberpunk-orange);
+    border-radius: 4px;
+
+    .back-button {
+      cursor: pointer;
+      transition: transform 0.2s;
+
+      &:hover {
+        transform: scale(1.1);
+      }
+
+      p {
+        pointer-events: none;
+      }
+    }
+  }
+}
