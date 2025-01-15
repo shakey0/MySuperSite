@@ -1,14 +1,14 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './BrainFeatures.scss';
 import BrainBase from './utils/BrainBase';
 import './BrainAuth.scoped.scss';
 
 const fakeFormFields = [
   // { label: 'Name of your first pet', name: 'first-pet', type: 'text' },
-  { label: 'Name of your primary school', name: 'primary-school', type: 'text' },
-  { label: 'Name of your second grade teacher', name: 'second-grade-teacher', type: 'text' },
+  { label: 'Name of your primary school', name: 'primary-school', type: 'password' },
+  { label: 'Name of your second grade teacher', name: 'second-grade-teacher', type: 'password' },
   // { label: 'The first film your saw at the cinema', name: 'first-film', type: 'text' },
-  { label: 'The first company/person you worked for', name: 'first-company', type: 'text' },
+  { label: 'The first company/person you worked for', name: 'first-company', type: 'password' },
   // { label: 'Name of your seconary school', name: 'secondary-school', type: 'text' },
   // { label: 'Your favourite book', name: 'favourite-book', type: 'text' },
   // { label: 'Your favourite movie', name: 'favourite-movie', type: 'text' },
@@ -26,8 +26,70 @@ const fakeFormFields = [
 
 export default function Brain() {
   const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [logInErrors, setLogInErrors] = useState([]);
+  console.log(logInErrors);
+  const [signUpErrors, setSignUpErrors] = useState([]);
 
-  const handleSubmit = async (event) => {};
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setIsSubmitting(true);
+
+    const formData = new FormData(event.target);
+    const data = {};
+
+    formData.forEach((value, key) => {
+      data[key] = value;
+    });
+
+    const process = data.name ? "sign_up" : "log_in";
+    if (process === "log_in")
+      setLogInErrors([]);
+    else
+      setSignUpErrors([]);
+
+    // Check that all form fields are filled in with at least 3 characters
+    const formFields = Object.keys(data);
+    const invalidFields = formFields.filter((field) => data[field].length < 3);
+    if (invalidFields.length > 0) {
+      if (process === "log_in")
+        setLogInErrors(invalidFields);
+      else
+        setSignUpErrors(invalidFields);
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
+      const response = await fetch(`/brain/${process}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': csrfToken,
+        },
+        body: JSON.stringify({
+          ...data,
+        }),
+      });
+
+      const responseData = await response.json();
+      if (responseData.outcome === "success") {
+        // Redirect to the user's dashboard
+        window.location.href = '/brain';
+      } else {
+        if (process === "log_in")
+          setLogInErrors(['invalid']);
+        else
+          setSignUpErrors(responseData.errors);
+      }
+    }
+    catch (error) {
+      console.error('Error during log in or sign up:', error);
+    }
+    finally {
+      setIsSubmitting(false);
+    }
+  }
 
   const toggleTabs = (event) => {
     const tabs = document.querySelectorAll('.tabs-container button');
@@ -57,6 +119,9 @@ export default function Brain() {
         }
       });
     }, 300);
+
+    setLogInErrors([]);
+    setSignUpErrors([]);
   }
 
   useEffect(() => {
@@ -70,23 +135,26 @@ export default function Brain() {
     <BrainBase header="Sign in to use Brain">
       <div className="main-container">
         <div className="tabs-container">
-          <button className="active" data-index="0" onClick={toggleTabs}>Log in</button>
-          <button data-index="1" onClick={toggleTabs}>Sign up</button>
+          <button className="active" data-index="0" onClick={toggleTabs} disabled={isSubmitting}>Log in</button>
+          <button data-index="1" onClick={toggleTabs} disabled={isSubmitting}>Sign up</button>
         </div>
 
         <form className="auth-form log-in active" onSubmit={handleSubmit}>
-          <input type="hidden" name="authenticity_token" value={csrfToken} />
-            {fakeFormFields.map((field) => (
-              <div className="input-container" key={field.name}>
-                <label htmlFor={field.name}>{field.label}</label>
-                <input type={field.type} name={field.name} />
-              </div>
-            ))}
-          <button className="submit-button" type="submit">Log in</button>
+          {fakeFormFields.map((field) => (
+            <div className="input-container" key={field.name}>
+              <label htmlFor={field.name}>{field.label}</label>
+              <input type={field.type} name={field.name} />
+            </div>
+          ))}
+          <button className="submit-button" type="submit" disabled={isSubmitting}>Log in</button>
+          {logInErrors.length > 0 && (
+            <div className="error-container">
+              <p>Those details did not match!</p>
+            </div>
+          )}
         </form>
 
         <form className="auth-form sign-up" onSubmit={handleSubmit}>
-          <input type="hidden" name="authenticity_token" value={csrfToken} />
           <div className="into-container">
             <p>This sign up will be valid for all services across shakey0.co.uk that require an account.</p>
             <p>I don't use any passwords or collect any personal information on my website.</p>
@@ -100,13 +168,14 @@ export default function Brain() {
             <input type="text" name="name" id="name" />
           </div>
           {/* https://chatgpt.com/c/6787a022-dd64-8004-b203-b8a1014ff4d2 - HANDLING USER SESSIONS WITH DYNAMODB */}
+          {/* https://chatgpt.com/c/6787d5a5-d024-8004-a997-37327f05f4cc - HANDLING ITEMS - KNOWLEDGE/LOGIC/MATH - DATA WITH DYNAMODB */}
           {fakeFormFields.map((field) => (
             <div className="input-container" key={field.name}>
               <label htmlFor={field.name}>{field.label}</label>
               <input type={field.type} name={field.name} id={field.name} />
             </div>
           ))}
-          <button className="submit-button" type="submit">Sign up</button>
+          <button className="submit-button" type="submit" disabled={isSubmitting}>Sign up</button>
         </form>
       </div>
     </BrainBase>
