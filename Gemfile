@@ -58,3 +58,4 @@ gem "vite_rails"
 gem "httparty"
 
 gem "aws-sdk-cloudfront"
+gem "aws-sdk-dynamodb"
