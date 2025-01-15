@@ -2,8 +2,9 @@
 
 .brain-base {
   background: linear-gradient(to bottom right, var(--dark-background-start), var(--dark-background-end));
-  height: 100vh;
+  min-height: 100vh;
   padding: 4px;
+  padding-bottom: 60px;
 
   .brain-base__header {
     display: flex;

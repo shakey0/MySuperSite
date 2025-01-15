@@ -20,6 +20,7 @@
       width: 140px;
       font-size: 24px;
       font-weight: bold;
+      transition: all 0.3s;
 
       &:not(:last-child) {
         border-top-left-radius: 100px;
@@ -35,9 +36,70 @@
         padding-left: 24px;
       }
 
+      &:hover {
+        color: var(--whiter-blue);
+      }
+
       &.active {
         transform: scale(1.125);
         color: var(--whiter-blue);
+      }
+    }
+  }
+
+  .auth-form {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    margin-top: 60px;
+
+    &.active {
+      display: flex;
+    }
+
+    .input-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      label {
+        color: var(--standard-white);
+        font-size: 20px;
+      }
+
+      input {
+        background: var(--darker-background);
+        color: var(--standard-white);
+        border: 2px solid var(--clear-blue);
+        border-radius: 4px;
+        padding: 12px;
+        font-size: 20px;
+        width: 400px;
+        transition: all 0.3s;
+
+        &:focus {
+          outline: none;
+          border: 2px solid var(--standard-white);
+        }
+      }
+    }
+
+    .submit-button {
+      background: var(--darker-background);
+      color: var(--standard-white);
+      border: 1px solid var(--clear-blue);
+      border-radius: 100px;
+      margin-top: 10px;
+      padding: 14px 40px;
+      font-size: 26px;
+      font-weight: bold;
+      box-shadow: 0 0 8px var(--clear-blue);
+      cursor: pointer;
+      transition: all 0.3s;
+
+      &:hover {
+        transform: scale(1.1);
       }
     }
   }
