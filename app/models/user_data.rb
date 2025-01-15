@@ -3,28 +3,31 @@ class UserData
     user_data = $redis.get("user:#{id}")
     if user_data.nil?
       params = {
-        table_name: 'users',
+        table_name: "users",
         key: {
-          'id' => id
+          "id" => id
         }
       }
       response = get_dymamo_db_client.get_item(params)
-      user_data = response.item.to_json
+      user_data = response.item
 
-      $redis.set("user:#{id}", user_data, ex: 1.hour)
+      $redis.set("user:#{id}", user_data.to_json, ex: 1.hour)
+    else
+      user_data = JSON.parse(user_data)
     end
 
-    JSON.parse(user_data)
+    user_data
   end
+
 
   # Query the users table using the GSI
   def self.query_users_by_secret(secret_value)
     params = {
-      table_name: 'users',
-      index_name: 'Secret1Index', # The name of the GSI
-      key_condition_expression: 'secret_1 = :secret',
+      table_name: "users",
+      index_name: "Secret1Index", # The name of the GSI
+      key_condition_expression: "secret_1 = :secret",
       expression_attribute_values: {
-        ':secret' => secret_value
+        ":secret" => secret_value
       }
     }
     response = get_dymamo_db_client.query(params)
@@ -33,15 +36,15 @@ class UserData
 
   def self.update_user(user)
     params = {
-      table_name: 'users',
+      table_name: "users",
       key: {
-        'id' => user["id"]  # The primary key
+        "id" => user["id"]  # The primary key
       },
-      update_expression: 'SET active_sessions = :sessions',
+      update_expression: "SET active_sessions = :sessions",
       expression_attribute_values: {
-        ':sessions' => user["active_sessions"]
+        ":sessions" => user["active_sessions"]
       },
-      return_values: 'ALL_NEW'  # This will return the updated item
+      return_values: "ALL_NEW"  # This will return the updated item
     }
     response = get_dymamo_db_client.update_item(params)
 
@@ -52,8 +55,8 @@ class UserData
 
   def self.get_dymamo_db_client
     Aws::DynamoDB::Client.new(
-      region: 'eu-west-2',
-      endpoint: 'http://localhost:8000'
+      region: "eu-west-2",
+      endpoint: "http://localhost:8000"
     )
   end
 end

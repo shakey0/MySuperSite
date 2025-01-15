@@ -18,19 +18,19 @@ class ApplicationController < ActionController::Base
 
   def current_user
     return @current_user if defined?(@current_user)
-    
+
     return nil unless cookies.signed[:user_session]
-    
+
     begin
       session_data = JSON.parse(cookies.signed[:user_session])
-      user_id = session_data['user_id']
-      session_token = session_data['session_token']
-      
+      user_id = session_data["user_id"]
+      session_token = session_data["session_token"]
+
       user = UserData.get_user_by_id(user_id)
-      
+
       # Check if the session token exists in active_sessions and it's less than 1 year old
-      is_valid_session = user['active_sessions'].any? { |session| session['key'] == session_token && Time.parse(session['created_at']) > 1.year.ago }
-      
+      is_valid_session = user["active_sessions"].any? { |session| session["key"] == session_token && Time.parse(session["created_at"]) > 1.year.ago }
+
       @current_user = is_valid_session ? user : nil
     rescue JSON::ParserError
       nil

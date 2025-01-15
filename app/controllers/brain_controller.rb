@@ -1,7 +1,7 @@
 class BrainController < ApplicationController
   # index route must require the user to be logged in
-  before_action :authenticate_user!, only: [:index]
-  before_action :require_no_user!, only: [:auth, :log_in, :sign_up]
+  before_action :authenticate_user!, only: [ :index ]
+  before_action :require_no_user!, only: [ :auth, :log_in, :sign_up ]
 
   def index
   end
@@ -10,15 +10,12 @@ class BrainController < ApplicationController
   end
 
   def log_in
-    custom_logger = Logger.new(Rails.root.join('log', 'custom.log'))
-
     secret_1 = params["primary-school"].downcase.gsub(/\p{Punct}|\s|[[:cntrl:]]/, "")
     secret_2 = params["second-grade-teacher"].downcase.gsub(/\p{Punct}|\s|[[:cntrl:]]/, "")
     secret_3 = params["first-company"].downcase.gsub(/\p{Punct}|\s|[[:cntrl:]]/, "")
 
     # Search all users with the first secret in dynamodb
     users_by_first_secret = UserData.query_users_by_secret(secret_1)
-    custom_logger.info("Users by first secret: #{users_by_first_secret}")
     users_by_second_secret = users_by_first_secret.select { |u| u["secret_2"] == secret_2 }
     user = users_by_second_secret.find { |u| u["secret_3"] == secret_3 }
     if user
