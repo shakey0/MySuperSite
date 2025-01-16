@@ -53,6 +53,11 @@ class BrainController < ApplicationController
   end
 
   def sign_up
+    # Create a new user with the provided secrets and encypt them all with bcrypt
+    # Remember to downcase and gsub the secrets to remove any punctuation, whitespace, or control characters
+    # Remember to gsub the name to remove any punctuation or control characters
+    # Remember to set the active_sessions to an empty array
+    # Remember to set the id to a SecureRandom.alphanumeric(9)
   end
 
   private
