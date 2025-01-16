@@ -36,6 +36,20 @@ class BrainController < ApplicationController
   end
 
   def log_out
+    session_data = JSON.parse(cookies.signed[:user_session])
+    user_id = session_data["user_id"]
+    session_token = session_data["session_token"]
+
+    user = UserData.get_user_by_id(user_id)
+    user["active_sessions"].reject! { |session| session["key"] == session_token }
+
+    UserData.update_user(user)
+
+    $redis.del("user:#{user_id}")
+
+    cookies.delete(:user_session)
+
+    redirect_to brain_auth_path
   end
 
   def sign_up
