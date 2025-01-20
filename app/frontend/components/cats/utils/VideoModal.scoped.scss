@@ -31,6 +31,7 @@
 }
 
 .video-close-box {
+  @extend %prevent-user-select;
   background: var(--white-50);
   position: absolute;
   top: 0;

@@ -65,7 +65,7 @@ const VideoPlayer = ({ videoSrc, selectedVideo, goFullScreen, quitFullScreen, st
       video.play();
       setIsPlaying(true);
     }
-  });
+  }, [playOnLoad]);
 
   return (
     <div className="video-player">

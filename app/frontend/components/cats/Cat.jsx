@@ -101,12 +101,14 @@ export default function Cats() {
   const goFullScreen = (videoSrc, track = true) => {
     setSelectedVideo(videoSrc);
     setIsVideoOpen(true);
+    document.body.classList.add('no-scroll');
     if (track) history.pushState({videoSrc}, "");
   }
 
   const quitFullScreen = (track = true) => {
     setSelectedVideo(null);
     setIsVideoOpen(false);
+    document.body.classList.remove('no-scroll');
     if (track) history.back();
   }
 

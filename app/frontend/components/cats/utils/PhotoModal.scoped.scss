@@ -23,6 +23,7 @@
 }
 
 .photo-close-box {
+  @extend %prevent-user-select;
   background: var(--white-50);
   position: absolute;
   top: 0;
@@ -55,6 +56,7 @@
 
 .arrow {
   @extend %button-default;
+  @extend %prevent-user-select;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -87,6 +89,7 @@
   max-width: 100vw;
 
   img {
+    @extend %prevent-user-select;
     max-height: 100vh;
     max-width: 100vw;
   }

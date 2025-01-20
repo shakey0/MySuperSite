@@ -29,6 +29,7 @@
 }
 
 .modal-close-box {
+  @extend %prevent-user-select;
   background: var(--pure-white);
   position: absolute;
   top: 0;
