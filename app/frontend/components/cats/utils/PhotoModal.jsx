@@ -74,7 +74,6 @@ export default function PhotoModal({ isOpen, onClose, selectPhoto, selectedPhoto
     window.addEventListener('touchmove', handleTouchMove);
     window.addEventListener('touchend', handleTouchEnd);
 
-    // Check inactivity every 100ms
     const interval = setInterval(hideControlsAfterInactivity, 100);
 
     return () => {

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Protest+Revolution&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&family=Yuji+Mai&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap');
 @import './CatColors.scss';
 @import './CatVars.scss';
 
@@ -308,15 +308,15 @@ body {
     }
   }
 
-  .video-container {
-    video {
-      max-height: 86vh;
-      width: 100%;
-      max-width: 84vw;
-      border-radius: 8px;
-      box-shadow: var(--dark-shadow-small);
-    }
-  }
+  // .video-container {
+  //   video {
+  //     max-height: 86vh;
+  //     width: 100%;
+  //     max-width: 84vw;
+  //     border-radius: 8px;
+  //     box-shadow: var(--dark-shadow-small);
+  //   }
+  // }
 
   .album-container {
     cursor: pointer;

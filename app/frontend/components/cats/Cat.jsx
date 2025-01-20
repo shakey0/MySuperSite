@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
-import './Cat.scoped.scss';
+import './CatsMain.scoped.scss';
 import CatPatternBackground from './utils/CatPatternBackground';
+import VideoPlayer from './utils/VideoPlayer';
+import VideoModal from './utils/VideoModal';
 import AlbumModal from './utils/AlbumModal';
 import PhotoModal from './utils/PhotoModal';
 import ExpandableText from '../shared/ExpandableText';
@@ -46,6 +48,8 @@ export default function Cats() {
   const [infoData, setInfoData] = useState({});
   const [rawData, setRawData] = useState({});
   const [tab, setTab] = useState('videos');
+  const [isVideoOpen, setIsVideoOpen] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAlbum, setSelectedAlbum] = useState(null);
   const [isPhotoOpen, setIsPhotoOpen] = useState(false);
@@ -94,6 +98,18 @@ export default function Cats() {
     fetchData();
   }, []);
 
+  const goFullScreen = (videoSrc, track = true) => {
+    setSelectedVideo(videoSrc);
+    setIsVideoOpen(true);
+    if (track) history.pushState({videoSrc}, "");
+  }
+
+  const quitFullScreen = (track = true) => {
+    setSelectedVideo(null);
+    setIsVideoOpen(false);
+    if (track) history.back();
+  }
+
   const openAlbumModal = (album, track = true) => {
     setSelectedAlbum(album);
     setIsModalOpen(true);
@@ -128,16 +144,19 @@ export default function Cats() {
   useEffect(() => {
     const handlePopState = (event) => {
       const data = event.state;
-      if (data && (data.album || data.photo)) {
+      if (data && (data.album || data.photo || data.videoSrc)) {
         if (data.album) {
           closePhotoModal(false);
           openAlbumModal(data.album, false);
         } else if (data.photo) {
           openPhotoModal(data.photo, false);
+        } else if (data.videoSrc) {
+          goFullScreen(data.videoSrc, false);
         }
       } else {
         closeAlbumModal(false);
         closePhotoModal(false);
+        quitFullScreen(false);
 
         if (data && data.tab) {
           setTab(data.tab);
@@ -238,10 +257,13 @@ export default function Cats() {
           {rawData.videos && rawData.videos.sort((a, b) => a.order - b.order).map((video, index) => (
             <div className="container video-container" key={index}>
               <p>{video.description}</p>
-              <video controls>
-                <source src={mediaUrl(video.video)} type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
+              <VideoPlayer
+                videoSrc={mediaUrl(video.video)}
+                selectedVideo={selectedVideo}
+                goFullScreen={goFullScreen}
+                quitFullScreen={quitFullScreen}
+                stopAndSilence={selectedVideo ? true : false}
+              />
             </div>
           ))}
           </MasonryLayout>
@@ -279,6 +301,18 @@ export default function Cats() {
           </div>
         )}
       </div>
+
+      <VideoModal isOpen={isVideoOpen} quitFullScreen={quitFullScreen}>
+        {selectedVideo && (
+          <VideoPlayer
+            videoSrc={selectedVideo}
+            selectedVideo={selectedVideo}
+            goFullScreen={goFullScreen}
+            quitFullScreen={quitFullScreen}
+            playOnLoad={true}
+          />
+        )}
+      </VideoModal>
 
       <AlbumModal isOpen={isModalOpen} onClose={closeAlbumModal} colors={rawData.colors}>
         {selectedAlbum && (

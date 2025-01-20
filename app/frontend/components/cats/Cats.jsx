@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import './Cat.scoped.scss';
+import './CatsMain.scoped.scss';
 import CatPatternBackground from './utils/CatPatternBackground';
 
 const colors = {

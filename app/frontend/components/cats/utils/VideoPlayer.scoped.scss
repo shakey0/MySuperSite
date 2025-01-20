@@ -1,0 +1,35 @@
+@import '../CatColors.scss';
+@import '../CatVars.scss';
+
+.video-player {
+  position: relative;
+  @extend %center-column;
+  width: 100%;
+
+  video {
+    position: relative;
+    max-height: 86vh;
+    background: var(--white);
+    width: 100%;
+    max-width: 84vw;
+    border-radius: 8px;
+    box-shadow: var(--dark-shadow-small);
+  }
+
+  .custom-controls {
+    @extend %center-row;
+    align-items: center;
+    gap: 16px;
+    position: absolute;
+    bottom: 8px;
+    padding: 8px 16px;
+    background: var(--dark-gray-60);
+    border-radius: 16px;
+
+    button {
+      @extend %button-default;
+      @extend %center-row;
+      align-items: center;
+    }
+  }
+}
