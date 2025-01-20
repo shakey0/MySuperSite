@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import './CatsMain.scoped.scss';
 import CatPatternBackground from './utils/CatPatternBackground';
 import VideoPlayer from './utils/VideoPlayer';
@@ -54,6 +54,7 @@ export default function Cats() {
   const [selectedAlbum, setSelectedAlbum] = useState(null);
   const [isPhotoOpen, setIsPhotoOpen] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState(null);
+  const modalRef = useRef(null);
 
   const slug = window.location.pathname.split('/').pop();
   if (!slug && window.location.pathname.endsWith('/')) {
@@ -98,15 +99,52 @@ export default function Cats() {
     fetchData();
   }, []);
 
+  const openFullscreen = () => {
+    if (!modalRef.current) return;
+  
+    try {
+      const fullscreenRequest = modalRef.current.requestFullscreen 
+        || modalRef.current.webkitRequestFullscreen  // Safari
+        || modalRef.current.msRequestFullscreen;     // IE11
+  
+      if (fullscreenRequest) {
+        fullscreenRequest.call(modalRef.current).catch(error => {
+          console.warn('Failed to open fullscreen:', error);
+        });
+      } else {
+        console.warn('Fullscreen is not supported on this element.');
+      }
+    } catch (error) {
+      console.warn('Error opening fullscreen:', error);
+    }
+  };  
+
+  const closeFullscreen = () => {
+    if (document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.msFullscreenElement) {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) { // Safari
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) { // IE11
+        document.msExitFullscreen();
+      }
+    }
+  };
+
   const goFullScreen = (videoSrc, track = true) => {
     setSelectedVideo(videoSrc);
     setIsVideoOpen(true);
+    document.body.classList.add('no-scroll');
     if (track) history.pushState({videoSrc}, "");
   }
 
   const quitFullScreen = (track = true) => {
     setSelectedVideo(null);
     setIsVideoOpen(false);
+    closeFullscreen();
+    document.body.classList.remove('no-scroll');
     if (track) history.back();
   }
 
@@ -127,12 +165,15 @@ export default function Cats() {
   const openPhotoModal = (photo, track = true) => {
     setSelectedPhoto(photo);
     setIsPhotoOpen(true);
+    if (photo.profile) document.body.classList.add('no-scroll');
     if (track) history.pushState({photo}, "");
   };
 
   const closePhotoModal = (track = true) => {
+    if (selectedPhoto && selectedPhoto.profile) document.body.classList.remove('no-scroll');
     setSelectedPhoto(null);
     setIsPhotoOpen(false);
+    closeFullscreen();
     if (track) history.back();
   };
 
@@ -302,7 +343,7 @@ export default function Cats() {
         )}
       </div>
 
-      <VideoModal isOpen={isVideoOpen} quitFullScreen={quitFullScreen}>
+      <VideoModal ref={modalRef} isOpen={isVideoOpen} quitFullScreen={quitFullScreen} openFullscreen={openFullscreen}>
         {selectedVideo && (
           <VideoPlayer
             videoSrc={selectedVideo}
@@ -325,11 +366,13 @@ export default function Cats() {
       </AlbumModal>
 
       <PhotoModal
+        ref={modalRef} 
         isOpen={isPhotoOpen}
         onClose={closePhotoModal}
         selectPhoto={setSelectedPhoto}
         selectedPhoto={selectedPhoto}
         photos={selectedAlbum ? selectedAlbum.photos : []}
+        openFullscreen={openFullscreen}
       >
         {selectedPhoto && (
           <div className="photo-modal-content">

@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, forwardRef } from 'react';
 import './VideoModal.scoped.scss';
 
-export default function VideoModal({ isOpen, quitFullScreen, children }) {
+const VideoModal = forwardRef(({ isOpen, quitFullScreen, openFullscreen, children }, ref) => {
   const [showControls, setShowControls] = useState(true);
   const lastInteractionRef = useRef(Date.now());
 
@@ -36,10 +36,16 @@ export default function VideoModal({ isOpen, quitFullScreen, children }) {
     };
   }, [isOpen, showControls]);
 
+  useEffect(() => {
+    if (isOpen) {
+      openFullscreen();
+    }
+  }, [isOpen, openFullscreen]);
+
   if (!isOpen) return null;
 
   return (
-    <div className="video-overlay">
+    <div className="video-overlay" ref={ref}>
       <div className={`video-close-box ${showControls ? '' : 'hidden'}`}>
         <button className="video-close" onClick={quitFullScreen}>×</button>
       </div>
@@ -48,4 +54,8 @@ export default function VideoModal({ isOpen, quitFullScreen, children }) {
       </div>
     </div>
   )
-}
+});
+
+VideoModal.displayName = 'VideoModal';
+
+export default VideoModal;

@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, forwardRef } from 'react';
 import './PhotoModal.scoped.scss';
 
-export default function PhotoModal({ isOpen, onClose, selectPhoto, selectedPhoto, photos, children }) {
+const PhotoModal = forwardRef(({ isOpen, onClose, selectPhoto, selectedPhoto, photos, openFullscreen, children }, ref) => {
   const [showControls, setShowControls] = useState(true);
   const [hideArrows, setHideArrows] = useState(false);
   const lastInteractionRef = useRef(Date.now());
@@ -86,6 +86,12 @@ export default function PhotoModal({ isOpen, onClose, selectPhoto, selectedPhoto
     };
   }, [isOpen, showControls, selectedPhoto, photos]);
 
+  useEffect(() => {
+    if (isOpen) {
+      openFullscreen();
+    }
+  }, [isOpen, openFullscreen]);
+
   if (!isOpen) return null;
 
   const nextPhoto = () => {
@@ -103,7 +109,7 @@ export default function PhotoModal({ isOpen, onClose, selectPhoto, selectedPhoto
   };
 
   return (
-    <div className="photo-overlay">
+    <div className="photo-overlay" ref={ref}>
       {photos.length > 1 && !selectedPhoto.profile && <>
         <button className={`arrow left ${showControls && !hideArrows ? '' : 'hidden'}`} onClick={prevPhoto}>&lt;</button>
         <button className={`arrow right ${showControls && !hideArrows ? '' : 'hidden'}`} onClick={nextPhoto}>&gt;</button>
@@ -116,4 +122,8 @@ export default function PhotoModal({ isOpen, onClose, selectPhoto, selectedPhoto
       </div>
     </div>
   );
-}
+});
+
+PhotoModal.displayName = 'PhotoModal';
+
+export default PhotoModal;
