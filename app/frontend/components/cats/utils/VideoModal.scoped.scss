@@ -34,8 +34,8 @@
   @extend %prevent-user-select;
   background: var(--white-50);
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 8px;
+  right: 8px;
   padding: 0 12px;
   border-radius: 40px;
   z-index: 1001;
