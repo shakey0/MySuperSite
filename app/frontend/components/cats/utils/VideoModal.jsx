@@ -24,14 +24,12 @@ const VideoModal = forwardRef(({ isOpen, quitFullScreen, openFullscreen, childre
 
     document.addEventListener('mousemove', handleInteraction);
     document.addEventListener('touchstart', handleInteraction);
-    document.addEventListener('touchend', hideControlsAfterInactivity);
 
     const interval = setInterval(hideControlsAfterInactivity, 100);
 
     return () => {
       document.removeEventListener('mousemove', handleInteraction);
       document.removeEventListener('touchstart', handleInteraction);
-      document.removeEventListener('touchend', hideControlsAfterInactivity);
       clearInterval(interval);
     };
   }, [isOpen, showControls]);

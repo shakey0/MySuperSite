@@ -25,6 +25,14 @@
     padding: 8px 16px;
     background: var(--dark-gray-60);
     border-radius: 16px;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+
+    &.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
 
     button {
       @extend %button-default;

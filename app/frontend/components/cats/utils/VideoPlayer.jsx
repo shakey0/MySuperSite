@@ -6,6 +6,37 @@ const VideoPlayer = ({ videoSrc, selectedVideo, goFullScreen, quitFullScreen, st
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
+  const [showControls, setShowControls] = useState(true);
+  const lastInteractionRef = useRef(Date.now());
+
+  useEffect(() => {
+    if (!videoSrc) return;
+
+    const handleInteraction = () => {
+      lastInteractionRef.current = Date.now();
+
+      if (!showControls) {
+        setShowControls(true); // Show controls when there's interaction
+      }
+    };
+
+    const hideControlsAfterInactivity = () => {
+      if (Date.now() - lastInteractionRef.current >= 1000) {
+        setShowControls(false);
+      }
+    };
+
+    document.addEventListener('mousemove', handleInteraction);
+    document.addEventListener('touchstart', handleInteraction);
+
+    const interval = setInterval(hideControlsAfterInactivity, 100);
+
+    return () => {
+      document.removeEventListener('mousemove', handleInteraction);
+      document.removeEventListener('touchstart', handleInteraction);
+      clearInterval(interval);
+    };
+  }, [videoSrc, showControls]);
 
   const handlePlayPause = () => {
     const video = videoRef.current;
@@ -70,8 +101,8 @@ const VideoPlayer = ({ videoSrc, selectedVideo, goFullScreen, quitFullScreen, st
   return (
     <div className="video-player">
       <video ref={videoRef} src={videoSrc} />
-      <div className="custom-controls">
-      <button onClick={handlePlayPause}>
+      <div className={`custom-controls ${showControls ? "" : "hidden"}`}>
+        <button onClick={handlePlayPause}>
           {isPlaying ? <Pause /> : <Play />}
         </button>
         <button onClick={handleMuteUnmute}>
