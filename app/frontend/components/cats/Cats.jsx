@@ -15,7 +15,6 @@ export default function Cats() {
         const response = await fetch(`/cats/index_data`);
         const data = await response.json();
         if (data) {
-          console.log(data);
           setCatsData(data.cats);
         }
       }
@@ -38,7 +37,7 @@ export default function Cats() {
   }
 
   return (
-    <CatPatternBackground colors={colors} loaded={true}>
+    <CatPatternBackground colors={colors}>
       <div className="page-container">
         <div className="container header-container">
           <h1 className="title">

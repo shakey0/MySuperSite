@@ -10,32 +10,18 @@ import MasonryLayout from './utils/MasonryLayout';
 import ResponsiveGallery from './utils/ResponsiveGallery';
 import useStore from './store';
 
-const enToCn = {
-  "known_as": "名字",
-  "born_on": "出生日期",
-  "passed_in": "去世日期",
-  "age_in_cat_years": "猫咪年龄",
-  "likes_eating": "喜欢吃",
-  "likes_to": "喜欢",
-  "story": "的故事",
-};
-
 export default function Cats() {
   const selectedVideo = useStore(s => s.selectedVideo);
   const selectedAlbum = useStore(s => s.selectedAlbum);
   const selectedPhoto = useStore(s => s.selectedPhoto);
-  const openVideoModal = useStore(s => s.openVideoModal);
-  const closeVideoModal = useStore(s => s.closeVideoModal);
   const openAlbumModal = useStore(s => s.openAlbumModal);
-  const closeAlbumModal = useStore(s => s.closeAlbumModal);
   const openPhotoModal = useStore(s => s.openPhotoModal);
-  const closePhotoModal = useStore(s => s.closePhotoModal);
   const setSelectedAlbum = useStore(s => s.setSelectedAlbum);
-  const setPhotosOnly = useStore(s => s.setPhotosOnly);
-
-  const [infoData, setInfoData] = useState({});
-  const [rawData, setRawData] = useState({});
-  const [tab, setTab] = useState('videos');
+  const currentTab = useStore(s => s.currentTab);
+  const toggleTab = useStore(s => s.toggleTab);
+  const rawData = useStore(s => s.rawData);
+  const infoData = useStore(s => s.infoData);
+  const fetchData = useStore(s => s.fetchData);
 
   const fullScreenRef = useRef(null);
 
@@ -47,84 +33,10 @@ export default function Cats() {
   const lang = new URLSearchParams(window.location.search).get('lang') || 'en';
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`/cats/${slug}/data?lang=${lang}`);
-        const data = await response.json();
-        if (data) {
-          setRawData(data);
-          const sortedData = {
-            [`${lang === 'cn' ? enToCn["known_as"] : "Known as"}`]: data.known_as,
-            [`${lang === 'cn' ? enToCn["born_on"] : "Born on"}`]: data.born_on,
-          };
-          if (data.passed_in) {
-            sortedData[`${lang === 'cn' ? enToCn["passed_in"] : "Passed in"}`] = data.passed_in;
-          }
-          Object.assign(sortedData, {
-            [`${lang === 'cn' ? enToCn["age_in_cat_years"] : "Age in cat years"}`]: data.age_in_cat_years,
-            [`${lang === 'cn' ? enToCn["likes_eating"] : "Like" + (data.passed_in ? "d" : "s") + " eating"}`]: data.likes_eating,
-            [`${lang === 'cn' ? enToCn["likes_to"] : "Like" + (data.passed_in ? "d" : "s") + " to"}`]: data.likes_to,
-            [`${data.first_name + (lang === 'cn' ? enToCn["story"] : "'s story")}`]: data.story,
-          });
-          setInfoData(sortedData);
-          if (data.videos.length === 0) {
-            setTab('albums');
-          }
-          if (data.photos) {
-            setPhotosOnly(data.photos)
-          }
-        } else {
-          console.warn('No data:', data);
-          window.location.href = '/cats';
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    }
-
-    fetchData();
+    fetchData(slug, lang);
+    const cleanup = useStore.getState().initializePopStateHandler();
+    return cleanup;
   }, []);
-
-  const toggleTab = (tab) => {
-    setTab(tab);
-    history.pushState({tab}, "");
-  };
-
-  useEffect(() => {
-    const handlePopState = (event) => {
-      const data = event.state;
-      if (data && (data.album || data.photo || data.videoSrc)) {
-        if (data.album) {
-          closePhotoModal(false);
-          openAlbumModal(data.album, false);
-        } else if (data.photo) {
-          openPhotoModal(data.photo, false);
-        } else if (data.videoSrc) {
-          openVideoModal(data.videoSrc, false);
-        }
-      } else {
-        closeAlbumModal(false);
-        closePhotoModal(false);
-        closeVideoModal(false);
-
-        if (data && data.tab) {
-          setTab(data.tab);
-        } else {
-          if (rawData.videos.length > 0) {
-            setTab('videos');
-          } else {
-            setTab('albums');
-          }
-        }
-      }
-    };
-
-    window.addEventListener("popstate", handlePopState);
-
-    return () => {
-      window.removeEventListener("popstate", handlePopState);
-    };
-  }, [rawData]);
 
   useEffect(() => {
     if (rawData.photos && !selectedAlbum) {
@@ -153,7 +65,7 @@ export default function Cats() {
   const imagesAs = rawData.albums ? {en: 'Albums', cn: '相册'} : {en: 'Photos', cn: '照片'};
 
   return (
-    <CatPatternBackground colors={rawData.colors} loaded={rawData.first_name ? true : false}>
+    <CatPatternBackground colors={rawData.colors}>
       <div className="page-container">
         <div className="container header-container">
           <h1 className="title">
@@ -197,11 +109,11 @@ export default function Cats() {
         </div>
 
         <div className="container tabs-container">
-          <button className={`tab left ${tab === 'videos' ? 'active' : ''}`} onClick={() => toggleTab('videos')}><h1>{lang === 'cn' ? '视频' : 'Videos'}</h1></button>
-          <button className={`tab right ${tab === 'albums' ? 'active' : ''}`} onClick={() => toggleTab('albums')}><h1>{lang === 'cn' ? imagesAs.cn : imagesAs.en}</h1></button>
+          <button className={`tab left ${currentTab === 'videos' ? 'active' : ''}`} onClick={() => toggleTab('videos')}><h1>{lang === 'cn' ? '视频' : 'Videos'}</h1></button>
+          <button className={`tab right ${currentTab === 'albums' ? 'active' : ''}`} onClick={() => toggleTab('albums')}><h1>{lang === 'cn' ? imagesAs.cn : imagesAs.en}</h1></button>
         </div>
 
-        <div className={`media-container videos ${tab === 'videos' ? 'active' : ''}`}>
+        <div className={`media-container videos ${currentTab === 'videos' ? 'active' : ''}`}>
           <MasonryLayout type="videos">
           {rawData.videos && rawData.videos.sort((a, b) => a.order - b.order).map((video, index) => (
             <div className="container video-container" key={index}>
@@ -216,7 +128,7 @@ export default function Cats() {
         </div>
         
         {rawData.albums ? (
-          <div className={`media-container albums ${tab === 'albums' ? 'active' : ''}`}>
+          <div className={`media-container albums ${currentTab === 'albums' ? 'active' : ''}`}>
             <MasonryLayout type="albums">
               {rawData.albums &&
                 rawData.albums.sort((a, b) => a.order - b.order).map((album, index) => {
@@ -240,7 +152,7 @@ export default function Cats() {
             </MasonryLayout>
           </div>
         ) : (
-          <div className={`container photos-container ${tab === 'albums' ? 'active' : ''}`}>
+          <div className={`container photos-container ${currentTab === 'albums' ? 'active' : ''}`}>
             {rawData.photos && (
               <ResponsiveGallery mediaUrl={mediaUrl} onPage={true} />
             )}

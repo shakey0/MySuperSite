@@ -1,5 +1,15 @@
 import { create } from 'zustand';
 
+const enToCn = {
+  "known_as": "名字",
+  "born_on": "出生日期",
+  "passed_in": "去世日期",
+  "age_in_cat_years": "猫咪年龄",
+  "likes_eating": "喜欢吃",
+  "likes_to": "喜欢",
+  "story": "的故事",
+};
+
 const useStore = create((set, get) => ({
   // Modal States
   isVideoOpen: false,
@@ -9,6 +19,53 @@ const useStore = create((set, get) => ({
   photosOnly: null,
   isPhotoOpen: false,
   selectedPhoto: null,
+  currentTab: 'videos',
+  rawData: {},
+  infoData: {},
+
+  // Setters
+  setSelectedAlbum: (album) => set({ selectedAlbum: album }),
+  setPhotosOnly: (photosOnly) => set({ photosOnly }),
+  setSelectedPhoto: (photo) => set({ selectedPhoto: photo }),
+  setCurrentTab: (tab) => set({ currentTab: tab }),
+  setRawData: (data) => set({ rawData: data }),
+  setInfoData: (data) => set({ infoData: data }),
+
+  // Fetch Data
+  fetchData: async (slug, lang) => {
+    try {
+      const response = await fetch(`/cats/${slug}/data?lang=${lang}`);
+      const data = await response.json();
+      if (data) {
+        set({ rawData: data });
+        const sortedData = {
+          [`${lang === 'cn' ? enToCn["known_as"] : "Known as"}`]: data.known_as,
+          [`${lang === 'cn' ? enToCn["born_on"] : "Born on"}`]: data.born_on,
+        };
+        if (data.passed_in) {
+          sortedData[`${lang === 'cn' ? enToCn["passed_in"] : "Passed in"}`] = data.passed_in;
+        }
+        Object.assign(sortedData, {
+          [`${lang === 'cn' ? enToCn["age_in_cat_years"] : "Age in cat years"}`]: data.age_in_cat_years,
+          [`${lang === 'cn' ? enToCn["likes_eating"] : "Like" + (data.passed_in ? "d" : "s") + " eating"}`]: data.likes_eating,
+          [`${lang === 'cn' ? enToCn["likes_to"] : "Like" + (data.passed_in ? "d" : "s") + " to"}`]: data.likes_to,
+          [`${data.first_name + (lang === 'cn' ? enToCn["story"] : "'s story")}`]: data.story,
+        });
+        set({ infoData: sortedData });
+        if (data.videos.length === 0) {
+          set({ currentTab: 'albums' });
+        }
+        if (data.photos) {
+          set({ photosOnly: data.photos });
+        }
+      } else {
+        console.warn('No data:', data);
+        window.location.href = '/cats';
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  },
 
   // Fullscreen Methods
   openFullscreen: (fullScreenRef) => {
@@ -85,9 +142,49 @@ const useStore = create((set, get) => ({
     if (track) history.back();
   },
 
-  setSelectedAlbum: (album) => set({ selectedAlbum: album }),
-  setPhotosOnly: (photosOnly) => set({ photosOnly }),
-  setSelectedPhoto: (photo) => set({ selectedPhoto: photo }),
+  toggleTab: (tab) => {
+    set({ currentTab: tab });
+    history.pushState({tab}, "");
+  },
+
+  // PopState Handler
+  initializePopStateHandler: () => {
+    const handlePopState = (event) => {
+      const data = event.state;
+      const store = get();
+      
+      if (data && (data.album || data.photo || data.videoSrc)) {
+        if (data.album) {
+          store.closePhotoModal(false);
+          store.openAlbumModal(data.album, false);
+        } else if (data.photo) {
+          store.openPhotoModal(data.photo, false);
+        } else if (data.videoSrc) {
+          store.openVideoModal(data.videoSrc, false);
+        }
+      } else {
+        store.closeAlbumModal(false);
+        store.closePhotoModal(false);
+        store.closeVideoModal(false);
+
+        if (data && data.tab) {
+          store.setCurrentTab(data.tab);
+        } else {
+          if (store.rawData.videos?.length > 0) {
+            store.setCurrentTab('videos');
+          } else {
+            store.setCurrentTab('albums');
+          }
+        }
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  },
 }));
 
 export default useStore;
