@@ -1,0 +1,63 @@
+@import '../CatColors.scss';
+@import '../CatVars.scss';
+
+.video-overlay {
+  @extend %media-overlay;
+  background: var(--pure-black);
+}
+
+.video-content {
+  position: relative;
+  width: 100%;
+
+  .video-player {
+    video {
+      background: var(--pure-black);
+      max-width: 100vw;
+      max-height: 100vh;
+    }
+  }
+}
+
+.video-close-box {
+  opacity: 1;
+  transition: opacity 0.5s ease;
+}
+
+.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+.video-close-box {
+  @extend %prevent-user-select;
+  background: var(--white-50);
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 0 12px;
+  border-radius: 40px;
+  z-index: 1001;
+
+  .video-close {
+    @extend %button-default;
+    font-size: 48px;
+    font-weight: 700;
+    font-family: 'Arial', sans-serif;
+    color: var(--darkish);
+    padding: 0 2px;
+
+    @media (max-width: 768px) {
+      padding: 0 8px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 0 4px;
+
+    .video-close {
+      font-size: 40px;
+    }
+  }
+}

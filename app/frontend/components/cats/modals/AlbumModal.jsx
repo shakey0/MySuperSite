@@ -1,6 +1,7 @@
 import './AlbumModal.scoped.scss';
 import Color from "color";
-import getHexColor from "./getHexColor";
+import getHexColor from "../utils/getHexColor";
+import useStore from '../store';
 
 function adjustColor(inputColor, maxDarknessLevel = 0.85, minLightnessLevel = 0.85) {
   try {
@@ -34,7 +35,10 @@ function adjustColor(inputColor, maxDarknessLevel = 0.85, minLightnessLevel = 0.
   }
 }
 
-export default function AlbumModal({ isOpen, onClose, colors, children }) {
+export default function AlbumModal({ colors, children }) {
+  const isOpen = useStore(s => s.isAlbumOpen);
+  const onClose = useStore(s => s.closeAlbumModal);
+
   if (!isOpen) return null;
 
   let color_1, color_2;

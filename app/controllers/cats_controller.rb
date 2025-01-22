@@ -99,7 +99,11 @@ class CatsController < ApplicationController
   def set_cloudfront_cookies
     return if Rails.env.test?
 
-    cloud_front_cookie_service = CloudFrontCookieService.new(key_pair_id: "CATS_MEDIA_ID", private_key_path: "CATS_MEDIA_KEY")
+    cloud_front_cookie_service = CloudFrontCookieService.new(
+      key_pair_id: "CATS_MEDIA_ID",
+      private_key_path: "CATS_MEDIA_KEY",
+      expiry_duration: 7.days.to_i
+    )
     signed_cookies = cloud_front_cookie_service.generate_signed_cookies("https://cats.shakey0.co.uk/*")
 
     signed_cookies.each do |cookie_string|

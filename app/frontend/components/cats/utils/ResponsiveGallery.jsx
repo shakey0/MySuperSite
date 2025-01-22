@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
 import './ResponsiveGallery.scoped.scss';
+import useStore from '../store';
 
-const ResponsiveGallery = ({ photos, mediaUrl, openPhotoModal }) => {
+const ResponsiveGallery = ({ mediaUrl, onPage = false }) => {
   const [processedPhotos, setProcessedPhotos] = useState([]);
   const [containerWidth, setContainerWidth] = useState(1600);
+  const photos = onPage ? useStore(s => s.photosOnly) : useStore(s => s.selectedAlbum.photos);
+  const openPhotoModal = useStore(s => s.openPhotoModal);
 
   const getColumnCountAndMaxWidth = (width, numPhotos) => {
     if (width >= 1440 && numPhotos >= 4) return { columnCount: 4, maxWidth: width / 3 };

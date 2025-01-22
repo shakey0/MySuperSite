@@ -1,9 +1,19 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, forwardRef } from 'react';
 import './PhotoModal.scoped.scss';
+import useStore from '../store';
 
-export default function PhotoModal({ isOpen, onClose, selectPhoto, selectedPhoto, photos, children }) {
+const PhotoModal = forwardRef(({ children }, ref) => {
+  const isOpen = useStore(s => s.isPhotoOpen);
+  const onClose = useStore(s => s.closePhotoModal);
+  const openFullscreen = useStore(s => s.openFullscreen);
+  const selectedPhoto = useStore(s => s.selectedPhoto);
+  const selectPhoto = useStore(s => s.setSelectedPhoto);
+  const selectedAlbum = useStore(s => s.selectedAlbum);
+  const photos = selectedAlbum ? selectedAlbum.photos : [];
+
   const [showControls, setShowControls] = useState(true);
   const [hideArrows, setHideArrows] = useState(false);
+
   const lastInteractionRef = useRef(Date.now());
   const touchStartXRef = useRef(null);
   const touchEndXRef = useRef(null);
@@ -74,7 +84,6 @@ export default function PhotoModal({ isOpen, onClose, selectPhoto, selectedPhoto
     window.addEventListener('touchmove', handleTouchMove);
     window.addEventListener('touchend', handleTouchEnd);
 
-    // Check inactivity every 100ms
     const interval = setInterval(hideControlsAfterInactivity, 100);
 
     return () => {
@@ -87,24 +96,30 @@ export default function PhotoModal({ isOpen, onClose, selectPhoto, selectedPhoto
     };
   }, [isOpen, showControls, selectedPhoto, photos]);
 
+  useEffect(() => {
+    if (isOpen) {
+      openFullscreen(ref);
+    }
+  }, [isOpen, openFullscreen]);
+
   if (!isOpen) return null;
 
   const nextPhoto = () => {
-    if (!photos || !selectedPhoto) return;
+    if (!photos || !selectedPhoto || selectedPhoto.profile) return;
     const currentPhoto = photos.find((photo) => photo.order === selectedPhoto.order);
     let nextPhoto = photos.find((photo) => photo.order === currentPhoto.order + 1) || photos.find((photo) => photo.order === 1);
     selectPhoto(nextPhoto);
   };
 
   const prevPhoto = () => {
-    if (!photos || !selectedPhoto) return;
+    if (!photos || !selectedPhoto || selectedPhoto.profile) return;
     const currentPhoto = photos.find((photo) => photo.order === selectedPhoto.order);
     let prevPhoto = photos.find((photo) => photo.order === currentPhoto.order - 1) || photos.find((photo) => photo.order === photos.length);
     selectPhoto(prevPhoto);
   };
 
   return (
-    <div className="photo-overlay">
+    <div className="photo-overlay" ref={ref}>
       {photos.length > 1 && !selectedPhoto.profile && <>
         <button className={`arrow left ${showControls && !hideArrows ? '' : 'hidden'}`} onClick={prevPhoto}>&lt;</button>
         <button className={`arrow right ${showControls && !hideArrows ? '' : 'hidden'}`} onClick={nextPhoto}>&gt;</button>
@@ -117,4 +132,8 @@ export default function PhotoModal({ isOpen, onClose, selectPhoto, selectedPhoto
       </div>
     </div>
   );
-}
+});
+
+PhotoModal.displayName = 'PhotoModal';
+
+export default PhotoModal;
