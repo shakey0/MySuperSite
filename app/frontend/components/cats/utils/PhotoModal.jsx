@@ -95,14 +95,14 @@ const PhotoModal = forwardRef(({ isOpen, onClose, selectPhoto, selectedPhoto, ph
   if (!isOpen) return null;
 
   const nextPhoto = () => {
-    if (!photos || !selectedPhoto) return;
+    if (!photos || !selectedPhoto || selectedPhoto.profile) return;
     const currentPhoto = photos.find((photo) => photo.order === selectedPhoto.order);
     let nextPhoto = photos.find((photo) => photo.order === currentPhoto.order + 1) || photos.find((photo) => photo.order === 1);
     selectPhoto(nextPhoto);
   };
 
   const prevPhoto = () => {
-    if (!photos || !selectedPhoto) return;
+    if (!photos || !selectedPhoto || selectedPhoto.profile) return;
     const currentPhoto = photos.find((photo) => photo.order === selectedPhoto.order);
     let prevPhoto = photos.find((photo) => photo.order === currentPhoto.order - 1) || photos.find((photo) => photo.order === photos.length);
     selectPhoto(prevPhoto);
