@@ -1,9 +1,19 @@
 import { useState, useEffect, useRef, forwardRef } from 'react';
 import './PhotoModal.scoped.scss';
+import useStore from '../store';
 
-const PhotoModal = forwardRef(({ isOpen, onClose, selectPhoto, selectedPhoto, photos, openFullscreen, children }, ref) => {
+const PhotoModal = forwardRef(({ children }, ref) => {
+  const isOpen = useStore(s => s.isPhotoOpen);
+  const onClose = useStore(s => s.closePhotoModal);
+  const openFullscreen = useStore(s => s.openFullscreen);
+  const selectedPhoto = useStore(s => s.selectedPhoto);
+  const selectPhoto = useStore(s => s.setSelectedPhoto);
+  const selectedAlbum = useStore(s => s.selectedAlbum);
+  const photos = selectedAlbum ? selectedAlbum.photos : [];
+
   const [showControls, setShowControls] = useState(true);
   const [hideArrows, setHideArrows] = useState(false);
+
   const lastInteractionRef = useRef(Date.now());
   const touchStartXRef = useRef(null);
   const touchEndXRef = useRef(null);
@@ -88,7 +98,7 @@ const PhotoModal = forwardRef(({ isOpen, onClose, selectPhoto, selectedPhoto, ph
 
   useEffect(() => {
     if (isOpen) {
-      openFullscreen();
+      openFullscreen(ref);
     }
   }, [isOpen, openFullscreen]);
 

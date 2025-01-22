@@ -1,38 +1,14 @@
 import { useEffect, useState, useRef } from 'react';
 import './CatsMain.scoped.scss';
+import VideoModal from './modals/VideoModal';
+import AlbumModal from './modals/AlbumModal';
+import PhotoModal from './modals/PhotoModal';
 import CatPatternBackground from './utils/CatPatternBackground';
-import VideoPlayer from './utils/VideoPlayer';
-import VideoModal from './utils/VideoModal';
-import AlbumModal from './utils/AlbumModal';
-import PhotoModal from './utils/PhotoModal';
 import ExpandableText from '../shared/ExpandableText';
+import VideoPlayer from './utils/VideoPlayer';
+import MasonryLayout from './utils/MasonryLayout';
 import ResponsiveGallery from './utils/ResponsiveGallery';
-import Masonry from 'react-masonry-css';
-
-function MasonryLayout({ type, children }) {
-  const videosBreakpoint = {
-    default: 3,
-    1280: 2,
-    768: 1,
-  };
-
-  const albumsBreakpoint = {
-    default: 4,
-    1440: 3,
-    1024: 2,
-    768: 1,
-  };
-
-  return (
-    <Masonry
-      breakpointCols={type === 'videos' ? videosBreakpoint : albumsBreakpoint}
-      className="masonry-grid"
-      columnClassName="masonry-grid-column"
-    >
-      {children}
-    </Masonry>
-  );
-}
+import useStore from './store';
 
 const enToCn = {
   "known_as": "名字",
@@ -45,15 +21,22 @@ const enToCn = {
 };
 
 export default function Cats() {
+  const selectedVideo = useStore(s => s.selectedVideo);
+  const selectedAlbum = useStore(s => s.selectedAlbum);
+  const selectedPhoto = useStore(s => s.selectedPhoto);
+  const openVideoModal = useStore(s => s.openVideoModal);
+  const closeVideoModal = useStore(s => s.closeVideoModal);
+  const openAlbumModal = useStore(s => s.openAlbumModal);
+  const closeAlbumModal = useStore(s => s.closeAlbumModal);
+  const openPhotoModal = useStore(s => s.openPhotoModal);
+  const closePhotoModal = useStore(s => s.closePhotoModal);
+  const setSelectedAlbum = useStore(s => s.setSelectedAlbum);
+  const setPhotosOnly = useStore(s => s.setPhotosOnly);
+
   const [infoData, setInfoData] = useState({});
   const [rawData, setRawData] = useState({});
   const [tab, setTab] = useState('videos');
-  const [isVideoOpen, setIsVideoOpen] = useState(false);
-  const [selectedVideo, setSelectedVideo] = useState(null);
-  const [isAlbumOpen, setIsAlbumOpen] = useState(false);
-  const [selectedAlbum, setSelectedAlbum] = useState(null);
-  const [isPhotoOpen, setIsPhotoOpen] = useState(false);
-  const [selectedPhoto, setSelectedPhoto] = useState(null);
+
   const fullScreenRef = useRef(null);
 
   const slug = window.location.pathname.split('/').pop();
@@ -87,6 +70,9 @@ export default function Cats() {
           if (data.videos.length === 0) {
             setTab('albums');
           }
+          if (data.photos) {
+            setPhotosOnly(data.photos)
+          }
         } else {
           console.warn('No data:', data);
           window.location.href = '/cats';
@@ -98,84 +84,6 @@ export default function Cats() {
 
     fetchData();
   }, []);
-
-  const openFullscreen = () => {
-    if (!fullScreenRef.current) return;
-  
-    try {
-      const fullscreenRequest = fullScreenRef.current.requestFullscreen 
-        || fullScreenRef.current.webkitRequestFullscreen  // Safari
-        || fullScreenRef.current.msRequestFullscreen;     // IE11
-  
-      if (fullscreenRequest) {
-        fullscreenRequest.call(fullScreenRef.current).catch(error => {
-          console.warn('Failed to open fullscreen:', error);
-        });
-      } else {
-        console.warn('Fullscreen is not supported on this element.');
-      }
-    } catch (error) {
-      console.warn('Error opening fullscreen:', error);
-    }
-  };  
-
-  const closeFullscreen = () => {
-    if (document.fullscreenElement ||
-        document.webkitFullscreenElement ||
-        document.msFullscreenElement) {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      } else if (document.webkitExitFullscreen) { // Safari
-        document.webkitExitFullscreen();
-      } else if (document.msExitFullscreen) { // IE11
-        document.msExitFullscreen();
-      }
-    }
-  };
-
-  const openVideoModal = (videoSrc, track = true) => {
-    setSelectedVideo(videoSrc);
-    setIsVideoOpen(true);
-    document.body.classList.add('no-scroll');
-    if (track) history.pushState({videoSrc}, "");
-  }
-
-  const closeVideoModal = (track = true) => {
-    setSelectedVideo(null);
-    setIsVideoOpen(false);
-    closeFullscreen();
-    document.body.classList.remove('no-scroll');
-    if (track) history.back();
-  }
-
-  const openAlbumModal = (album, track = true) => {
-    setSelectedAlbum(album);
-    setIsAlbumOpen(true);
-    document.body.classList.add('no-scroll');
-    if (track) history.pushState({album}, "");
-  };
-
-  const closeAlbumModal = (track = true) => {
-    setSelectedAlbum(null);
-    setIsAlbumOpen(false);
-    document.body.classList.remove('no-scroll');
-    if (track) history.back();
-  };
-
-  const openPhotoModal = (photo, track = true) => {
-    setSelectedPhoto(photo);
-    setIsPhotoOpen(true);
-    if (photo.profile) document.body.classList.add('no-scroll');
-    if (track) history.pushState({photo}, "");
-  };
-
-  const closePhotoModal = (track = true) => {
-    if (selectedPhoto && selectedPhoto.profile) document.body.classList.remove('no-scroll');
-    setSelectedPhoto(null);
-    setIsPhotoOpen(false);
-    closeFullscreen();
-    if (track) history.back();
-  };
 
   const toggleTab = (tab) => {
     setTab(tab);
@@ -300,9 +208,6 @@ export default function Cats() {
               <p>{video.description}</p>
               <VideoPlayer
                 videoSrc={mediaUrl(video.video)}
-                selectedVideo={selectedVideo}
-                openVideoModal={openVideoModal}
-                closeVideoModal={closeVideoModal}
                 stopAndSilence={selectedVideo ? true : false}
               />
             </div>
@@ -337,43 +242,32 @@ export default function Cats() {
         ) : (
           <div className={`container photos-container ${tab === 'albums' ? 'active' : ''}`}>
             {rawData.photos && (
-              <ResponsiveGallery photos={rawData.photos} mediaUrl={mediaUrl} openPhotoModal={openPhotoModal} />
+              <ResponsiveGallery mediaUrl={mediaUrl} onPage={true} />
             )}
           </div>
         )}
       </div>
 
-      <VideoModal ref={fullScreenRef} isOpen={isVideoOpen} closeVideoModal={closeVideoModal} openFullscreen={openFullscreen}>
+      <VideoModal ref={fullScreenRef}>
         {selectedVideo && (
           <VideoPlayer
             videoSrc={selectedVideo}
-            selectedVideo={selectedVideo}
-            openVideoModal={openVideoModal}
-            closeVideoModal={closeVideoModal}
             playOnLoad={true}
           />
         )}
       </VideoModal>
 
-      <AlbumModal isOpen={isAlbumOpen} onClose={closeAlbumModal} colors={rawData.colors}>
+      <AlbumModal colors={rawData.colors}>
         {selectedAlbum && (
           <div className="album-modal-content">
             <h3>{selectedAlbum.name}</h3>
             <p>{selectedAlbum.description}</p>
-            <ResponsiveGallery photos={selectedAlbum.photos} mediaUrl={mediaUrl} openPhotoModal={openPhotoModal} />
+            <ResponsiveGallery mediaUrl={mediaUrl} />
           </div>
         )}
       </AlbumModal>
 
-      <PhotoModal
-        ref={fullScreenRef} 
-        isOpen={isPhotoOpen}
-        onClose={closePhotoModal}
-        selectPhoto={setSelectedPhoto}
-        selectedPhoto={selectedPhoto}
-        photos={selectedAlbum ? selectedAlbum.photos : []}
-        openFullscreen={openFullscreen}
-      >
+      <PhotoModal ref={fullScreenRef}>
         {selectedPhoto && (
           <div className="photo-modal-content">
             <img src={mediaUrl(selectedPhoto.name)} alt={`Photo ${selectedPhoto.order} from ${selectedAlbum?.name || ""}`} />

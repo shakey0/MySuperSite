@@ -1,12 +1,18 @@
 import { useRef, useState, useEffect } from "react";
 import "./VideoPlayer.scoped.scss";
 import { SoundOn, Mute, Play, Pause, EnterFullScreen, LeaveFullScreen } from "./VideoControlSvgs";
+import useStore from '../store';
 
-const VideoPlayer = ({ videoSrc, selectedVideo, openVideoModal, closeVideoModal, stopAndSilence = false, playOnLoad = false }) => {
-  const videoRef = useRef(null);
+const VideoPlayer = ({ videoSrc, stopAndSilence = false, playOnLoad = false }) => {
+  const selectedVideo = useStore(s => s.selectedVideo);
+  const openVideoModal = useStore(s => s.openVideoModal);
+  const closeVideoModal = useStore(s => s.closeVideoModal);
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [showControls, setShowControls] = useState(true);
+
+  const videoRef = useRef(null);
   const lastInteractionRef = useRef(Date.now());
 
   useEffect(() => {

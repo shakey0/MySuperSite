@@ -1,8 +1,14 @@
 import { useState, useEffect, useRef, forwardRef } from 'react';
 import './VideoModal.scoped.scss';
+import useStore from '../store';
 
-const VideoModal = forwardRef(({ isOpen, closeVideoModal, openFullscreen, children }, ref) => {
+const VideoModal = forwardRef(({ children }, ref) => {
+  const isOpen = useStore(s => s.isVideoOpen);
+  const closeVideoModal = useStore(s => s.closeVideoModal);
+  const openFullscreen = useStore(s => s.openFullscreen);
+
   const [showControls, setShowControls] = useState(true);
+
   const lastInteractionRef = useRef(Date.now());
 
   useEffect(() => {
@@ -36,7 +42,7 @@ const VideoModal = forwardRef(({ isOpen, closeVideoModal, openFullscreen, childr
 
   useEffect(() => {
     if (isOpen) {
-      openFullscreen();
+      openFullscreen(ref);
     }
   }, [isOpen, openFullscreen]);
 
