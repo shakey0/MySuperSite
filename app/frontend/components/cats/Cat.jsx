@@ -50,11 +50,11 @@ export default function Cats() {
   const [tab, setTab] = useState('videos');
   const [isVideoOpen, setIsVideoOpen] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAlbumOpen, setIsAlbumOpen] = useState(false);
   const [selectedAlbum, setSelectedAlbum] = useState(null);
   const [isPhotoOpen, setIsPhotoOpen] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState(null);
-  const modalRef = useRef(null);
+  const fullScreenRef = useRef(null);
 
   const slug = window.location.pathname.split('/').pop();
   if (!slug && window.location.pathname.endsWith('/')) {
@@ -100,15 +100,15 @@ export default function Cats() {
   }, []);
 
   const openFullscreen = () => {
-    if (!modalRef.current) return;
+    if (!fullScreenRef.current) return;
   
     try {
-      const fullscreenRequest = modalRef.current.requestFullscreen 
-        || modalRef.current.webkitRequestFullscreen  // Safari
-        || modalRef.current.msRequestFullscreen;     // IE11
+      const fullscreenRequest = fullScreenRef.current.requestFullscreen 
+        || fullScreenRef.current.webkitRequestFullscreen  // Safari
+        || fullScreenRef.current.msRequestFullscreen;     // IE11
   
       if (fullscreenRequest) {
-        fullscreenRequest.call(modalRef.current).catch(error => {
+        fullscreenRequest.call(fullScreenRef.current).catch(error => {
           console.warn('Failed to open fullscreen:', error);
         });
       } else {
@@ -133,14 +133,14 @@ export default function Cats() {
     }
   };
 
-  const goFullScreen = (videoSrc, track = true) => {
+  const openVideoModal = (videoSrc, track = true) => {
     setSelectedVideo(videoSrc);
     setIsVideoOpen(true);
     document.body.classList.add('no-scroll');
     if (track) history.pushState({videoSrc}, "");
   }
 
-  const quitFullScreen = (track = true) => {
+  const closeVideoModal = (track = true) => {
     setSelectedVideo(null);
     setIsVideoOpen(false);
     closeFullscreen();
@@ -150,14 +150,14 @@ export default function Cats() {
 
   const openAlbumModal = (album, track = true) => {
     setSelectedAlbum(album);
-    setIsModalOpen(true);
+    setIsAlbumOpen(true);
     document.body.classList.add('no-scroll');
     if (track) history.pushState({album}, "");
   };
 
   const closeAlbumModal = (track = true) => {
     setSelectedAlbum(null);
-    setIsModalOpen(false);
+    setIsAlbumOpen(false);
     document.body.classList.remove('no-scroll');
     if (track) history.back();
   };
@@ -192,12 +192,12 @@ export default function Cats() {
         } else if (data.photo) {
           openPhotoModal(data.photo, false);
         } else if (data.videoSrc) {
-          goFullScreen(data.videoSrc, false);
+          openVideoModal(data.videoSrc, false);
         }
       } else {
         closeAlbumModal(false);
         closePhotoModal(false);
-        quitFullScreen(false);
+        closeVideoModal(false);
 
         if (data && data.tab) {
           setTab(data.tab);
@@ -301,8 +301,8 @@ export default function Cats() {
               <VideoPlayer
                 videoSrc={mediaUrl(video.video)}
                 selectedVideo={selectedVideo}
-                goFullScreen={goFullScreen}
-                quitFullScreen={quitFullScreen}
+                openVideoModal={openVideoModal}
+                closeVideoModal={closeVideoModal}
                 stopAndSilence={selectedVideo ? true : false}
               />
             </div>
@@ -343,19 +343,19 @@ export default function Cats() {
         )}
       </div>
 
-      <VideoModal ref={modalRef} isOpen={isVideoOpen} quitFullScreen={quitFullScreen} openFullscreen={openFullscreen}>
+      <VideoModal ref={fullScreenRef} isOpen={isVideoOpen} closeVideoModal={closeVideoModal} openFullscreen={openFullscreen}>
         {selectedVideo && (
           <VideoPlayer
             videoSrc={selectedVideo}
             selectedVideo={selectedVideo}
-            goFullScreen={goFullScreen}
-            quitFullScreen={quitFullScreen}
+            openVideoModal={openVideoModal}
+            closeVideoModal={closeVideoModal}
             playOnLoad={true}
           />
         )}
       </VideoModal>
 
-      <AlbumModal isOpen={isModalOpen} onClose={closeAlbumModal} colors={rawData.colors}>
+      <AlbumModal isOpen={isAlbumOpen} onClose={closeAlbumModal} colors={rawData.colors}>
         {selectedAlbum && (
           <div className="album-modal-content">
             <h3>{selectedAlbum.name}</h3>
@@ -366,7 +366,7 @@ export default function Cats() {
       </AlbumModal>
 
       <PhotoModal
-        ref={modalRef} 
+        ref={fullScreenRef} 
         isOpen={isPhotoOpen}
         onClose={closePhotoModal}
         selectPhoto={setSelectedPhoto}

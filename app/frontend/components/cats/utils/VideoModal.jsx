@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, forwardRef } from 'react';
 import './VideoModal.scoped.scss';
 
-const VideoModal = forwardRef(({ isOpen, quitFullScreen, openFullscreen, children }, ref) => {
+const VideoModal = forwardRef(({ isOpen, closeVideoModal, openFullscreen, children }, ref) => {
   const [showControls, setShowControls] = useState(true);
   const lastInteractionRef = useRef(Date.now());
 
@@ -45,7 +45,7 @@ const VideoModal = forwardRef(({ isOpen, quitFullScreen, openFullscreen, childre
   return (
     <div className="video-overlay" ref={ref}>
       <div className={`video-close-box ${showControls ? '' : 'hidden'}`}>
-        <button className="video-close" onClick={quitFullScreen}>×</button>
+        <button className="video-close" onClick={closeVideoModal}>×</button>
       </div>
       <div className="video-content">
         {children}

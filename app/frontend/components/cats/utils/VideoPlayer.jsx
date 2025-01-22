@@ -2,7 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import "./VideoPlayer.scoped.scss";
 import { SoundOn, Mute, Play, Pause, EnterFullScreen, LeaveFullScreen } from "./VideoControlSvgs";
 
-const VideoPlayer = ({ videoSrc, selectedVideo, goFullScreen, quitFullScreen, stopAndSilence = false, playOnLoad = false }) => {
+const VideoPlayer = ({ videoSrc, selectedVideo, openVideoModal, closeVideoModal, stopAndSilence = false, playOnLoad = false }) => {
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
@@ -57,9 +57,9 @@ const VideoPlayer = ({ videoSrc, selectedVideo, goFullScreen, quitFullScreen, st
 
   const handleFullScreenToggle = () => {
     if (selectedVideo) {
-      quitFullScreen();
+      closeVideoModal();
     } else {
-      goFullScreen(videoSrc);
+      openVideoModal(videoSrc);
     }
   };
 
