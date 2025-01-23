@@ -3,65 +3,91 @@ import './BrainFeatures.scss';
 import BrainBase from './utils/BrainBase';
 import './BrainAuth.scoped.scss';
 
-const fakeFormFields = [
-  // { label: 'Name of your first pet', name: 'first-pet', type: 'text' },
-  { label: 'Name of your primary school', name: 'primary-school', type: 'password' },
-  { label: 'Name of your second grade teacher', name: 'second-grade-teacher', type: 'password' },
-  // { label: 'The first film your saw at the cinema', name: 'first-film', type: 'text' },
-  { label: 'The first company/person you worked for', name: 'first-company', type: 'password' },
-  // { label: 'Name of your seconary school', name: 'secondary-school', type: 'text' },
-  // { label: 'Your favourite book', name: 'favourite-book', type: 'text' },
-  // { label: 'Your favourite movie', name: 'favourite-movie', type: 'text' },
-  // { label: 'Your favourite movie character', name: 'favourite-character', type: 'text' },
-  // { label: 'Your first car model', name: 'first-car', type: 'text' },
-  // { label: 'Your first holiday destination', name: 'first-holiday', type: 'text' },
-  // { label: 'Your favourite holiday destination', name: 'favourite-holiday', type: 'text' },
-  // { label: 'City you met your partner in', name: 'partner-city', type: 'text' },
-  // { label: 'City you got married in', name: 'marriage-city', type: 'text' },
-  // { label: 'Your dream job as a child', name: 'dream-job', type: 'text' },
-  // { label: 'Your favourite drink', name: 'favourite-drink', type: 'text' },
-  // { label: 'Your favourite actor/actress', name: 'favourite-actor', type: 'text' },
-  // { label: 'Your favourite musician', name: 'favourite-musician', type: 'text' },
+const getFormFields = [
+  { label: 'Name/Nickname', name: 'name', type: 'text' },
+  { label: 'Email', name: 'email', type: 'text' },
+  { label: 'Password', name: 'password', type: 'password' },
+  { label: 'Confirm password', name: 'confirm_password', type: 'password' },
 ]
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function validateLogin(email, password) {
+  if (!emailRegex.test(email) || password.length < 8) {
+    return ['Invalid email or password.'];
+  }
+  return [];
+}
+
+function validateSignUp(name, email) {
+  const errors = [];
+  if (name.length === 0) {
+    errors.push('Name/Nickname is required.');
+  } else if (name.length < 2) {
+    errors.push('Name/Nickname must be at least 2 characters.');
+  } else if (name.length > 20) {
+    errors.push('Name/Nickname cannot be more than 20 characters.');
+  }
+  if (email.length === 0) {
+    errors.push('Email is required.');
+  } else if (!emailRegex.test(email)) {
+    errors.push('Invalid email address.');
+  }
+  return errors;
+}
+
+function validateSetPassword(password, confirmPassword) {
+  const errors = [];
+  if (password.length < 8) {
+    errors.push('Password must be at least 8 characters.');
+  }
+  if (password !== confirmPassword) {
+    errors.push('Passwords do not match.');
+  }
+  return errors;
+}
+
+// ADD SET_PASSWORD STUFF TO THIS NEXT !!!!!!!!!
 
 export default function Brain() {
   const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [logInErrors, setLogInErrors] = useState([]);
-  console.log(logInErrors);
-  const [signUpErrors, setSignUpErrors] = useState([]);
+  const [authMessages, setAuthMessages] = useState([]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsSubmitting(true);
+    setAuthMessages([]);
 
     const formData = new FormData(event.target);
     const data = {};
-
     formData.forEach((value, key) => {
       data[key] = value;
     });
 
-    const process = data.name ? "sign_up" : "log_in";
-    if (process === "log_in")
-      setLogInErrors([]);
-    else
-      setSignUpErrors([]);
-
-    // Check that all form fields are filled in with at least 3 characters
     const formFields = Object.keys(data);
-    const invalidFields = formFields.filter((field) => data[field].length < 3);
-    if (invalidFields.length > 0) {
-      if (process === "log_in")
-        setLogInErrors(invalidFields);
-      else
-        setSignUpErrors(invalidFields);
+
+    // Check there are no empty fields
+    const emptyFields = formFields.filter((field) => data[field].length === 0);
+    if (emptyFields.length > 0) {
+      setIsSubmitting(false);
+      return;
+    }
+
+    const process = data.confirm_password ? "set_password" : data.name ? "sign_up" : "log_in";
+
+    const errors = process === "log_in" ? validateLogin(data.email, data.password) :
+      process === "sign_up" ? validateSignUp(data.name, data.email) :
+      validateSetPassword(data.password, data.confirm_password);
+
+    if (errors.length > 0) {
+      setAuthMessages(errors);
       setIsSubmitting(false);
       return;
     }
 
     try {
-      const response = await fetch(`/brain/${process}`, {
+      const response = await fetch(`/${process}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -74,17 +100,18 @@ export default function Brain() {
 
       const responseData = await response.json();
       if (responseData.outcome === "success") {
-        // Redirect to the user's dashboard
-        window.location.href = '/brain';
+        if (process === "log_in") 
+          window.location.href = '/brain';
+        else if (process === "sign_up")
+          setAuthMessages(["An invitation email has been sent to your email address. It will be valid for 10 minutes."]);
+        else if (process === "set_password")
+          window.location.href = '/brain/auth?message=password_set';
       } else {
-        if (process === "log_in")
-          setLogInErrors(['invalid']);
-        else
-          setSignUpErrors(responseData.errors);
+        setAuthMessages(responseData.errors);
       }
     }
     catch (error) {
-      console.error('Error during log in or sign up:', error);
+      console.error('Error during auth process:', error);
     }
     finally {
       setIsSubmitting(false);
@@ -120,8 +147,7 @@ export default function Brain() {
       });
     }, 300);
 
-    setLogInErrors([]);
-    setSignUpErrors([]);
+    setAuthMessages([]);
   }
 
   useEffect(() => {
@@ -140,36 +166,24 @@ export default function Brain() {
         </div>
 
         <form className="auth-form log-in active" onSubmit={handleSubmit}>
-          {fakeFormFields.map((field) => (
+          {getFormFields.slice(1, 3).map((field) => (
             <div className="input-container" key={field.name}>
               <label htmlFor={field.name}>{field.label}</label>
               <input type={field.type} name={field.name} />
             </div>
           ))}
           <button className="submit-button" type="submit" disabled={isSubmitting}>Log in</button>
-          {logInErrors.length > 0 && (
-            <div className="error-container">
-              <p>Those details did not match!</p>
-            </div>
-          )}
         </form>
 
         <form className="auth-form sign-up" onSubmit={handleSubmit}>
           <div className="into-container">
             <p>This sign up will be valid for all services across shakey0.co.uk that require an account.</p>
-            <p>I don't use any passwords or collect any personal information on my website.</p>
-            <p>At shakey0.co.uk, your name/nickname is just for your own reference and can be changed in your account settings.</p>
-            <p>Instead of a password, you will log in by answering the 3 pieces of memorable information about yourself.</p>
-            <p>Once logged in, you will stay logged in on that browser for 1 year (unless you delete your cookies).</p>
             <p>shakey0.co.uk will use cookies to quickly identify your account and make your experience as smooth as possible.</p>
-          </div>
-          <div className="input-container">
-            <label htmlFor="name">Name/Nickname</label>
-            <input type="text" name="name" id="name" />
+            <p>By signing up, you agree to the <b>Terms of Service</b> and <b>Privacy Policy</b>.</p>
           </div>
           {/* https://chatgpt.com/c/6787a022-dd64-8004-b203-b8a1014ff4d2 - HANDLING USER SESSIONS WITH DYNAMODB */}
           {/* https://chatgpt.com/c/6787d5a5-d024-8004-a997-37327f05f4cc - HANDLING ITEMS - KNOWLEDGE/LOGIC/MATH - DATA WITH DYNAMODB */}
-          {fakeFormFields.map((field) => (
+          {getFormFields.slice(0, 2).map((field) => (
             <div className="input-container" key={field.name}>
               <label htmlFor={field.name}>{field.label}</label>
               <input type={field.type} name={field.name} id={field.name} />
@@ -177,6 +191,14 @@ export default function Brain() {
           ))}
           <button className="submit-button" type="submit" disabled={isSubmitting}>Sign up</button>
         </form>
+
+        {authMessages.length > 0 && (
+          <div className="after-container">
+            {authMessages.map((message, index) => (
+              <p key={index}>{message}</p>
+            ))}
+          </div>
+        )}
       </div>
     </BrainBase>
   );

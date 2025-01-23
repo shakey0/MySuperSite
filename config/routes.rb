@@ -1,9 +1,9 @@
 Rails.application.routes.draw do
   get "brain", to: "brain#index", as: "brain_index"
   get "brain/auth", to: "brain#auth", as: "brain_auth"
-  post "brain/log_in", to: "brain#log_in", as: "brain_log_in"
-  post "brain/log_out", to: "brain#log_out", as: "brain_log_out"
-  post "brain/sign_up", to: "brain#sign_up", as: "brain_sign_up"
+  post "log_in", to: "auth_api#log_in", as: "auth_api_log_in"
+  delete "log_out", to: "auth_api#log_out", as: "auth_api_log_out"
+  post "sign_up", to: "auth_api#sign_up", as: "auth_api_sign_up"
 
   namespace :brain do
     get "knowledge", to: "knowledge#index", as: "knowledge_index"
