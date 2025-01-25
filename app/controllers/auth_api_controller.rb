@@ -3,15 +3,13 @@ class AuthApiController < ApplicationController
   before_action :require_no_user!, only: [ :log_in, :sign_up ]
 
   def log_in
-    secret_1 = params["primary-school"].downcase.gsub(/\p{Punct}|\s|[[:cntrl:]]/, "")
-    secret_2 = params["second-grade-teacher"].downcase.gsub(/\p{Punct}|\s|[[:cntrl:]]/, "")
-    secret_3 = params["first-company"].downcase.gsub(/\p{Punct}|\s|[[:cntrl:]]/, "")
+    email = params.permit(:email)[:email]
+    password = params.permit(:password)[:password]
 
-    # Search all users with the first secret in dynamodb
-    users_by_first_secret = UserData.query_users_by_secret(secret_1)
-    users_by_second_secret = users_by_first_secret.select { |u| u["secret_2"] == secret_2 }
-    user = users_by_second_secret.find { |u| u["secret_3"] == secret_3 }
-    if user
+    user = UserData.get_user_by_email(email)
+
+    # if user && BCrypt::Password.new(user["password"]) == password # THIS IS FOR WHEN BCRYPT IS IMPLEMENTED
+    if user && user["password"] == password
       session_token = SecureRandom.alphanumeric(64)
       set_user_session_cookie(user["id"], session_token)
       user["active_sessions"] << {
@@ -23,9 +21,11 @@ class AuthApiController < ApplicationController
       user["active_sessions"].select! { |session| Time.parse(session["created_at"]) > 1.year.ago }
 
       UserData.update_user(user)
-    end
 
-    render json: { outcome: user ? "success" : "failure" }
+      render json: { outcome: "success" }
+    else
+      render json: { outcome: "failed", errors: [ "Invalid email or password" ] }
+    end
   end
 
   def log_out

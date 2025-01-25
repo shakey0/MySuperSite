@@ -22,16 +22,16 @@ create_table_command = <<~CMD
     --table-name users \
     --attribute-definitions \
       AttributeName=id,AttributeType=S \
-      AttributeName=secret_1,AttributeType=S \
+      AttributeName=email,AttributeType=S \
     --key-schema \
       AttributeName=id,KeyType=HASH \
     --provisioned-throughput \
       ReadCapacityUnits=5,WriteCapacityUnits=5 \
     --global-secondary-indexes \
       '[{
-        "IndexName": "Secret1Index",
+        "IndexName": "EmailIndex",
         "KeySchema": [
-          {"AttributeName": "secret_1", "KeyType": "HASH"}
+          {"AttributeName": "email", "KeyType": "HASH"}
         ],
         "Projection": {
           "ProjectionType": "ALL"
@@ -49,10 +49,11 @@ run_command(create_table_command)
 user_data = {
   "id" => { "S" => "rJ3P02N1d" },
   "name" => { "S" => "Johnny Boy" },
-  "secret_1" => { "S" => "blackwell" },
-  "secret_2" => { "S" => "missgreen" },
-  "secret_3" => { "S" => "tulleysfarm" },
-  "active_sessions" => { "L" => [] }
+  "email" => { "S" => "johnny_walker@gmail.com" },
+  "password" => { "S" => "onthemoon" },
+  "active_sessions" => { "L" => [] },
+  "preferences" => { "M" => {} },
+  "permissions" => { "M" => {} }
 }
 seed_command = <<~CMD
   aws dynamodb put-item \

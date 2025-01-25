@@ -11,7 +11,7 @@ class UserData
       response = get_dymamo_db_client.get_item(params)
       user_data = response.item
 
-      $redis.set("user:#{id}", user_data.to_json, ex: 1.hour)
+      cache_user(user_data)
     else
       user_data = JSON.parse(user_data)
     end
@@ -19,19 +19,19 @@ class UserData
     user_data
   end
 
-
   # Query the users table using the GSI
-  def self.query_users_by_secret(secret_value)
+  def self.get_user_by_email(email)
     params = {
       table_name: "users",
-      index_name: "Secret1Index", # The name of the GSI
-      key_condition_expression: "secret_1 = :secret",
+      index_name: "EmailIndex",
+      key_condition_expression: "email = :email",
       expression_attribute_values: {
-        ":secret" => secret_value
+        ":email" => email
       }
     }
     response = get_dymamo_db_client.query(params)
-    response.items
+
+    response.items.first
   end
 
   def self.update_user(user)
@@ -48,9 +48,14 @@ class UserData
     }
     response = get_dymamo_db_client.update_item(params)
 
-    $redis.set("user:#{user["id"]}", user.to_json, ex: 1.hour)
+    cache_user(response.attributes)
 
     response.attributes
+  end
+
+  def self.cache_user(user)
+    user.delete("password")
+    $redis.set("user:#{user["id"]}", user.to_json, ex: 1.hour)
   end
 
   def self.get_dymamo_db_client

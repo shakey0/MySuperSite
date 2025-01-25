@@ -21,16 +21,12 @@ function validateLogin(email, password) {
 
 function validateSignUp(name, email) {
   const errors = [];
-  if (name.length === 0) {
-    errors.push('Name/Nickname is required.');
-  } else if (name.length < 2) {
+  if (name.length < 2) {
     errors.push('Name/Nickname must be at least 2 characters.');
   } else if (name.length > 20) {
     errors.push('Name/Nickname cannot be more than 20 characters.');
   }
-  if (email.length === 0) {
-    errors.push('Email is required.');
-  } else if (!emailRegex.test(email)) {
+  if (!emailRegex.test(email)) {
     errors.push('Invalid email address.');
   }
   return errors;
@@ -47,12 +43,18 @@ function validateSetPassword(password, confirmPassword) {
   return errors;
 }
 
-// ADD SET_PASSWORD STUFF TO THIS NEXT !!!!!!!!!
+// ADD SET_PASSWORD STUFF TO THIS NEXT !!!!!!!!! Then fix the backend for the login, do the sign up, then do the set password routes
+// DynamoDB seed script needs amending
 
 export default function Brain() {
   const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [authMessages, setAuthMessages] = useState([]);
+
+  const queryParams = new URLSearchParams(window.location.search);
+  const authToken = queryParams.get('auth_token');
+  console.log(authToken);
+  const message = queryParams.get('message');
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -73,6 +75,8 @@ export default function Brain() {
       setIsSubmitting(false);
       return;
     }
+
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 
     const process = data.confirm_password ? "set_password" : data.name ? "sign_up" : "log_in";
 
@@ -158,39 +162,59 @@ export default function Brain() {
   }, []);
 
   return (
-    <BrainBase header="Sign in to use Brain">
+    <BrainBase header={`${authToken ? "shakey0.co.uk - set password": "Sign in to use Brain"}`}>
       <div className="main-container">
-        <div className="tabs-container">
-          <button className="active" data-index="0" onClick={toggleTabs} disabled={isSubmitting}>Log in</button>
-          <button data-index="1" onClick={toggleTabs} disabled={isSubmitting}>Sign up</button>
-        </div>
-
-        <form className="auth-form log-in active" onSubmit={handleSubmit}>
-          {getFormFields.slice(1, 3).map((field) => (
-            <div className="input-container" key={field.name}>
-              <label htmlFor={field.name}>{field.label}</label>
-              <input type={field.type} name={field.name} />
+        {!authToken ? (
+          <>
+            <div className="tabs-container">
+              <button className="active" data-index="0" onClick={toggleTabs} disabled={isSubmitting}>Log in</button>
+              <button data-index="1" onClick={toggleTabs} disabled={isSubmitting}>Sign up</button>
             </div>
-          ))}
-          <button className="submit-button" type="submit" disabled={isSubmitting}>Log in</button>
-        </form>
 
-        <form className="auth-form sign-up" onSubmit={handleSubmit}>
-          <div className="into-container">
-            <p>This sign up will be valid for all services across shakey0.co.uk that require an account.</p>
-            <p>shakey0.co.uk will use cookies to quickly identify your account and make your experience as smooth as possible.</p>
-            <p>By signing up, you agree to the <b>Terms of Service</b> and <b>Privacy Policy</b>.</p>
-          </div>
-          {/* https://chatgpt.com/c/6787a022-dd64-8004-b203-b8a1014ff4d2 - HANDLING USER SESSIONS WITH DYNAMODB */}
-          {/* https://chatgpt.com/c/6787d5a5-d024-8004-a997-37327f05f4cc - HANDLING ITEMS - KNOWLEDGE/LOGIC/MATH - DATA WITH DYNAMODB */}
-          {getFormFields.slice(0, 2).map((field) => (
-            <div className="input-container" key={field.name}>
-              <label htmlFor={field.name}>{field.label}</label>
-              <input type={field.type} name={field.name} id={field.name} />
+            <form className="auth-form log-in active" onSubmit={handleSubmit}>
+              {getFormFields.slice(1, 3).map((field) => (
+                <div className="input-container" key={field.name}>
+                  <label htmlFor={field.name}>{field.label}</label>
+                  <input type={field.type} name={field.name} />
+                </div>
+              ))}
+              <button className="submit-button" type="submit" disabled={isSubmitting}>Log in</button>
+            </form>
+
+            <form className="auth-form sign-up" onSubmit={handleSubmit}>
+              <div className="into-container">
+                <p>This sign up will be valid for all services across shakey0.co.uk that require an account.</p>
+                <p>shakey0.co.uk will use cookies to quickly identify your account and make your experience as smooth as possible.</p>
+                <p>By signing up, you agree to the <b>Terms of Service</b> and <b>Privacy Policy</b>.</p>
+              </div>
+              {/* https://chatgpt.com/c/6787a022-dd64-8004-b203-b8a1014ff4d2 - HANDLING USER SESSIONS WITH DYNAMODB */}
+              {/* https://chatgpt.com/c/6787d5a5-d024-8004-a997-37327f05f4cc - HANDLING ITEMS - KNOWLEDGE/LOGIC/MATH - DATA WITH DYNAMODB */}
+              {getFormFields.slice(0, 2).map((field) => (
+                <div className="input-container" key={field.name}>
+                  <label htmlFor={field.name}>{field.label}</label>
+                  <input type={field.type} name={field.name} id={field.name} />
+                </div>
+              ))}
+              <button className="submit-button" type="submit" disabled={isSubmitting}>Sign up</button>
+            </form>
+          </>
+        ) : (
+          <form className="auth-form set-password active" style={{ opacity: 1 }} onSubmit={handleSubmit}>
+            <div className="into-container">
+              <p>Set a password for your shakey0.co.uk account.</p>
+              <p>This password will be used to log in to all services across shakey0.co.uk</p>
+              <p>Your password must be at least 8 characters long.</p>
             </div>
-          ))}
-          <button className="submit-button" type="submit" disabled={isSubmitting}>Sign up</button>
-        </form>
+            <input type="hidden" name="auth_token" value={authToken} />
+            {getFormFields.slice(2, 4).map((field) => (
+              <div className="input-container" key={field.name}>
+                <label htmlFor={field.name}>{field.label}</label>
+                <input type={field.type} name={field.name} id={field.name} />
+              </div>
+            ))}
+            <button className="submit-button" type="submit" disabled={isSubmitting}>Set password</button>
+          </form>
+        )}
 
         {authMessages.length > 0 && (
           <div className="after-container">
