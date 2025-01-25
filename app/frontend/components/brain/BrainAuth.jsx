@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import './BrainFeatures.scss';
 import BrainBase from './utils/BrainBase';
 import './BrainAuth.scoped.scss';
+import validateForm from './validateForm';
+import AuthField from './AuthField';
+import SubmitButton from './SubmitButton';
 
 const getFormFields = [
   { label: 'Name/Nickname', name: 'name', type: 'text' },
@@ -9,39 +12,6 @@ const getFormFields = [
   { label: 'Password', name: 'password', type: 'password' },
   { label: 'Confirm password', name: 'confirm_password', type: 'password' },
 ]
-
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-function validateLogin(email, password) {
-  if (!emailRegex.test(email) || password.length < 8) {
-    return ['Invalid email or password.'];
-  }
-  return [];
-}
-
-function validateSignUp(name, email) {
-  const errors = [];
-  if (name.length < 2) {
-    errors.push('Name/Nickname must be at least 2 characters.');
-  } else if (name.length > 20) {
-    errors.push('Name/Nickname cannot be more than 20 characters.');
-  }
-  if (!emailRegex.test(email)) {
-    errors.push('Invalid email address.');
-  }
-  return errors;
-}
-
-function validateSetPassword(password, confirmPassword) {
-  const errors = [];
-  if (password.length < 8) {
-    errors.push('Password must be at least 8 characters.');
-  }
-  if (password !== confirmPassword) {
-    errors.push('Passwords do not match.');
-  }
-  return errors;
-}
 
 // ADD SET_PASSWORD STUFF TO THIS NEXT !!!!!!!!! Then fix the backend for the login, do the sign up, then do the set password routes
 // DynamoDB seed script needs amending
@@ -53,7 +23,6 @@ export default function Brain() {
 
   const queryParams = new URLSearchParams(window.location.search);
   const authToken = queryParams.get('auth_token');
-  console.log(authToken);
   const message = queryParams.get('message');
 
   const handleSubmit = async (event) => {
@@ -67,10 +36,7 @@ export default function Brain() {
       data[key] = value;
     });
 
-    const formFields = Object.keys(data);
-
-    // Check there are no empty fields
-    const emptyFields = formFields.filter((field) => data[field].length === 0);
+    const emptyFields = Object.keys(data).filter((field) => data[field].length === 0);
     if (emptyFields.length > 0) {
       setIsSubmitting(false);
       return;
@@ -78,11 +44,12 @@ export default function Brain() {
 
     window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 
-    const process = data.confirm_password ? "set_password" : data.name ? "sign_up" : "log_in";
+    const process = data.confirm_password ? "set_password" : 
+                    data.name ? "sign_up" : 
+                    data.password ? "log_in" : 
+                    "forgot_password";
 
-    const errors = process === "log_in" ? validateLogin(data.email, data.password) :
-      process === "sign_up" ? validateSignUp(data.name, data.email) :
-      validateSetPassword(data.password, data.confirm_password);
+    const errors = validateForm(process, data);
 
     if (errors.length > 0) {
       setAuthMessages(errors);
@@ -123,8 +90,7 @@ export default function Brain() {
   }
 
   const toggleTabs = (event) => {
-    const tabs = document.querySelectorAll('.tabs-container button');
-    tabs.forEach((tab) => tab.classList.remove('active'));
+    document.querySelectorAll('.tabs-container button').forEach((tab) => tab.classList.remove('active'));
     event.target.classList.add('active');
 
     const forms = document.querySelectorAll('.auth-form');
@@ -135,6 +101,7 @@ export default function Brain() {
       if (form.classList.contains('active')) {
         form.style.opacity = '0';
       }
+      form.reset();
     });
     
     // Wait for fade out to complete before switching forms
@@ -148,17 +115,14 @@ export default function Brain() {
         } else {
           form.classList.remove('active');
         }
+        setAuthMessages([]);
       });
     }, 300);
-
-    setAuthMessages([]);
   }
 
   useEffect(() => {
     const loginButton = document.querySelector('.tabs-container button[data-index="0"]');
-    if (loginButton) {
-      loginButton.click();
-    }
+    if (loginButton) loginButton.click();
   }, []);
 
   return (
@@ -168,17 +132,25 @@ export default function Brain() {
           <>
             <div className="tabs-container">
               <button className="active" data-index="0" onClick={toggleTabs} disabled={isSubmitting}>Log in</button>
-              <button data-index="1" onClick={toggleTabs} disabled={isSubmitting}>Sign up</button>
+              <button data-index="2" onClick={toggleTabs} disabled={isSubmitting}>Sign up</button>
             </div>
 
-            <form className="auth-form log-in active" onSubmit={handleSubmit}>
+            <form className="auth-form log-in" onSubmit={handleSubmit}>
               {getFormFields.slice(1, 3).map((field) => (
-                <div className="input-container" key={field.name}>
-                  <label htmlFor={field.name}>{field.label}</label>
-                  <input type={field.type} name={field.name} />
-                </div>
+                <AuthField key={field.name} field={field} />
               ))}
-              <button className="submit-button" type="submit" disabled={isSubmitting}>Log in</button>
+              <button type="button" className="forgot-password" data-index="1" onClick={toggleTabs} disabled={isSubmitting}>
+                Forgot password?
+              </button>
+              <SubmitButton text="Log in" isSubmitting={isSubmitting} />
+            </form>
+
+            <form className="auth-form reset-pwd" onSubmit={handleSubmit}>
+              <div className="into-container">
+                <p>Enter your email address to receive a password reset link.</p>
+              </div>
+              <AuthField field={getFormFields[1]} />
+              <SubmitButton text="Send password reset link" isSubmitting={isSubmitting} />
             </form>
 
             <form className="auth-form sign-up" onSubmit={handleSubmit}>
@@ -189,13 +161,11 @@ export default function Brain() {
               </div>
               {/* https://chatgpt.com/c/6787a022-dd64-8004-b203-b8a1014ff4d2 - HANDLING USER SESSIONS WITH DYNAMODB */}
               {/* https://chatgpt.com/c/6787d5a5-d024-8004-a997-37327f05f4cc - HANDLING ITEMS - KNOWLEDGE/LOGIC/MATH - DATA WITH DYNAMODB */}
+              <input type="hidden" name="from_section" value="brain" />
               {getFormFields.slice(0, 2).map((field) => (
-                <div className="input-container" key={field.name}>
-                  <label htmlFor={field.name}>{field.label}</label>
-                  <input type={field.type} name={field.name} id={field.name} />
-                </div>
+                <AuthField key={field.name} field={field} />
               ))}
-              <button className="submit-button" type="submit" disabled={isSubmitting}>Sign up</button>
+              <SubmitButton text="Sign up" isSubmitting={isSubmitting} />
             </form>
           </>
         ) : (
@@ -207,12 +177,9 @@ export default function Brain() {
             </div>
             <input type="hidden" name="auth_token" value={authToken} />
             {getFormFields.slice(2, 4).map((field) => (
-              <div className="input-container" key={field.name}>
-                <label htmlFor={field.name}>{field.label}</label>
-                <input type={field.type} name={field.name} id={field.name} />
-              </div>
+              <AuthField key={field.name} field={field} />
             ))}
-            <button className="submit-button" type="submit" disabled={isSubmitting}>Set password</button>
+            <SubmitButton text="Set password" isSubmitting={isSubmitting} />
           </form>
         )}
 

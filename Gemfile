@@ -51,6 +51,8 @@ group :test do
   gem "selenium-webdriver"
 end
 
+gem "rack-attack"
+
 gem "dotenv-rails", groups: [ :development, :test ]
 
 gem "vite_rails"

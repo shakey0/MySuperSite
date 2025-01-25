@@ -3,8 +3,9 @@ class AuthApiController < ApplicationController
   before_action :require_no_user!, only: [ :log_in, :sign_up ]
 
   def log_in
-    email = params.permit(:email)[:email]
-    password = params.permit(:password)[:password]
+    permitted_params = params.require(:auth_api).permit(:email, :password)
+    email = permitted_params[:email].strip.downcase
+    password = permitted_params[:password].strip
 
     user = UserData.get_user_by_email(email)
 
