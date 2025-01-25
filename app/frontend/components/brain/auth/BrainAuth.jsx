@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import './BrainFeatures.scss';
-import BrainBase from './utils/BrainBase';
+import '../BrainFeatures.scss';
+import BrainBase from '../utils/BrainBase';
 import './BrainAuth.scoped.scss';
 import validateForm from './validateForm';
 import AuthField from './AuthField';
-import SubmitButton from './SubmitButton';
+import SubmitButton from '../utils/SubmitButton';
 
 const getFormFields = [
   { label: 'Name/Nickname', name: 'name', type: 'text' },

@@ -1,5 +1,5 @@
-@import './BrainColors.scss';
-@import './BrainVars.scss';
+@import '../BrainColors.scss';
+@import '../BrainVars.scss';
 
 .main-container {
   @extend %center-column;

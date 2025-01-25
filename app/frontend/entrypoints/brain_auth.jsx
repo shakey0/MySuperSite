@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client';
-import BrainAuth from '../components/brain/BrainAuth';
+import BrainAuth from '../components/brain/auth/BrainAuth';
 
 document.addEventListener('DOMContentLoaded', () => {
   const rootElement = document.getElementById('brain-auth-root');

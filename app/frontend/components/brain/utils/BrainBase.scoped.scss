@@ -1,4 +1,5 @@
 @import '../BrainColors.scss';
+@import '../BrainVars.scss';
 
 .brain-base {
   background: linear-gradient(to bottom right, var(--dark-background-start), var(--dark-background-end));
@@ -7,8 +8,7 @@
   padding-bottom: 60px;
 
   .brain-base__header {
-    display: flex;
-    justify-content: center;
+    @extend %center-row;
     align-items: center;
     height: 72px;
     position: sticky;
