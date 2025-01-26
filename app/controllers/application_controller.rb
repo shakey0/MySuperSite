@@ -7,17 +7,17 @@ class ApplicationController < ActionController::Base
   def authenticate_user!
     unless current_user
       if request.xhr? || request.content_type == "application/json"
-        render json: { error: 'Unauthorized access', status: :unauthorized }, status: :unauthorized
+        render json: { error: "Unauthorized access", status: :unauthorized }, status: :unauthorized
       else
         redirect_to brain_auth_path # This will need to direct dynamically to the correct path in the future
       end
     end
   end
-  
+
   def require_no_user!
     if current_user
       if request.xhr? || request.content_type == "application/json"
-        render json: { error: 'Access not permitted for authenticated users', status: :forbidden }, status: :forbidden
+        render json: { error: "Access not permitted for authenticated users", status: :forbidden }, status: :forbidden
       else
         redirect_to brain_index_path # This will need to direct dynamically to the correct path in the future
       end
