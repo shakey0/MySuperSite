@@ -17,7 +17,7 @@ export default function Brain() {
       });
 
       const responseData = await response.json();
-      if (responseData.outcome === "success") {
+      if (responseData.outcome === "success_and_redirect_to_auth") {
         window.location.href = '/brain/auth';
       }
     } catch (error) {

@@ -3,6 +3,7 @@
 .submit-button {
   @extend %button-default;
   @extend %dark-element;
+  max-width: 92%;
   border-radius: 100px;
   margin-top: 10px;
   padding: 14px 40px;

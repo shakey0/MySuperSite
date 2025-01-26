@@ -25,7 +25,7 @@ class AuthApiController < ApplicationController
 
       UserData.update_user_sessions(user)
 
-      render json: { outcome: "success" }
+      render json: { outcome: "success_and_redirect_to_root" }
     else
       render json: { outcome: "failed", errors: [ "Invalid email or password" ] }
     end
@@ -45,7 +45,7 @@ class AuthApiController < ApplicationController
 
     cookies.delete(:user_session)
 
-    render json: { outcome: "success" }
+    render json: { outcome: "success_and_redirect_to_auth" }
   end
 
   def sign_up
@@ -54,10 +54,15 @@ class AuthApiController < ApplicationController
     email = permitted_params[:email].strip.downcase.gsub(/[[:cntrl:]]/, "")
     from_section = permitted_params[:from_section]
 
+    unless email.match?(/\A[^@\s]+@[^@\s]+\.[^@\s]+\z/)
+      render json: { outcome: "failed", errors: [ "Invalid email address." ] }
+      return
+    end
+
     user = UserData.get_user_by_email(email)
 
     if user
-      render json: { outcome: "failed", errors: [ "Email is already taken" ] }
+      render json: { outcome: "failed", errors: [ "This email is already taken." ] }
     else
       # Cache the email as a key for 30 seconds to prevent multiple sign up requests while checking if it's cached
       unless $redis.set("email:#{email}", "1", nx: true, ex: 30)
@@ -78,16 +83,24 @@ class AuthApiController < ApplicationController
     auth_token = permitted_params[:auth_token]
     password = permitted_params[:password].strip.gsub(/[[:cntrl:]]/, "")
 
+    if password.length < 8
+      render json: { outcome: "failed", errors: ["Password must be at least 8 characters."] }
+      return
+    end
+
     user_data = $redis.get("auth_token_b:#{auth_token}")
 
     if user_data.nil?
-      render json: { outcome: "failed", message: "This link has timed out. Please request a new one." }
+      render json: { outcome: "failed_and_redirect_to_auth", message: "This link has timed out. Please request a new one." }
     else
       user = JSON.parse(user_data)
 
       # Check if email is cached in redis
       if $redis.get("email_for_auth:#{user["email"]}")
-        render json: { outcome: "failed", message: "Your password has recently been set. Please log in. If you didn't set or reset your password, please contact me. You can only reset your password once every 10 minutes." }
+        render json: {
+          outcome: "failed_and_redirect_to_auth",
+          message: "Your password reset has failed as this action has already been performed within the last 10 minutes. If you didn't set or reset your password, please contact me. Otherwise, please wait a bit before trying again."
+        }
         return
       end
 
@@ -103,7 +116,10 @@ class AuthApiController < ApplicationController
       # Cache the email in redis for 10 minutes to prevent multiple password set requests
       $redis.set("email_for_auth:#{user["email"]}", "1", ex: 10 * 60)
 
-      render json: { outcome: "success", message: "Your password has been set and your account is ready! Please log in." }
+      render json: {
+        outcome: "success_and_redirect_to_auth",
+        message: "Your password has been set and your account is ready! Please log in."
+      }
     end
   end
 
@@ -111,6 +127,15 @@ class AuthApiController < ApplicationController
     permitted_params = params.require(:auth_api).permit(:email, :from_section)
     email = permitted_params[:email].strip.downcase.gsub(/[[:cntrl:]]/, "")
     from_section = permitted_params[:from_section]
+
+    # Check if email is cached in redis
+    if $redis.get("email_for_auth:#{email}")
+      render json: {
+        outcome: "failed",
+        errors: [ "You have already set or reset your password within the last 10 minutes. If you didn't do this, please contact me. Otherwise, please wait a bit before trying again." ]
+      }
+      return
+    end
 
     unless $redis.set("email:#{email}", "1", nx: true, ex: 30)
       render json: { outcome: "failed", errors: [ "Check your inbox for the password reset email." ] }
@@ -147,7 +172,7 @@ class AuthApiController < ApplicationController
     }
   end
 
-  def set_auth_token_and_send_email(user, from_section)
+  def set_auth_token_and_send_email(user, from_section) # Add a param for invitation email of type boolean
     auth_token = SecureRandom.alphanumeric(64)
 
     $redis.set("auth_token:#{auth_token}", user.to_json, ex: 10.minutes)

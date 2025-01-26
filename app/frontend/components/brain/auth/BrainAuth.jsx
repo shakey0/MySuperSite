@@ -64,21 +64,16 @@ export default function BrainAuth() {
       });
 
       const responseData = await response.json();
-      if (responseData.outcome === "success") {
-        if (process === "log_in") 
-          window.location.href = '/brain';
-        else if (process === "sign_up")
-          setAuthMessages([responseData.message]);
-        else if (process === "set_password")
-          window.location.href = `/brain/auth?message=${responseData.message}`;
-        else if (process === "forgot_password")
-          setAuthMessages([responseData.message]);
-      } else {
-        if (process === "set_password") {
-          window.location.href = `/brain/auth?message=${responseData.message}`;
-        } else {
-          setAuthMessages(responseData.errors);
-        }
+      const outcome = responseData.outcome;
+      const responseMessage = responseData.message;
+      if (outcome === "success_and_redirect_to_root") {
+        window.location.href = `/brain${responseMessage ? `?message=${responseMessage}` : ''}`;
+      } else if (outcome === "success_and_redirect_to_auth" || outcome === "failed_and_redirect_to_auth") {
+        window.location.href = `/brain/auth${responseMessage ? `?message=${responseMessage}` : ''}`;
+      } else if (outcome === "success") {
+        setAuthMessages([responseMessage]);
+      } else { // "failed"
+        setAuthMessages(responseData.errors);
       }
     }
     catch (error) {
