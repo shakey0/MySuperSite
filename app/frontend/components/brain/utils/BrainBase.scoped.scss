@@ -38,5 +38,35 @@
         pointer-events: none;
       }
     }
+
+    .menu {
+      @extend %center-column;
+      gap: 16px;
+      position: absolute;
+      top: 72px;
+      right: 0;
+      background: var(--darker-background);
+      border: 2px solid var(--cyberpunk-orange);
+      border-radius: 4px;
+      padding: 20px 18px;
+      z-index: 1;
+
+      .menu__option {
+        cursor: pointer;
+
+        a, button {
+          @extend %button-default;
+          text-decoration: none;
+          color: (var(--standard-white));
+          font-size: 22px;
+        }
+
+        &:hover {
+          a, button {
+            color: var(--whiter-orange);
+          }
+        }
+      }
+    }
   }
 }

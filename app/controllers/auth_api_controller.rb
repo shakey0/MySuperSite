@@ -1,6 +1,6 @@
 class AuthApiController < ApplicationController
   before_action :authenticate_user!, only: [ :log_out ]
-  before_action :require_no_user!, only: [ :log_in, :sign_up ]
+  before_action :require_no_user!, only: [ :log_in, :sign_up, :forgot_password ]
 
   def log_in
     permitted_params = params.require(:auth_api).permit(:email, :password)
@@ -84,7 +84,7 @@ class AuthApiController < ApplicationController
     password = permitted_params[:password].strip.gsub(/[[:cntrl:]]/, "")
 
     if password.length < 8
-      render json: { outcome: "failed", errors: ["Password must be at least 8 characters."] }
+      render json: { outcome: "failed", errors: [ "Password must be at least 8 characters." ] }
       return
     end
 
