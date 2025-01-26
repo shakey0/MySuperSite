@@ -79,6 +79,6 @@ class UserData
     }
     get_dymamo_db_client.put_item(params)
 
-    return true
+    true
   end
 end

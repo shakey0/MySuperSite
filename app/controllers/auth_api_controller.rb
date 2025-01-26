@@ -4,8 +4,8 @@ class AuthApiController < ApplicationController
 
   def log_in
     permitted_params = params.require(:auth_api).permit(:email, :password)
-    email = permitted_params[:email].strip.downcase.gsub(/[[:cntrl:]]/, '')
-    password = permitted_params[:password].strip.gsub(/[[:cntrl:]]/, '')    
+    email = permitted_params[:email].strip.downcase.gsub(/[[:cntrl:]]/, "")
+    password = permitted_params[:password].strip.gsub(/[[:cntrl:]]/, "")
 
     user = UserData.get_user_by_email(email)
 
@@ -50,8 +50,8 @@ class AuthApiController < ApplicationController
 
   def sign_up
     permitted_params = params.require(:auth_api).permit(:name, :email, :from_section)
-    name = permitted_params[:name].strip.gsub(/[[:cntrl:]]/, '')
-    email = permitted_params[:email].strip.downcase.gsub(/[[:cntrl:]]/, '')
+    name = permitted_params[:name].strip.gsub(/[[:cntrl:]]/, "")
+    email = permitted_params[:email].strip.downcase.gsub(/[[:cntrl:]]/, "")
 
     user = UserData.get_user_by_email(email)
 
@@ -81,7 +81,7 @@ class AuthApiController < ApplicationController
   def set_password
     permitted_params = params.require(:auth_api).permit(:auth_token, :password)
     auth_token = permitted_params[:auth_token]
-    password = permitted_params[:password].strip.gsub(/[[:cntrl:]]/, '')
+    password = permitted_params[:password].strip.gsub(/[[:cntrl:]]/, "")
 
     user_data = $redis.get("auth_token_b:#{auth_token}")
 

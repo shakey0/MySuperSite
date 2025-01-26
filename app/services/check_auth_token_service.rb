@@ -16,6 +16,6 @@ class CheckAuthTokenService
     $redis.del("auth_token:#{@token}")
     $redis.set("auth_token_b:#{@token}", user_data, ex: 5.minutes)
 
-    return { valid: true }
+    { valid: true }
   end
 end
