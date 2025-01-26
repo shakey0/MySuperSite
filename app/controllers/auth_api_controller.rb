@@ -4,24 +4,27 @@ class AuthApiController < ApplicationController
 
   def log_in
     permitted_params = params.require(:auth_api).permit(:email, :password)
-    email = permitted_params[:email].strip.downcase
-    password = permitted_params[:password].strip
+    email = permitted_params[:email].strip.downcase.gsub(/[[:cntrl:]]/, '')
+    password = permitted_params[:password].strip.gsub(/[[:cntrl:]]/, '')    
 
     user = UserData.get_user_by_email(email)
 
     # if user && BCrypt::Password.new(user["password"]) == password # THIS IS FOR WHEN BCRYPT IS IMPLEMENTED
     if user && user["password"] == password
       session_token = SecureRandom.alphanumeric(64)
+
       set_user_session_cookie(user["id"], session_token)
+
+      hashed_session_token = BCrypt::Password.create(session_token)
       user["active_sessions"] << {
-        "key" => session_token,
+        "key" => hashed_session_token,
         "created_at" => Time.now.iso8601
       }
 
       # Clean up expired sessions that are older than 1 year
       user["active_sessions"].select! { |session| Time.parse(session["created_at"]) > 1.year.ago }
 
-      UserData.update_user(user)
+      UserData.update_user_sessions(user)
 
       render json: { outcome: "success" }
     else
@@ -35,9 +38,9 @@ class AuthApiController < ApplicationController
     session_token = session_data["session_token"]
 
     user = UserData.get_user_by_id(user_id)
-    user["active_sessions"].reject! { |session| session["key"] == session_token }
+    user["active_sessions"].reject! { |session| BCrypt::Password.new(session["key"]) == session_token }
 
-    UserData.update_user(user)
+    UserData.update_user_sessions(user)
 
     $redis.del("user:#{user_id}")
 
@@ -47,11 +50,37 @@ class AuthApiController < ApplicationController
   end
 
   def sign_up
-    # Create a new user with the provided secrets and encypt them all with bcrypt
-    # Remember to downcase and gsub the secrets to remove any punctuation, whitespace, or control characters
-    # Remember to gsub the name to remove any punctuation or control characters
-    # Remember to set the active_sessions to an empty array
-    # Remember to set the id to a SecureRandom.alphanumeric(9)
+    # validate the email
+    # downcase the email
+    # if the email is already taken, return an error
+
+    permitted_params = params.require(:auth_api).permit(:name, :email, :from_section)
+    name = permitted_params[:name].strip.gsub(/[[:cntrl:]]/, '')
+    email = permitted_params[:email].strip.downcase.gsub(/[[:cntrl:]]/, '')
+
+    user = UserData.get_user_by_email(email)
+
+    if user
+      render json: { outcome: "failed", errors: [ "Email is already taken" ] }
+    else
+      # Cache the email as a key for 30 seconds to prevent multiple sign up requests while checking if it's cached
+      unless $redis.set("email:#{email}", "1", nx: true, ex: 30)
+        render json: { outcome: "failed", errors: [ "Check your inbox for the invitation email." ] }
+        return
+      end
+
+      temp_user = { "name" => name, "email" => email }
+
+      auth_token = SecureRandom.alphanumeric(64)
+
+      $redis.set("auth_token:#{auth_token}", temp_user.to_json, ex: 10.minutes)
+
+      # Send the auth_token to the user's email
+      from_section = permitted_params[:from_section]
+      puts "Link: http://localhost:5100/#{from_section}/auth?auth_token=#{auth_token}"
+
+      render json: { outcome: "success", message: "An invitation email has been sent to your email address. It will be valid for 10 minutes and can only be clicked once." }
+    end
   end
 
   private

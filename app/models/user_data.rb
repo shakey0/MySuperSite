@@ -13,10 +13,8 @@ class UserData
 
       cache_user(user_data)
     else
-      user_data = JSON.parse(user_data)
+      JSON.parse(user_data)
     end
-
-    user_data
   end
 
   # Query the users table using the GSI
@@ -31,10 +29,10 @@ class UserData
     }
     response = get_dymamo_db_client.query(params)
 
-    response.items.first
+    response.items.first # Return the first user (with the password included (only in this case))
   end
 
-  def self.update_user(user)
+  def self.update_user_sessions(user)
     params = {
       table_name: "users",
       key: {
@@ -49,13 +47,12 @@ class UserData
     response = get_dymamo_db_client.update_item(params)
 
     cache_user(response.attributes)
-
-    response.attributes
   end
 
   def self.cache_user(user)
     user.delete("password")
     $redis.set("user:#{user["id"]}", user.to_json, ex: 1.hour)
+    user
   end
 
   def self.get_dymamo_db_client

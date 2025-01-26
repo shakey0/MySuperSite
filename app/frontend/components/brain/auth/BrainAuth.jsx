@@ -74,7 +74,7 @@ export default function Brain() {
         if (process === "log_in") 
           window.location.href = '/brain';
         else if (process === "sign_up")
-          setAuthMessages(["An invitation email has been sent to your email address. It will be valid for 10 minutes."]);
+          setAuthMessages([responseData.message]);
         else if (process === "set_password")
           window.location.href = '/brain/auth?message=password_set';
       } else {
@@ -85,7 +85,9 @@ export default function Brain() {
       console.error('Error during auth process:', error);
     }
     finally {
-      setIsSubmitting(false);
+      setTimeout(() => {
+        setIsSubmitting(false);
+      }, 3000);
     }
   }
 

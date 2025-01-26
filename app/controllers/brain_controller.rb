@@ -6,8 +6,14 @@ class BrainController < ApplicationController
   end
 
   def auth
-    auth_token = params.permit(:auth_token)[:auth_token]
-    # Need a check_auth_token_service here that validates the auth_token and invalidates it if it's valid
-    # If the auth_token is not valid, render the index page with a message param saying the link has expired or is invalid
+    permitted_params = params.permit(:auth_token, :message)
+    auth_token = permitted_params[:auth_token]
+    if auth_token
+      check_auth_token_service = CheckAuthTokenService.new(auth_token)
+      result = check_auth_token_service.check_and_reassign_token
+      unless result[:valid]
+        redirect_to brain_auth_path(message: result[:message])
+      end
+    end
   end
 end

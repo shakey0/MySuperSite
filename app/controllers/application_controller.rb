@@ -29,7 +29,7 @@ class ApplicationController < ActionController::Base
       user = UserData.get_user_by_id(user_id)
 
       # Check if the session token exists in active_sessions and it's less than 1 year old
-      is_valid_session = user["active_sessions"].any? { |session| session["key"] == session_token && Time.parse(session["created_at"]) > 1.year.ago }
+      is_valid_session = user["active_sessions"].any? { |session| BCrypt::Password.new(session["key"]) == session_token && Time.parse(session["created_at"]) > 1.year.ago }
 
       @current_user = is_valid_session ? user : nil
     rescue JSON::ParserError
