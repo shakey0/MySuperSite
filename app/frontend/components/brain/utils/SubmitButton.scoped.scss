@@ -1,0 +1,15 @@
+@import '../BrainVars.scss';
+
+.submit-button {
+  @extend %button-default;
+  @extend %dark-element;
+  border-radius: 100px;
+  margin-top: 10px;
+  padding: 14px 40px;
+  font-size: 26px;
+  box-shadow: 0 0 8px var(--clear-blue);
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}

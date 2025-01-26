@@ -3,17 +3,12 @@ import '../BrainFeatures.scss';
 import BrainBase from '../utils/BrainBase';
 import './BrainAuth.scoped.scss';
 import validateForm from './validateForm';
+import { getFormFields, getSignUpInfo, getSetPasswordInfo } from '../../shared/authConstants';
+import InfoMessage from '../../shared/InfoMessage';
 import AuthField from './AuthField';
 import SubmitButton from '../utils/SubmitButton';
 
-const getFormFields = [
-  { label: 'Name/Nickname', name: 'name', type: 'text' },
-  { label: 'Email', name: 'email', type: 'text' },
-  { label: 'Password', name: 'password', type: 'password' },
-  { label: 'Confirm password', name: 'confirm_password', type: 'password' },
-];
-
-export default function Brain() {
+export default function BrainAuth() {
   const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [authMessages, setAuthMessages] = useState([]);
@@ -166,9 +161,9 @@ export default function Brain() {
 
             <form className="auth-form sign-up" onSubmit={handleSubmit}>
               <div className="into-container">
-                <p>This sign up will be valid for all services across shakey0.co.uk that require an account.</p>
-                <p>shakey0.co.uk will use cookies to quickly identify your account and make your experience as smooth as possible.</p>
-                <p>By signing up, you agree to the <b>Terms of Service</b> and <b>Privacy Policy</b>.</p>
+                {getSignUpInfo.map((message, index) => (
+                  <InfoMessage key={index} message={message} />
+                ))}
               </div>
               {/* https://chatgpt.com/c/6787a022-dd64-8004-b203-b8a1014ff4d2 - HANDLING USER SESSIONS WITH DYNAMODB */}
               {/* https://chatgpt.com/c/6787d5a5-d024-8004-a997-37327f05f4cc - HANDLING ITEMS - KNOWLEDGE/LOGIC/MATH - DATA WITH DYNAMODB */}
@@ -182,9 +177,9 @@ export default function Brain() {
         ) : (
           <form className="auth-form set-password active" style={{ opacity: 1 }} onSubmit={handleSubmit}>
             <div className="into-container">
-              <p>Set a password for your shakey0.co.uk account.</p>
-              <p>This password will be used to log in to all services across shakey0.co.uk</p>
-              <p>Your password must be at least 8 characters long.</p>
+              {getSetPasswordInfo.map((message, index) => (
+                <InfoMessage key={index} message={message} />
+              ))}
             </div>
             <input type="hidden" name="auth_token" value={authToken} />
             {getFormFields.slice(2, 4).map((field) => (

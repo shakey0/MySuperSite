@@ -1,3 +1,5 @@
+import './AuthField.scoped.scss'
+
 const AuthField = ({ field }) => {
   return (
     <div className="input-container" key={field.name}>

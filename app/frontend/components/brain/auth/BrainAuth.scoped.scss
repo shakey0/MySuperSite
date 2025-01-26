@@ -1,4 +1,3 @@
-@import '../BrainColors.scss';
 @import '../BrainVars.scss';
 
 .main-container {
@@ -72,69 +71,6 @@
       display: flex;
     }
 
-    .into-container {
-      @extend %start-column;
-      max-width: 98%;
-      background: var(--lighter-background);
-      padding: 16px;
-      border: 2px solid var(--clear-blue);
-      border-radius: 8px;
-      gap: 8px;
-      margin: 32px 0 8px;
-
-      p {
-        position: relative;
-        color: var(--standard-white);
-        font-size: 18px;
-        padding-left: 22px;
-
-        &::before {
-          content: "•";
-          position: absolute;
-          left: 0;
-          top: -4px;
-          font-size: 1.5em;
-          color: var(--standard-white);
-        }
-
-        b {
-          @extend %button-default;
-          color: var(--clear-blue);
-          text-decoration: underline;
-
-          &:hover {
-            color: var(--whiter-blue);
-          }
-        }
-      }
-    }
-
-    .input-container {
-      @extend %start-column;
-      width: 440px;
-      max-width: 98%;
-      gap: 8px;
-
-      label {
-        color: var(--standard-white);
-        font-size: 20px;
-        margin-right: 16px;
-      }
-
-      input {
-        @extend %dark-element;
-        border-radius: 4px;
-        padding: 12px;
-        font-size: 20px;
-        transition: all 0.3s;
-
-        &:focus {
-          outline: none;
-          border: 2px solid var(--standard-white);
-        }
-      }
-    }
-
     .forgot-password {
       @extend %button-default;
       color: var(--shiny-gray);
@@ -142,20 +78,6 @@
 
       &:hover {
         color: var(--whiter-gray);
-      }
-    }
-
-    .submit-button {
-      @extend %button-default;
-      @extend %dark-element;
-      border-radius: 100px;
-      margin-top: 10px;
-      padding: 14px 40px;
-      font-size: 26px;
-      box-shadow: 0 0 8px var(--clear-blue);
-
-      &:hover {
-        transform: scale(1.1);
       }
     }
   }

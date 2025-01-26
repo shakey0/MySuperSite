@@ -94,7 +94,7 @@ class AuthApiController < ApplicationController
 
       $redis.del("auth_token_b:#{auth_token}")
 
-      render json: { outcome: "success" }
+      render json: { outcome: "success", message: "Your password has been set and your account is ready! Please log in." }
     end
   end
 

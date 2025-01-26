@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=ABeeZee:wght@400;700&ital@0;1&display=swap');
+@import './BrainVars.scss';
 
 h1, h2, h3, h4, h5, h6, p {
   margin: 0;
@@ -10,4 +11,43 @@ h1, h2, h3, h4, h5, h6, p {
   -webkit-user-select: none; /* Safari */
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* IE 10+ */
+}
+
+// SHARED ELEMENT STYLES
+
+.into-container {
+  @extend %start-column;
+  max-width: 98%;
+  background: var(--lighter-background);
+  padding: 16px;
+  border: 2px solid var(--clear-blue);
+  border-radius: 8px;
+  gap: 8px;
+  margin: 32px 0 8px;
+
+  p {
+    position: relative;
+    color: var(--standard-white);
+    font-size: 18px;
+    padding-left: 22px;
+
+    &::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      top: -4px;
+      font-size: 1.5em;
+      color: var(--standard-white);
+    }
+
+    a {
+      @extend %button-default;
+      color: var(--clear-blue);
+      text-decoration: underline;
+
+      &:hover {
+        color: var(--whiter-blue);
+      }
+    }
+  }
 }
