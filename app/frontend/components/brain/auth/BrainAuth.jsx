@@ -71,6 +71,8 @@ export default function BrainAuth() {
           setAuthMessages([responseData.message]);
         else if (process === "set_password")
           window.location.href = `/brain/auth?message=${responseData.message}`;
+        else if (process === "forgot_password")
+          setAuthMessages([responseData.message]);
       } else {
         if (process === "set_password") {
           window.location.href = `/brain/auth?message=${responseData.message}`;
@@ -155,6 +157,7 @@ export default function BrainAuth() {
               <div className="into-container">
                 <p>Enter your email address to receive a password reset link.</p>
               </div>
+              <input type="hidden" name="from_section" value="brain" />
               <AuthField field={getFormFields[1]} />
               <SubmitButton text="Send password reset link" isSubmitting={isSubmitting} />
             </form>
@@ -165,7 +168,6 @@ export default function BrainAuth() {
                   <InfoMessage key={index} message={message} />
                 ))}
               </div>
-              {/* https://chatgpt.com/c/6787a022-dd64-8004-b203-b8a1014ff4d2 - HANDLING USER SESSIONS WITH DYNAMODB */}
               {/* https://chatgpt.com/c/6787d5a5-d024-8004-a997-37327f05f4cc - HANDLING ITEMS - KNOWLEDGE/LOGIC/MATH - DATA WITH DYNAMODB */}
               <input type="hidden" name="from_section" value="brain" />
               {getFormFields.slice(0, 2).map((field) => (

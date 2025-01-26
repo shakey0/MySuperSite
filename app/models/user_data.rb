@@ -81,4 +81,20 @@ class UserData
 
     true
   end
+
+  def self.update_user_password(user, password)
+    params = {
+      table_name: "users",
+      key: {
+        "id" => user["id"]
+      },
+      update_expression: "SET password = :password",
+      expression_attribute_values: {
+        ":password" => BCrypt::Password.create(password)
+      }
+    }
+    get_dymamo_db_client.update_item(params)
+
+    true
+  end
 end

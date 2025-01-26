@@ -52,6 +52,7 @@ class AuthApiController < ApplicationController
     permitted_params = params.require(:auth_api).permit(:name, :email, :from_section)
     name = permitted_params[:name].strip.gsub(/[[:cntrl:]]/, "")
     email = permitted_params[:email].strip.downcase.gsub(/[[:cntrl:]]/, "")
+    from_section = permitted_params[:from_section]
 
     user = UserData.get_user_by_email(email)
 
@@ -66,13 +67,7 @@ class AuthApiController < ApplicationController
 
       temp_user = { "name" => name, "email" => email }
 
-      auth_token = SecureRandom.alphanumeric(64)
-
-      $redis.set("auth_token:#{auth_token}", temp_user.to_json, ex: 10.minutes)
-
-      # Send the auth_token to the user's email
-      from_section = permitted_params[:from_section]
-      puts "Link: http://localhost:5100/#{from_section}/auth?auth_token=#{auth_token}"
+      set_auth_token_and_send_email(temp_user, from_section)
 
       render json: { outcome: "success", message: "An invitation email has been sent to your email address. It will be valid for 10 minutes and can only be clicked once." }
     end
@@ -90,11 +85,49 @@ class AuthApiController < ApplicationController
     else
       user = JSON.parse(user_data)
 
-      UserData.create_user(user["name"], user["email"], password)
+      # Check if email is cached in redis
+      if $redis.get("email_for_auth:#{user["email"]}")
+        render json: { outcome: "failed", message: "Your password has recently been set. Please log in. If you didn't set or reset your password, please contact me. You can only reset your password once every 10 minutes." }
+        return
+      end
+
+      if user["id"]
+        # The user already exists, so update the password
+        UserData.update_user_password(user, password)
+      else
+        UserData.create_user(user["name"], user["email"], password)
+      end
 
       $redis.del("auth_token_b:#{auth_token}")
 
+      # Cache the email in redis for 10 minutes to prevent multiple password set requests
+      $redis.set("email_for_auth:#{user["email"]}", "1", ex: 10 * 60)
+
       render json: { outcome: "success", message: "Your password has been set and your account is ready! Please log in." }
+    end
+  end
+
+  def forgot_password
+    permitted_params = params.require(:auth_api).permit(:email, :from_section)
+    email = permitted_params[:email].strip.downcase.gsub(/[[:cntrl:]]/, "")
+    from_section = permitted_params[:from_section]
+
+    unless $redis.set("email:#{email}", "1", nx: true, ex: 30)
+      render json: { outcome: "failed", errors: ["Check your inbox for the password reset email."] }
+      return
+    end
+
+    universal_message = "A password reset link has been emailed to you (if you have an account). It will be valid for 10 minutes and can only be clicked once."
+
+    user = UserData.get_user_by_email(email)
+
+    if user
+      user.delete("password")
+      set_auth_token_and_send_email(user, from_section)
+
+      render json: { outcome: "success", message: universal_message }
+    else
+      render json: { outcome: "failed", errors: [universal_message] }
     end
   end
 
@@ -112,5 +145,14 @@ class AuthApiController < ApplicationController
       secure: Rails.env.production?,
       domain: Rails.env.production? ? ".shakey0.co.uk" : nil
     }
+  end
+
+  def set_auth_token_and_send_email(user, from_section)
+    auth_token = SecureRandom.alphanumeric(64)
+
+    $redis.set("auth_token:#{auth_token}", user.to_json, ex: 10.minutes)
+
+    # Send the auth_token to the user's email
+    puts "Link: http://localhost:5100/#{from_section}/auth?auth_token=#{auth_token}"
   end
 end
