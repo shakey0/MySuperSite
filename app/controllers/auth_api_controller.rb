@@ -113,7 +113,7 @@ class AuthApiController < ApplicationController
     from_section = permitted_params[:from_section]
 
     unless $redis.set("email:#{email}", "1", nx: true, ex: 30)
-      render json: { outcome: "failed", errors: ["Check your inbox for the password reset email."] }
+      render json: { outcome: "failed", errors: [ "Check your inbox for the password reset email." ] }
       return
     end
 
@@ -127,7 +127,7 @@ class AuthApiController < ApplicationController
 
       render json: { outcome: "success", message: universal_message }
     else
-      render json: { outcome: "failed", errors: [universal_message] }
+      render json: { outcome: "failed", errors: [ universal_message ] }
     end
   end
 
