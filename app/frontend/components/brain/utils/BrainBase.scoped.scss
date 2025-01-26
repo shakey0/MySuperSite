@@ -49,7 +49,15 @@
       border: 2px solid var(--cyberpunk-orange);
       border-radius: 4px;
       padding: 20px 18px;
-      z-index: 1;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 300ms ease, visibility 300ms ease;
+      z-index: 2;
+
+      &.open {
+        opacity: 1;
+        visibility: visible;
+      }
 
       .menu__option {
         cursor: pointer;
@@ -67,6 +75,10 @@
           }
         }
       }
+    }
+
+    @media (max-width: 768px) {
+      position: relative;
     }
   }
 }

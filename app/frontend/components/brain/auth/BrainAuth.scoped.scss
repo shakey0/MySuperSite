@@ -47,6 +47,7 @@
       &.active {
         transform: scale(1.125);
         color: var(--whiter-blue);
+        z-index: 1;
       }
     }
   }

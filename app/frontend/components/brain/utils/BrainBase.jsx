@@ -29,8 +29,12 @@ const BrainBase = ({ header, showButtons, backPath, children }) => {
     { name: "About Brain", path: "/brain/about", newTab: false },
     { name: "shakey0.co.uk", path: "/", newTab: true },
     { name: "Contact me", path: "/contact", newTab: true },
-    { name: "Log out", onClick: handleLogOut },
   ];
+
+  const userSessionCookie = document.cookie.split(';').find(cookie => cookie.includes('user_session'));
+  if (userSessionCookie) {
+    menuOptions.push({ name: "Log out", onClick: handleLogOut });
+  }
 
   useEffect(() => {
     const closeMenu = () => setMenuOpen(false);
@@ -42,7 +46,7 @@ const BrainBase = ({ header, showButtons, backPath, children }) => {
 
   const toggleMenu = (e) => {
     e.stopPropagation();
-    setMenuOpen(!menuOpen);
+    setMenuOpen((prev) => !prev);
   }
 
   return (
@@ -64,27 +68,25 @@ const BrainBase = ({ header, showButtons, backPath, children }) => {
           <MenuIcon />
         </div>
 
-        {menuOpen && (
-          <div className="menu">
-            {menuOptions.map((option, index) => (
-              <div key={index} className="menu__option">
-                {option.newTab ? (
-                  <a href={option.path} target="_blank" rel="noreferrer">
-                    {option.name}
-                  </a>
-                ) : option.onClick ? (
-                  <button onClick={option.onClick}>
-                    {option.name}
-                  </button>
-                ) : (
-                  <a href={option.path}>
-                    {option.name}
-                  </a>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
+        <div className={`menu ${menuOpen ? "open" : ""}`}>
+          {menuOptions.map((option, index) => (
+            <div key={index} className="menu__option">
+              {option.newTab ? (
+                <a href={option.path} target="_blank" rel="noreferrer">
+                  {option.name}
+                </a>
+              ) : option.onClick ? (
+                <button onClick={option.onClick}>
+                  {option.name}
+                </button>
+              ) : (
+                <a href={option.path}>
+                  {option.name}
+                </a>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
       <div className="brain-base__content">
         {children}
