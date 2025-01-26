@@ -9,8 +9,7 @@ class AuthApiController < ApplicationController
 
     user = UserData.get_user_by_email(email)
 
-    # if user && BCrypt::Password.new(user["password"]) == password # THIS IS FOR WHEN BCRYPT IS IMPLEMENTED
-    if user && user["password"] == password
+    if user && BCrypt::Password.new(user["password"]) == password
       session_token = SecureRandom.alphanumeric(64)
 
       set_user_session_cookie(user["id"], session_token)
@@ -50,10 +49,6 @@ class AuthApiController < ApplicationController
   end
 
   def sign_up
-    # validate the email
-    # downcase the email
-    # if the email is already taken, return an error
-
     permitted_params = params.require(:auth_api).permit(:name, :email, :from_section)
     name = permitted_params[:name].strip.gsub(/[[:cntrl:]]/, '')
     email = permitted_params[:email].strip.downcase.gsub(/[[:cntrl:]]/, '')
@@ -80,6 +75,26 @@ class AuthApiController < ApplicationController
       puts "Link: http://localhost:5100/#{from_section}/auth?auth_token=#{auth_token}"
 
       render json: { outcome: "success", message: "An invitation email has been sent to your email address. It will be valid for 10 minutes and can only be clicked once." }
+    end
+  end
+
+  def set_password
+    permitted_params = params.require(:auth_api).permit(:auth_token, :password)
+    auth_token = permitted_params[:auth_token]
+    password = permitted_params[:password].strip.gsub(/[[:cntrl:]]/, '')
+
+    user_data = $redis.get("auth_token_b:#{auth_token}")
+
+    if user_data.nil?
+      render json: { outcome: "failed", message: "This link has timed out. Please request a new one." }
+    else
+      user = JSON.parse(user_data)
+
+      UserData.create_user(user["name"], user["email"], password)
+
+      $redis.del("auth_token_b:#{auth_token}")
+
+      render json: { outcome: "success" }
     end
   end
 

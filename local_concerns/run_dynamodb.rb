@@ -1,5 +1,6 @@
 require 'open3'
 require 'json'
+require 'bcrypt'
 
 def run_command(command)
   puts "Running: #{command}"
@@ -46,11 +47,12 @@ CMD
 run_command(create_table_command)
 
 # Step 3: Seed the `users` table with a sample user
+password = BCrypt::Password.create("password")
 user_data = {
   "id" => { "S" => "rJ3P02N1d" },
   "name" => { "S" => "Johnny Boy" },
   "email" => { "S" => "johnny_walker@gmail.com" },
-  "password" => { "S" => "onthemoon" },
+  "password" => { "S" => password },
   "active_sessions" => { "L" => [] },
   "preferences" => { "M" => {} },
   "permissions" => { "M" => {} }

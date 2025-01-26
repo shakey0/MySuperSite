@@ -4,6 +4,17 @@
 .main-container {
   @extend %center-column;
 
+  .message-container {
+    p {
+      color: var(--standard-white);
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+      line-height: 1.4;
+      margin-top: 28px;
+    }
+  }
+
   .tabs-container {
     @extend %center-row;
     margin-top: 60px;

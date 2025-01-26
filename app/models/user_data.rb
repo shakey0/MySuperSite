@@ -61,4 +61,24 @@ class UserData
       endpoint: "http://localhost:8000"
     )
   end
+
+  def self.create_user(name, email, password)
+    user = {
+      "id" => SecureRandom.alphanumeric(9),
+      "name" => name,
+      "email" => email,
+      "password" => BCrypt::Password.create(password),
+      "active_sessions" => [],
+      "preferences" => {},
+      "permissions" => {}
+    }
+
+    params = {
+      table_name: "users",
+      item: user
+    }
+    get_dymamo_db_client.put_item(params)
+
+    return true
+  end
 end

@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   post "log_in", to: "auth_api#log_in", as: "auth_api_log_in"
   delete "log_out", to: "auth_api#log_out", as: "auth_api_log_out"
   post "sign_up", to: "auth_api#sign_up", as: "auth_api_sign_up"
+  post "set_password", to: "auth_api#set_password", as: "auth_api_set_password"
 
   get "brain", to: "brain#index", as: "brain_index"
   get "brain/auth", to: "brain#auth", as: "brain_auth"

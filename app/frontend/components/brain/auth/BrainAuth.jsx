@@ -11,10 +11,7 @@ const getFormFields = [
   { label: 'Email', name: 'email', type: 'text' },
   { label: 'Password', name: 'password', type: 'password' },
   { label: 'Confirm password', name: 'confirm_password', type: 'password' },
-]
-
-// ADD SET_PASSWORD STUFF TO THIS NEXT !!!!!!!!! Then fix the backend for the login, do the sign up, then do the set password routes
-// DynamoDB seed script needs amending
+];
 
 export default function Brain() {
   const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -57,6 +54,8 @@ export default function Brain() {
       return;
     }
 
+    if (process === "set_password") delete data.confirm_password;
+
     try {
       const response = await fetch(`/${process}`, {
         method: 'POST',
@@ -76,9 +75,13 @@ export default function Brain() {
         else if (process === "sign_up")
           setAuthMessages([responseData.message]);
         else if (process === "set_password")
-          window.location.href = '/brain/auth?message=password_set';
+          window.location.href = `/brain/auth?message=${responseData.message}`;
       } else {
-        setAuthMessages(responseData.errors);
+        if (process === "set_password") {
+          window.location.href = `/brain/auth?message=${responseData.message}`;
+        } else {
+          setAuthMessages(responseData.errors);
+        }
       }
     }
     catch (error) {
@@ -130,6 +133,12 @@ export default function Brain() {
   return (
     <BrainBase header={`${authToken ? "shakey0.co.uk - set password": "Sign in to use Brain"}`}>
       <div className="main-container">
+        {message && (
+          <div className="message-container">
+            <p>{message}</p>
+          </div>
+        )}
+
         {!authToken ? (
           <>
             <div className="tabs-container">
