@@ -60,7 +60,7 @@ gem "vite_rails"
 gem "httparty"
 
 group :development do
-  gem 'letter_opener'
+  gem "letter_opener"
 end
 
 gem "aws-sdk-cloudfront"
