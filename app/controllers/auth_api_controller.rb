@@ -178,6 +178,9 @@ class AuthApiController < ApplicationController
     $redis.set("auth_token:#{auth_token}", user.to_json, ex: 10.minutes)
 
     # Send the auth_token to the user's email
-    puts "Link: http://localhost:5100/#{from_section}/auth?auth_token=#{auth_token}"
+    domain = Rails.env.production? ? "https://shakey0.co.uk" : "http://localhost:5100"
+    link = "#{domain}/#{from_section}/auth?auth_token=#{auth_token}"
+    UserMailer.welcome_email(user, link).deliver_now
+    puts "Link: #{link}" # FOR DEVELOPMENT ONLY - REMOVE IN PRODUCTION
   end
 end
