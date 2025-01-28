@@ -168,7 +168,8 @@ class AuthApiController < ApplicationController
       expires: 1.year.from_now,
       httponly: true,
       secure: Rails.env.production?,
-      domain: Rails.env.production? ? ".shakey0.co.uk" : nil
+      domain: Rails.env.production? ? ".shakey0.co.uk" : nil,
+      same_site: Rails.env.production? ? :strict : nil
     }
   end
 
