@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@vitejs/plugin-react": "^4.3.3",
+    "@vitejs/plugin-react": "^4.3.4",
     "color": "^4.2.3",
     "i18next": "^24.0.5",
     "react": "^18.3.1",
