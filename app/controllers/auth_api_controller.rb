@@ -10,20 +10,7 @@ class AuthApiController < ApplicationController
     user = UserData.get_user_by_email(email)
 
     if user && BCrypt::Password.new(user["password"]) == password
-      session_token = SecureRandom.alphanumeric(64)
-
-      set_user_session_cookie(user["id"], session_token)
-
-      hashed_session_token = BCrypt::Password.create(session_token)
-      user["active_sessions"] << {
-        "key" => hashed_session_token,
-        "created_at" => Time.now.iso8601
-      }
-
-      # Clean up expired sessions that are older than 1 year
-      user["active_sessions"].select! { |session| Time.parse(session["created_at"]) > 1.year.ago }
-
-      UserData.update_user_sessions(user)
+      set_user_session_cookie(user, true)
 
       render json: { outcome: "success_and_redirect_to_root" }
     else
@@ -157,21 +144,6 @@ class AuthApiController < ApplicationController
   end
 
   private
-
-  def set_user_session_cookie(user_id, session_token)
-    session_data = {
-      user_id: user_id,
-      session_token: session_token
-    }
-    cookies.signed[:user_session] = {
-      value: session_data.to_json,
-      expires: 1.year.from_now,
-      httponly: true,
-      secure: Rails.env.production?,
-      domain: Rails.env.production? ? ".shakey0.co.uk" : nil,
-      same_site: Rails.env.production? ? :strict : nil
-    }
-  end
 
   def set_auth_token_and_send_email(user, from_section) # Add a param for invitation email of type boolean
     auth_token = SecureRandom.alphanumeric(64)

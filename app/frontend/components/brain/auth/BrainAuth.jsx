@@ -46,6 +46,9 @@ export default function BrainAuth() {
     if (errors.length > 0) {
       setAuthMessages(errors);
       setIsSubmitting(false);
+      setTimeout(() => {
+        setAuthMessages([]);
+      }, 6000);
       return;
     }
 
@@ -74,6 +77,9 @@ export default function BrainAuth() {
         setAuthMessages([responseMessage]);
       } else { // "failed"
         setAuthMessages(responseData.errors);
+        setTimeout(() => {
+          setAuthMessages([]);
+        }, 6000);
       }
     }
     catch (error) {

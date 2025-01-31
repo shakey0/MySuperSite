@@ -32,15 +32,16 @@ class UserData
     response.items.first # Return the first user (with the password included (only in this case))
   end
 
-  def self.update_user_sessions(user)
+  def self.update_user_sessions(user) # Also updates the last login time
     params = {
       table_name: "users",
       key: {
         "id" => user["id"]  # The primary key
       },
-      update_expression: "SET active_sessions = :sessions",
+      update_expression: "SET active_sessions = :sessions, last_login = :last_login",
       expression_attribute_values: {
-        ":sessions" => user["active_sessions"]
+        ":sessions" => user["active_sessions"],
+        ":last_login" => Time.now.utc.to_s
       },
       return_values: "ALL_NEW"  # This will return the updated item
     }
