@@ -20,6 +20,8 @@ RSpec.describe Rack::Attack do
 
   describe "throttling" do
     before do
+      puts "Redis URL: #{ENV['REDIS_URL']}"
+      puts "Cache Store: #{Rack::Attack.cache.store.class}"
       Rack::Attack.cache.store.clear
     end
 
@@ -36,6 +38,9 @@ RSpec.describe Rack::Attack do
           post "/log_in", {}, headers
 
           if i >= 30
+            puts "Response Status: #{last_response.status}"
+            puts "Response Body: #{last_response.body}"
+            puts "Response Headers: #{last_response.headers}"
             expect(last_response.status).to eq(429)
             expect(last_response.headers["Content-Type"]).to eq("application/json")
             expect(last_response.headers).to include("Retry-After")
