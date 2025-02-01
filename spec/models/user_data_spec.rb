@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe UserData do
   let(:dynamodb_client) { instance_double(Aws::DynamoDB::Client) }
-  
+
   let(:user_data) do
     {
       "id" => "123abc",
@@ -70,7 +70,7 @@ RSpec.describe UserData do
       }
     end
 
-    let(:dynamodb_response) { instance_double(Aws::DynamoDB::Types::QueryOutput, items: [user_data]) }
+    let(:dynamodb_response) { instance_double(Aws::DynamoDB::Types::QueryOutput, items: [ user_data ]) }
 
     before do
       allow(dynamodb_client).to receive(:query).and_return(dynamodb_response)
@@ -195,7 +195,7 @@ RSpec.describe UserData do
         user_data.except("password").to_json,
         ex: 1.hour
       )
-      
+
       result = UserData.cache_user(user_data.dup)
       expect(result).to eq(user_data.except("password"))
     end

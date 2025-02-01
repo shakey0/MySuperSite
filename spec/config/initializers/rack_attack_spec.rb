@@ -8,7 +8,7 @@ RSpec.describe Rack::Attack do
   end
 
   let(:limit_period) { 1.minute }
-  
+
   describe "throttling" do
     before do
       # Clear any throttle data before each test
@@ -26,12 +26,12 @@ RSpec.describe Rack::Attack do
       it "throttles requests over the limit" do
         31.times do |i|
           post "/log_in"
-          
+
           if i >= 30
             expect(last_response.status).to eq(429)
             expect(last_response.headers["Content-Type"]).to eq("application/json")
             expect(last_response.headers).to include("Retry-After")
-            
+
             response_body = JSON.parse(last_response.body)
             expect(response_body["outcome"]).to eq("failed")
             expect(response_body["errors"]).to include("Too many login attempts. You'd better give it a minute.")
@@ -51,12 +51,12 @@ RSpec.describe Rack::Attack do
       it "throttles requests over the limit" do
         11.times do |i|
           post "/set_password"
-          
+
           if i >= 10
             expect(last_response.status).to eq(429)
             expect(last_response.headers["Content-Type"]).to eq("application/json")
             expect(last_response.headers).to include("Retry-After")
-            
+
             response_body = JSON.parse(last_response.body)
             expect(response_body["outcome"]).to eq("failed")
             expect(response_body["errors"]).to include("For security reasons, please wait a minute before trying again.")

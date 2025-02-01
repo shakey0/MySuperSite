@@ -58,8 +58,8 @@ group :development, :test do
 end
 
 group :test do
-  gem 'rack-test'
-  gem 'timecop'
+  gem "rack-test"
+  gem "timecop"
 end
 
 gem "rack-attack"
