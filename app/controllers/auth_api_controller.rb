@@ -52,7 +52,7 @@ class AuthApiController < ApplicationController
       render json: { outcome: "failed", errors: [ "This email is already taken." ] }
     else
       # Cache the email as a key for 30 seconds to prevent multiple sign up requests while checking if it's cached
-      unless $redis.set("email:#{email}", "1", nx: true, ex: 30)
+      unless $redis.set("set_password_link_sent:#{email}", "1", nx: true, ex: 30)
         render json: { outcome: "failed", errors: [ "Check your inbox for the invitation email." ] }
         return
       end
@@ -75,7 +75,7 @@ class AuthApiController < ApplicationController
       return
     end
 
-    user_data = $redis.get("auth_token_b:#{auth_token}")
+    user_data = $redis.get("auth_token:set_password_auth:#{auth_token}")
 
     if user_data.nil?
       render json: { outcome: "failed_and_redirect_to_auth", message: "This link has timed out. Please request a new one." }
@@ -83,7 +83,7 @@ class AuthApiController < ApplicationController
       user = JSON.parse(user_data)
 
       # Check if email is cached in redis
-      if $redis.get("email_for_auth:#{user["email"]}")
+      if $redis.get("auth_action_completed:#{user["email"]}")
         render json: {
           outcome: "failed_and_redirect_to_auth",
           message: "Your password reset has failed as this action has already been performed within the last 10 minutes. If you didn't set or reset your password, please contact me. Otherwise, please wait a bit before trying again."
@@ -98,10 +98,10 @@ class AuthApiController < ApplicationController
         UserData.create_user(user["name"], user["email"], password)
       end
 
-      $redis.del("auth_token_b:#{auth_token}")
+      $redis.del("auth_token:set_password_auth:#{auth_token}")
 
       # Cache the email in redis for 10 minutes to prevent multiple password set requests
-      $redis.set("email_for_auth:#{user["email"]}", "1", ex: 10 * 60)
+      $redis.set("auth_action_completed:#{user["email"]}", "1", ex: 10 * 60)
 
       render json: {
         outcome: "success_and_redirect_to_auth",
@@ -116,7 +116,7 @@ class AuthApiController < ApplicationController
     from_section = permitted_params[:from_section]
 
     # Check if email is cached in redis
-    if $redis.get("email_for_auth:#{email}")
+    if $redis.get("auth_action_completed:#{email}")
       render json: {
         outcome: "failed",
         errors: [ "You have already set or reset your password within the last 10 minutes. If you didn't do this, please contact me. Otherwise, please wait a bit before trying again." ]
@@ -124,7 +124,7 @@ class AuthApiController < ApplicationController
       return
     end
 
-    unless $redis.set("email:#{email}", "1", nx: true, ex: 30)
+    unless $redis.set("set_password_link_sent:#{email}", "1", nx: true, ex: 30)
       render json: { outcome: "failed", errors: [ "Check your inbox for the password reset email." ] }
       return
     end
@@ -148,7 +148,7 @@ class AuthApiController < ApplicationController
   def set_auth_token_and_send_email(user, from_section, is_sign_up = false)
     auth_token = SecureRandom.alphanumeric(64)
 
-    $redis.set("auth_token:#{auth_token}", user.to_json, ex: 10.minutes)
+    $redis.set("auth_token:set_password_link:#{auth_token}", user.to_json, ex: 10.minutes)
 
     # Send the auth_token to the user's email
     domain = Rails.env.production? ? "https://shakey0.co.uk" : "http://localhost:5100"

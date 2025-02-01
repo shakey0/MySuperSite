@@ -100,7 +100,7 @@ RSpec.describe AuthApiController, type: :controller do
     context 'with valid parameters' do
       before do
         allow(UserData).to receive(:get_user_by_email).with("new@example.com").and_return(nil)
-        allow($redis).to receive(:set).with("email:new@example.com", "1", nx: true, ex: 30).and_return(true)
+        allow($redis).to receive(:set).with("set_password_link_sent:new@example.com", "1", nx: true, ex: 30).and_return(true)
         allow(SecureRandom).to receive(:alphanumeric).and_return("random_token")
       end
 
@@ -159,8 +159,8 @@ RSpec.describe AuthApiController, type: :controller do
 
     context 'with valid auth token' do
       before do
-        allow($redis).to receive(:get).with("auth_token_b:valid_token").and_return(cached_user_data)
-        allow($redis).to receive(:get).with("email_for_auth:test@example.com").and_return(nil)
+        allow($redis).to receive(:get).with("auth_token:set_password_auth:valid_token").and_return(cached_user_data)
+        allow($redis).to receive(:get).with("auth_action_completed:test@example.com").and_return(nil)
       end
 
       it 'creates new user and sets password' do
@@ -186,7 +186,7 @@ RSpec.describe AuthApiController, type: :controller do
 
     context 'with expired auth token' do
       before do
-        allow($redis).to receive(:get).with("auth_token_b:valid_token").and_return(nil)
+        allow($redis).to receive(:get).with("auth_token:set_password_auth:valid_token").and_return(nil)
       end
 
       it 'returns expired token message' do
@@ -212,8 +212,8 @@ RSpec.describe AuthApiController, type: :controller do
     context 'with existing user' do
       before do
         allow(UserData).to receive(:get_user_by_email).with("test@example.com").and_return(valid_user)
-        allow($redis).to receive(:set).with("email:test@example.com", "1", nx: true, ex: 30).and_return(true)
-        allow($redis).to receive(:get).with("email_for_auth:test@example.com").and_return(nil)
+        allow($redis).to receive(:set).with("set_password_link_sent:test@example.com", "1", nx: true, ex: 30).and_return(true)
+        allow($redis).to receive(:get).with("auth_action_completed:test@example.com").and_return(nil)
       end
 
       it 'sends reset password email' do
@@ -226,7 +226,7 @@ RSpec.describe AuthApiController, type: :controller do
     context 'with non-existent user' do
       before do
         allow(UserData).to receive(:get_user_by_email).with("test@example.com").and_return(nil)
-        allow($redis).to receive(:set).with("email:test@example.com", "1", nx: true, ex: 30).and_return(true)
+        allow($redis).to receive(:set).with("set_password_link_sent:test@example.com", "1", nx: true, ex: 30).and_return(true)
       end
 
       it 'returns universal message' do
@@ -240,7 +240,7 @@ RSpec.describe AuthApiController, type: :controller do
 
     context 'when email is rate limited' do
       before do
-        allow($redis).to receive(:get).with("email_for_auth:test@example.com").and_return("1")
+        allow($redis).to receive(:get).with("auth_action_completed:test@example.com").and_return("1")
       end
 
       it 'returns rate limit message' do
