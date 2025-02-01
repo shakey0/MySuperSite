@@ -9,12 +9,12 @@ class Rack::Attack
     req.ip if req.path == "/set_password" && req.post?
   end
 
-  self.throttled_response = lambda do |env|
-    match_data = env["rack.attack.match_data"]
+  Rack::Attack.throttled_responder = lambda do |request|
+    match_data = request.env["rack.attack.match_data"]
     now = match_data[:epoch_time]
     retry_after = match_data[:period] - (now % match_data[:period])
 
-    throttle_key = env["rack.attack.matched"]
+    throttle_key = request.env["rack.attack.matched"]
     response_message = case throttle_key
     when "log_in"
       "Too many login attempts. You'd better give it a minute."

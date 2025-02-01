@@ -57,6 +57,11 @@ group :development, :test do
   gem "faker"
 end
 
+group :test do
+  gem 'rack-test'
+  gem 'timecop'
+end
+
 gem "rack-attack"
 
 gem "dotenv-rails", groups: [ :development, :test ]
