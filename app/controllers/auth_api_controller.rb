@@ -134,7 +134,7 @@ class AuthApiController < ApplicationController
     user = UserData.get_user_by_email(email)
 
     if user
-      user.delete("password")
+      user.delete("password") # Incredibly important as the set_auth_token_and_send_email method will store the user in Redis
       set_auth_token_and_send_email(user, from_section)
 
       render json: { outcome: "success", message: universal_message }

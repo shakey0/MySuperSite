@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
       if request.xhr? || request.content_type == "application/json"
         render json: { error: "Unauthorized access", status: :unauthorized }, status: :unauthorized
       else
-        redirect_to brain_auth_path # This will need to direct dynamically to the correct path in the future
+        redirect_to brain_auth_path # !!!!! This will need to direct dynamically to the correct path in the future !!!!!
       end
     end
   end
@@ -19,7 +19,7 @@ class ApplicationController < ActionController::Base
       if request.xhr? || request.content_type == "application/json"
         render json: { error: "Access not permitted for authenticated users", status: :forbidden }, status: :forbidden
       else
-        redirect_to brain_index_path # This will need to direct dynamically to the correct path in the future
+        redirect_to brain_index_path # !!!!! This will need to direct dynamically to the correct path in the future !!!!!
       end
     end
   end
@@ -96,7 +96,6 @@ class ApplicationController < ActionController::Base
     # Clean up expired sessions that are older than 14 days
     user["active_sessions"].select! { |session| Time.parse(session["created_at"]) > 14.days.ago }
 
-    puts "User #{user["id"]} logged in" if has_logged_in
     user["last_login"] = Time.now.utc.to_s if has_logged_in
 
     UserData.update_user_sessions(user)

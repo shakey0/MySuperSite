@@ -51,6 +51,12 @@ group :test do
   gem "selenium-webdriver"
 end
 
+group :development, :test do
+  gem "rspec-rails", "~> 6.1.0"
+  gem "rails-controller-testing"  # Helpful for controller specs
+  gem "faker"
+end
+
 gem "rack-attack"
 
 gem "dotenv-rails", groups: [ :development, :test ]
