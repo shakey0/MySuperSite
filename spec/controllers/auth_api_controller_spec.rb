@@ -217,7 +217,7 @@ RSpec.describe AuthApiController, type: :controller do
       end
 
       it 'sends reset password email' do
-        expect(UserMailer).to receive_message_chain(:welcome_email, :deliver_now)
+        expect(UserMailer).to receive_message_chain(:forgot_password_email, :deliver_now)
         post :forgot_password, params: valid_params
         expect(JSON.parse(response.body)["outcome"]).to eq("success")
       end

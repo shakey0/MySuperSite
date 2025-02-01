@@ -59,7 +59,7 @@ class AuthApiController < ApplicationController
 
       temp_user = { "name" => name, "email" => email }
 
-      set_auth_token_and_send_email(temp_user, from_section)
+      set_auth_token_and_send_email(temp_user, from_section, true)
 
       render json: { outcome: "success", message: "An invitation email has been sent to your email address. It will be valid for 10 minutes and can only be clicked once." }
     end
@@ -145,7 +145,7 @@ class AuthApiController < ApplicationController
 
   private
 
-  def set_auth_token_and_send_email(user, from_section) # Add a param for invitation email of type boolean
+  def set_auth_token_and_send_email(user, from_section, is_sign_up = false)
     auth_token = SecureRandom.alphanumeric(64)
 
     $redis.set("auth_token:#{auth_token}", user.to_json, ex: 10.minutes)
@@ -153,7 +153,11 @@ class AuthApiController < ApplicationController
     # Send the auth_token to the user's email
     domain = Rails.env.production? ? "https://shakey0.co.uk" : "http://localhost:5100"
     link = "#{domain}/#{from_section}/auth?auth_token=#{auth_token}"
-    UserMailer.welcome_email(user, link).deliver_now
+    if is_sign_up
+      UserMailer.welcome_email(user, link).deliver_now
+    else
+      UserMailer.forgot_password_email(user, link).deliver_now
+    end
     puts "Link: #{link}" # FOR DEVELOPMENT ONLY - REMOVE IN PRODUCTION
   end
 end
