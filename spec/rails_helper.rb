@@ -11,6 +11,8 @@ require 'aws-sdk-dynamodb'
 
 require 'rack/test'
 
+require 'rspec/retry'
+
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
 # run as spec files by default. This means that files in spec/support that end
@@ -56,6 +58,12 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+
+  config.verbose_retry = true
+  config.display_try_failure_messages = true
+  config.around :each do |ex|
+    ex.run_with_retry retry: 4
+  end
 
   config.include Rails.application.routes.url_helpers
   config.include ActionController::TestCase::Behavior, type: :controller

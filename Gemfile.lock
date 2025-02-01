@@ -274,6 +274,8 @@ GEM
       rspec-expectations (~> 3.13)
       rspec-mocks (~> 3.13)
       rspec-support (~> 3.13)
+    rspec-retry (0.6.2)
+      rspec-core (> 3.3)
     rspec-support (3.13.2)
     rubocop (1.67.0)
       json (~> 2.3)
@@ -377,6 +379,7 @@ DEPENDENCIES
   rails-controller-testing
   redis (>= 4.0.1)
   rspec-rails (~> 6.1.0)
+  rspec-retry
   rubocop-rails-omakase
   selenium-webdriver
   sprockets-rails

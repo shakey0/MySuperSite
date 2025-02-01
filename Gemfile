@@ -60,6 +60,7 @@ end
 group :test do
   gem "rack-test"
   gem "timecop"
+  gem "rspec-retry"
 end
 
 gem "rack-attack"
