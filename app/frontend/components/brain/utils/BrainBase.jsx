@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import './BrainBase.scoped.scss';
 import { BackArrow, MenuIcon } from './MenuBarSvgs';
 
-const BrainBase = ({ header, showButtons, backPath, children }) => {
+const BrainBase = ({ header, showButtons = true, backPath = true, showLogOut = true, children }) => {
   const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -31,8 +31,7 @@ const BrainBase = ({ header, showButtons, backPath, children }) => {
     { name: "Contact me", path: "/contact", newTab: true },
   ];
 
-  const userSessionCookie = document.cookie.split(';').find(cookie => cookie.includes('user_session'));
-  if (userSessionCookie) {
+  if (showLogOut) {
     menuOptions.push({ name: "Log out", onClick: handleLogOut });
   }
 

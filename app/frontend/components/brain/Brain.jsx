@@ -1,4 +1,6 @@
 import './BrainFeatures.scss';
+import BrainBase from './utils/BrainBase';
+import './Brain.scoped.scss';
 
 export default function Brain() {
   // THIS WILL GO INTO BRAINBASE.JSX IN THE MENU COMPONENT
@@ -26,12 +28,14 @@ export default function Brain() {
   }
 
   return (
-    <div>
-      Hello Brain!
-      
-      <form onSubmit={handleSubmit}>
-        <button type="submit">Log out</button>
-      </form>
-    </div>
+    <BrainBase header="Expand your mind with Brain">
+      <div>
+        Hello Brain!
+        
+        <form onSubmit={handleSubmit}>
+          <button type="submit">Log out</button>
+        </form>
+      </div>
+    </BrainBase>
   );
 }

@@ -138,7 +138,7 @@ export default function BrainAuth() {
   }, []);
 
   return (
-    <BrainBase header={`${authToken ? "shakey0.co.uk - set password": "Sign in to use Brain"}`}>
+    <BrainBase header={`${authToken ? "shakey0.co.uk - set password": "Sign in to use Brain"}`} showLogOut={false}>
       <div className="main-container">
         {message && (
           <div className="message-container">
