@@ -158,6 +158,5 @@ class AuthApiController < ApplicationController
     else
       UserMailer.forgot_password_email(user, link).deliver_now
     end
-    puts "Link: #{link}" # FOR DEVELOPMENT ONLY - REMOVE IN PRODUCTION
   end
 end
