@@ -54,6 +54,8 @@ export default function BrainAuth() {
 
     if (process === "set_password") delete data.confirm_password;
 
+    setAuthMessages(["Processing..."]);
+
     try {
       const response = await fetch(`/${process}`, {
         method: 'POST',
@@ -94,6 +96,8 @@ export default function BrainAuth() {
       setTimeout(() => {
         setIsSubmitting(false);
       }, 3000);
+
+      if (authMessages[0] === "Processing...") setAuthMessages([]);
     }
   }
 
