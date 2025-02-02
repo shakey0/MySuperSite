@@ -139,7 +139,7 @@ class AuthApiController < ApplicationController
 
       render json: { outcome: "success", message: universal_message }
     else
-      render json: { outcome: "failed", errors: [ universal_message ] }
+      render json: { outcome: "success", message: universal_message }
     end
   end
 

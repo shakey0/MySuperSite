@@ -77,9 +77,14 @@ export default function BrainAuth() {
         setAuthMessages([responseMessage]);
       } else { // "failed"
         setAuthMessages(responseData.errors);
-        setTimeout(() => {
-          setAuthMessages([]);
-        }, 6000);
+        const checkYourInbox = Array.isArray(responseData.errors) 
+        ? responseData.errors.find((error) => error.includes('Check your inbox')) 
+        : null;
+        if (process !== "forgot_password" && !checkYourInbox) {
+          setTimeout(() => {
+            setAuthMessages([]);
+          }, 6000);
+        }
       }
     }
     catch (error) {

@@ -232,8 +232,8 @@ RSpec.describe AuthApiController, type: :controller do
       it 'returns universal message' do
         post :forgot_password, params: valid_params
         expect(JSON.parse(response.body)).to include(
-          "outcome" => "failed",
-          "errors" => [ include("A password reset link has been emailed to you") ]
+          "outcome" => "success",
+          "message" => include("A password reset link has been emailed to you")
         )
       end
     end
