@@ -31,6 +31,7 @@
 /tmp/storage/*
 !/tmp/storage/.keep
 /frontend_concerns/*
+/lambda_functions/*
 /local_concerns/*
 
 # Ignore assets.

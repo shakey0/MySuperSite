@@ -75,5 +75,8 @@ group :development do
   gem "letter_opener"
 end
 
+gem "premailer-rails"
+
 gem "aws-sdk-cloudfront"
 gem "aws-sdk-dynamodb"
+gem "aws-sdk-lambda"
