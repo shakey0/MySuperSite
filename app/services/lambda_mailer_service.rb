@@ -19,10 +19,21 @@ class LambdaMailerService
 
     puts "Sending email to #{to} via Lambda..."
 
-    @lambda_client.invoke(
-      function_name: ENV.fetch("LAMBDA_EMAIL_SENDER_FUNCTION_NAME"),
-      invocation_type: "Event",  # Async invocation
-      payload: payload.to_json
-    )
+    Thread.new do
+      begin
+        Timeout.timeout(10) do
+          @lambda_client.invoke(
+            function_name: ENV.fetch("LAMBDA_EMAIL_SENDER_FUNCTION_NAME"),
+            invocation_type: "Event",
+            payload: payload.to_json
+          )
+          puts "Lambda invocation completed successfully"
+        end
+      rescue Timeout::Error
+        puts "Lambda invocation timed out"
+      rescue => e
+        puts "Failed to invoke Lambda: #{e.message}"
+      end
+    end
   end
 end
