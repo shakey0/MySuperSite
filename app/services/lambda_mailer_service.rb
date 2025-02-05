@@ -22,7 +22,7 @@ class LambdaMailerService
     Thread.new do
       retries = 0
       max_retries = 2
-    
+
       begin
         Timeout.timeout(10) do
           @lambda_client.invoke(
