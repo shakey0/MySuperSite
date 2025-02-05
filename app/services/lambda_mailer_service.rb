@@ -20,6 +20,9 @@ class LambdaMailerService
     puts "Sending email to #{to} via Lambda..."
 
     Thread.new do
+      retries = 0
+      max_retries = 2
+    
       begin
         Timeout.timeout(10) do
           @lambda_client.invoke(
@@ -30,7 +33,12 @@ class LambdaMailerService
           puts "Lambda invocation completed successfully"
         end
       rescue Timeout::Error
-        puts "Lambda invocation timed out"
+        puts "Lambda invocation timed out (attempt #{retries + 1}/#{max_retries + 1})"
+        if retries < max_retries
+          retries += 1
+          sleep(2 ** retries) # Exponential backoff: 2s, then 4s
+          retry
+        end
       rescue => e
         puts "Failed to invoke Lambda: #{e.message}"
       end

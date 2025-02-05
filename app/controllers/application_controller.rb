@@ -52,6 +52,7 @@ class ApplicationController < ActionController::Base
           user["active_sessions"] = []
         end
         UserData.update_user_sessions(user)
+        $redis.del("user:#{user_id}")
         hashed_session_token = nil
       end
 
