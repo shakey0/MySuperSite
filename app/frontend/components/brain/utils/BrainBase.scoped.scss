@@ -26,6 +26,12 @@
     }
 
     .back-button, .menu-button {
+      @extend %center-row;
+      align-items: center;
+      position: absolute;
+      top: 0;
+      height: 100%;
+      width: 76px;
       cursor: pointer;
       transition: transform 0.2s;
       font-family: 'ABeeZee', sans-serif;
@@ -37,6 +43,14 @@
       p {
         pointer-events: none;
       }
+    }
+
+    .back-button {
+      left: 0;
+    }
+
+    .menu-button {
+      right: 0;
     }
 
     @media (max-width: 768px) {

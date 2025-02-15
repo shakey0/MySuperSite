@@ -35,19 +35,13 @@ const BrainBase = ({ header, showButtons = true, backPath = true, showLogOut = t
     <div className="brain-base">
       <div className="brain-base__header">
         <h1>{header}</h1>
-        <div
-          style={{ display: "flex", justifyContent: "center", alignItems: "center", position: "absolute", left: "0", top: "0", height: "100%", width: "76px" }}
-          className="back-button"
-        >
+        <div className="back-button">
           <BackArrow />
         </div>
 
         <Popup
           trigger={
-            <div
-              className="menu-button"
-              style={{ display: "flex", justifyContent: "center", alignItems: "center", position: "absolute", right: "0", top: "0", height: "100%", width: "76px" }}
-            >
+            <div className="menu-button">
               <MenuIcon />
             </div>
           }
