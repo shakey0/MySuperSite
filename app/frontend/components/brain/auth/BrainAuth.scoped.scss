@@ -54,7 +54,6 @@
 
   .auth-form {
     @extend %center-column;
-    display: none;
     width: 100%;
     gap: 24px;
     opacity: 0;
@@ -66,10 +65,8 @@
 
     &.set-password {
       margin-top: 20px;
-    }
-
-    &.active {
       display: flex;
+      opacity: 1;
     }
 
     .forgot-password {

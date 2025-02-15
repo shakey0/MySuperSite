@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import '../BrainFeatures.scss';
 import BrainBase from '../utils/BrainBase';
 import './BrainAuth.scoped.scss';
@@ -12,6 +12,10 @@ export default function BrainAuth() {
   const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [authMessages, setAuthMessages] = useState([]);
+  const [activeTabIndex, setActiveTabIndex] = useState(0);
+  const [isFormVisible, setIsFormVisible] = useState(true);
+  const [logInRef, resetPwdRef, signUpRef] = [useRef(0), useRef(1), useRef(2)];
+  const [logInFormRef, resetPwdFormRef, signUpFormRef] = [useRef(null), useRef(null), useRef(null)];
 
   const queryParams = new URLSearchParams(window.location.search);
   const authToken = queryParams.get('auth_token');
@@ -101,40 +105,30 @@ export default function BrainAuth() {
     }
   }
 
-  const toggleTabs = (event) => {
-    document.querySelectorAll('.tabs-container button').forEach((tab) => tab.classList.remove('active'));
-    event.target.classList.add('active');
+  const toggleTabs = (tabRef) => {
+    setIsFormVisible(false);
 
-    const forms = document.querySelectorAll('.auth-form');
-    const targetIndex = event.target.dataset.index;
-  
-    // First, start the fade out
-    forms.forEach((form) => {
-      if (form.classList.contains('active')) {
-        form.style.opacity = '0';
-      }
-      form.reset();
-    });
-    
-    // Wait for fade out to complete before switching forms
+    const formRefs = {
+      [logInRef.current]: logInFormRef,
+      [resetPwdRef.current]: resetPwdFormRef,
+      [signUpRef.current]: signUpFormRef
+    };
+    const currentForm = formRefs[activeTabIndex]?.current;
+    if (currentForm) {
+      currentForm.reset();
+    }
+
     setTimeout(() => {
-      forms.forEach((form, index) => {
-        if (index.toString() === targetIndex) {
-          form.classList.add('active');
-          // Trigger reflow to ensure transition happens
-          form.offsetHeight;
-          form.style.opacity = '1';
-        } else {
-          form.classList.remove('active');
-        }
-        setAuthMessages([]);
+      setActiveTabIndex(tabRef.current);
+      setAuthMessages([]);
+      requestAnimationFrame(() => {
+        setIsFormVisible(true);
       });
     }, 300);
-  }
+  };
 
   useEffect(() => {
-    const loginButton = document.querySelector('.tabs-container button[data-index="0"]');
-    if (loginButton) loginButton.click();
+    toggleTabs(logInRef);
   }, []);
 
   return (
@@ -149,21 +143,54 @@ export default function BrainAuth() {
         {!authToken ? (
           <>
             <div className="tabs-container">
-              <button className="active" data-index="0" onClick={toggleTabs} disabled={isSubmitting}>Log in</button>
-              <button data-index="2" onClick={toggleTabs} disabled={isSubmitting}>Sign up</button>
+              <button 
+                className={activeTabIndex === logInRef.current ? 'active' : ''} 
+                onClick={() => toggleTabs(logInRef)} 
+                disabled={isSubmitting}
+              >
+                Log in
+              </button>
+              <button 
+                className={activeTabIndex === signUpRef.current ? 'active' : ''} 
+                onClick={() => toggleTabs(signUpRef)} 
+                disabled={isSubmitting}
+              >
+                Sign up
+              </button>
             </div>
 
-            <form className="auth-form log-in" onSubmit={handleSubmit}>
+            <form 
+              ref={logInFormRef}
+              className="auth-form log-in"
+              style={{ 
+                opacity: activeTabIndex === logInRef.current && isFormVisible ? 1 : 0,
+                display: activeTabIndex === logInRef.current ? 'flex' : 'none'
+              }}
+              onSubmit={handleSubmit}
+            >
               {getFormFields.slice(1, 3).map((field) => (
                 <AuthField key={field.name} field={field} />
               ))}
-              <button type="button" className="forgot-password" data-index="1" onClick={toggleTabs} disabled={isSubmitting}>
+              <button 
+                type="button" 
+                className="forgot-password" 
+                onClick={() => toggleTabs(resetPwdRef)} 
+                disabled={isSubmitting}
+              >
                 Forgot password?
               </button>
               <SubmitButton text="Log in" isSubmitting={isSubmitting} />
             </form>
 
-            <form className="auth-form reset-pwd" onSubmit={handleSubmit}>
+            <form 
+              ref={resetPwdFormRef}
+              className="auth-form reset-pwd"
+              style={{ 
+                opacity: activeTabIndex === resetPwdRef.current && isFormVisible ? 1 : 0,
+                display: activeTabIndex === resetPwdRef.current ? 'flex' : 'none'
+              }}
+              onSubmit={handleSubmit}
+            >
               <div className="into-container">
                 <p>Enter your email address to receive a password reset link.</p>
               </div>
@@ -172,7 +199,15 @@ export default function BrainAuth() {
               <SubmitButton text="Send password reset link" isSubmitting={isSubmitting} />
             </form>
 
-            <form className="auth-form sign-up" onSubmit={handleSubmit}>
+            <form 
+              ref={signUpFormRef}
+              className="auth-form sign-up"
+              style={{ 
+                opacity: activeTabIndex === signUpRef.current && isFormVisible ? 1 : 0,
+                display: activeTabIndex === signUpRef.current ? 'flex' : 'none'
+              }}
+              onSubmit={handleSubmit}
+            >
               <div className="into-container">
                 {getSignUpInfo.map((message, index) => (
                   <InfoMessage key={index} message={message} />
@@ -187,7 +222,7 @@ export default function BrainAuth() {
             </form>
           </>
         ) : (
-          <form className="auth-form set-password active" style={{ opacity: 1 }} onSubmit={handleSubmit}>
+          <form className="auth-form set-password" onSubmit={handleSubmit}>
             <div className="into-container">
               {getSetPasswordInfo.map((message, index) => (
                 <InfoMessage key={index} message={message} />
