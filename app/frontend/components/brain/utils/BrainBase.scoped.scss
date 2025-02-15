@@ -39,46 +39,42 @@
       }
     }
 
-    .menu {
-      @extend %center-column;
-      gap: 16px;
-      position: absolute;
-      top: 72px;
-      right: 0;
-      background: var(--darker-background);
-      border: 2px solid var(--cyberpunk-orange);
-      border-radius: 4px;
-      padding: 20px 18px;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 300ms ease, visibility 300ms ease;
-      z-index: 2;
+    @media (max-width: 768px) {
+      position: relative;
+    }
+  }
+}
 
-      &.open {
-        opacity: 1;
-        visibility: visible;
-      }
 
-      .menu__option {
-        cursor: pointer;
+.menu {
+  @extend %center-column;
+  margin-top: 2px;
+  gap: 16px;
+  background: var(--darker-background);
+  border: 2px solid var(--cyberpunk-orange);
+  border-radius: 4px;
+  padding: 20px 18px;
+  transition: opacity 300ms ease, visibility 300ms ease;
+  z-index: 2;
 
-        a, button {
-          @extend %button-default;
-          text-decoration: none;
-          color: (var(--standard-white));
-          font-size: 22px;
-        }
+  .menu__option {
+    cursor: pointer;
 
-        &:hover {
-          a, button {
-            color: var(--whiter-orange);
-          }
-        }
+    a, button {
+      @extend %button-default;
+      text-decoration: none;
+      color: (var(--standard-white));
+      font-size: 22px;
+
+      &:focus {
+        outline: none;
       }
     }
 
-    @media (max-width: 768px) {
-      position: relative;
+    &:hover {
+      a, button {
+        color: var(--whiter-orange);
+      }
     }
   }
 }

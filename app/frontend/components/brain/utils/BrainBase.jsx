@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react';
+import Popup from "reactjs-popup";
 import './BrainBase.scoped.scss';
 import { BackArrow, MenuIcon } from './MenuBarSvgs';
 
 const BrainBase = ({ header, showButtons = true, backPath = true, showLogOut = true, children }) => {
   const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogOut = async () => {
     try {
@@ -29,24 +28,8 @@ const BrainBase = ({ header, showButtons = true, backPath = true, showLogOut = t
     { name: "About Brain", path: "/brain/about", newTab: false },
     { name: "shakey0.co.uk", path: "/", newTab: true },
     { name: "Contact me", path: "/contact", newTab: true },
+    ...(showLogOut ? [{ name: "Log out", onClick: handleLogOut }] : []),
   ];
-
-  if (showLogOut) {
-    menuOptions.push({ name: "Log out", onClick: handleLogOut });
-  }
-
-  useEffect(() => {
-    const closeMenu = () => setMenuOpen(false);
-    if (menuOpen) {
-      document.body.addEventListener('click', closeMenu);
-      return () => document.body.removeEventListener('click', closeMenu);
-    }
-  }, [menuOpen]);
-
-  const toggleMenu = (e) => {
-    e.stopPropagation();
-    setMenuOpen((prev) => !prev);
-  }
 
   return (
     <div className="brain-base">
@@ -59,37 +42,38 @@ const BrainBase = ({ header, showButtons = true, backPath = true, showLogOut = t
           <BackArrow />
         </div>
 
-        <div
-          onClick={toggleMenu}
-          style={{ display: "flex", justifyContent: "center", alignItems: "center", position: "absolute", right: "0", top: "0", height: "100%", width: "76px" }}
-          className="menu-button"
-        >
-          <MenuIcon />
-        </div>
-
-        <div className={`menu ${menuOpen ? "open" : ""}`}>
-          {menuOptions.map((option, index) => (
-            <div key={index} className="menu__option">
-              {option.newTab ? (
-                <a href={option.path} target="_blank" rel="noreferrer">
-                  {option.name}
-                </a>
-              ) : option.onClick ? (
-                <button onClick={option.onClick}>
-                  {option.name}
-                </button>
-              ) : (
-                <a href={option.path}>
-                  {option.name}
-                </a>
-              )}
+        <Popup
+          trigger={
+            <div
+              className="menu-button"
+              style={{ display: "flex", justifyContent: "center", alignItems: "center", position: "absolute", right: "0", top: "0", height: "100%", width: "76px" }}
+            >
+              <MenuIcon />
             </div>
-          ))}
-        </div>
+          }
+          position="bottom right"
+          on="click"
+          closeOnDocumentClick
+          arrow={false}
+        >
+          <div className="menu">
+            {menuOptions.map((option, index) => (
+              <div key={index} className="menu__option">
+                {option.newTab ? (
+                  <a href={option.path} target="_blank" rel="noreferrer">
+                    {option.name}
+                  </a>
+                ) : option.onClick ? (
+                  <button onClick={option.onClick}>{option.name}</button>
+                ) : (
+                  <a href={option.path}>{option.name}</a>
+                )}
+              </div>
+            ))}
+          </div>
+        </Popup>
       </div>
-      <div className="brain-base__content">
-        {children}
-      </div>
+      <div className="brain-base__content">{children}</div>
     </div>
   );
 }
