@@ -37,7 +37,7 @@ group :development, :test do
   gem "brakeman", require: false
 
   # Pin RuboCop to a version known to work
-  gem "rubocop", "= 1.71.1", require: false
+  gem "rubocop", "1.73.0", require: false
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
