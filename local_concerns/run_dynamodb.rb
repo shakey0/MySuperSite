@@ -15,7 +15,7 @@ def ensure_cleanup
     system("docker stop #{DYNAMO_CONTAINER_NAME} 2>/dev/null")
     system("docker rm #{DYNAMO_CONTAINER_NAME} 2>/dev/null")
   RUBY
-  
+
   File.chmod(0755, cleanup_script)
   # Run detached process that won't be killed by Foreman
   system("nohup #{cleanup_script} > /dev/null 2>&1 &")
