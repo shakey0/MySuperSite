@@ -1,0 +1,27 @@
+@import '../BrainVars.scss';
+
+.input-container {
+  @extend %start-column;
+  width: 440px;
+  max-width: 98%;
+  gap: 8px;
+
+  label {
+    color: var(--standard-white);
+    font-size: 20px;
+    margin-right: 16px;
+  }
+
+  input {
+    @extend %dark-element;
+    border-radius: 4px;
+    padding: 12px;
+    font-size: 20px;
+    transition: all 0.3s;
+
+    &:focus {
+      outline: none;
+      border: 2px solid var(--standard-white);
+    }
+  }
+}
