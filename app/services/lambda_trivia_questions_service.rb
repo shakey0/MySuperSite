@@ -9,10 +9,11 @@ class LambdaTriviaQuestionsService
     )
   end
 
-  def get_trivia_questions(category:, difficulty:)
+  def get_trivia_questions(category:, difficulty:, user_id:)
     payload = {
       category: category,
-      difficulty_level: difficulty
+      difficulty_level: difficulty,
+      user_id: user_id
     }
 
     puts "Getting trivia questions for category #{category} and difficulty #{difficulty} via Lambda..."

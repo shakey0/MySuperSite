@@ -3,108 +3,37 @@ import requests
 import random
 from time import sleep
 
-def fetch_trivia_questions(category, max_retries=5):
+def fetch_trivia_questions(category, difficulty):
     url = "https://the-trivia-api.com/api/questions"
     params = {
         "categories": category,
+        "difficulty": difficulty,
         "limit": 50
     }
-    
-    for attempt in range(max_retries):
-        try:
-            response = requests.get(url, params=params)
-            response.raise_for_status()
-            questions = response.json()
-            
-            if not questions:
-                print(f"Attempt {attempt + 1}: No questions received. Retrying...")
-                continue
-                
-            return questions
-            
-        except requests.RequestException as e:
-            print(f"Attempt {attempt + 1} failed: {str(e)}")
-            if attempt < max_retries - 1:
-                sleep(1)
-            continue
-            
-    raise Exception(f"Failed to fetch questions after {max_retries} attempts")
 
-def validate_question_counts(questions, difficulty_level):
-    easy_questions = [q for q in questions if q['difficulty'] == 'easy']
-    medium_questions = [q for q in questions if q['difficulty'] == 'medium']
-    hard_questions = [q for q in questions if q['difficulty'] == 'hard']
-
-    # Print the counts of each difficulty
-    print(f"Easy questions received: {len(easy_questions)}")
-    print(f"Medium questions received: {len(medium_questions)}")
-    print(f"Hard questions received: {len(hard_questions)}")
-    
-    if difficulty_level.lower() == 'easy':
-        if len(easy_questions) >= 3 and len(medium_questions) >= 3:
-            return easy_questions, medium_questions
-        raise Exception("Not enough easy or medium questions")
-    else:
-        if len(medium_questions) >= 3 and len(hard_questions) >= 3:
-            return medium_questions, hard_questions
-        raise Exception("Not enough medium or hard questions")
-
-def get_sorted_questions(category, difficulty_level):
-    max_retries = 5
-    for attempt in range(max_retries):
-        try:
-            questions = fetch_trivia_questions(category)
-            
-            if difficulty_level.lower() == 'easy':
-                easy_questions, medium_questions = validate_question_counts(questions, difficulty_level)
-                
-                selected_easy = random.sample(easy_questions, 3)
-                selected_medium = random.sample(medium_questions, 3)
-                
-                return [
-                    selected_easy[0],    # First easy
-                    selected_easy[1],    # Second easy
-                    selected_medium[0],  # First medium
-                    selected_easy[2],    # Third easy
-                    selected_medium[1],  # Second medium
-                    selected_medium[2]   # Third medium
-                ]
-            else:  # hard difficulty
-                medium_questions, hard_questions = validate_question_counts(questions, difficulty_level)
-                
-                selected_medium = random.sample(medium_questions, 3)
-                selected_hard = random.sample(hard_questions, 3)
-                
-                return [
-                    selected_medium[0],  # First medium
-                    selected_medium[1],  # Second medium
-                    selected_hard[0],    # First hard
-                    selected_medium[2],  # Third medium
-                    selected_hard[1],    # Second hard
-                    selected_hard[2]     # Third hard
-                ]
-                
-        except Exception as e:
-            print(f"Attempt {attempt + 1} failed: {str(e)}")
-            if attempt < max_retries - 1:
-                sleep(1)
-            continue
-            
-    raise Exception(f"Failed to get valid question set after {max_retries} attempts")
+    try:
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+        questions = response.json()
+        return questions if questions else []
+    except requests.RequestException as e:
+        print(f"API request failed: {str(e)}")
+        return []
 
 def lambda_handler(event, context):
     try:
         category = event.get('category')
         difficulty_level = event.get('difficulty_level')
+        user_id = event.get('user_id')
 
         print("Lambda function started.")
         print(f"Received event: {event}")
-        print(f"Received category: {category}, difficulty_level: {difficulty_level}")
+        print(f"Received category: {category}, difficulty_level: {difficulty_level}, user_id: {user_id}")
 
         CATEGORIES = ["music", "sport_and_leisure", "film_and_tv", "arts_and_literature", 
                      "history", "society_and_culture", "science", "geography", 
                      "food_and_drink", "general_knowledge"]
-        DIFFICULTIES = ['easy', 'hard']
+        DIFFICULTIES = ['easy', 'medium', 'hard']
 
         if difficulty_level not in DIFFICULTIES or category not in CATEGORIES:
             return {
@@ -114,21 +43,81 @@ def lambda_handler(event, context):
                 })
             }
 
-        sorted_questions = get_sorted_questions(category, difficulty_level)
-        
-        formatted_questions = [
-            f"{i+1}. [{q['difficulty']}] {q['question']}"
-            for i, q in enumerate(sorted_questions)
+        # MOCK DATA: Previously answered question IDs for this user
+        # In a real implementation, this would come from DynamoDB
+        previously_answered_questions = [
+            "622a1c357cc59eab6f950807",
+            "622a1c347cc59eab6f94fb63",
+            "622a1c367cc59eab6f9511e1",
+            "622a1c377cc59eab6f95230a",
+            "622a1c347cc59eab6f950010",
+            "622a1c367cc59eab6f951655",
+            "622a1c377cc59eab6f951f88",
+            "622a1c347cc59eab6f94fd32",
+            "622a1c357cc59eab6f950c48",
+            "622a1c347cc59eab6f94fa3d"
         ]
-        
-        print(f"\n{difficulty_level.capitalize()} mode questions:")
-        print("\n".join(formatted_questions))
-        print()
 
+        # Fetch questions from the API (with retries if we don't get enough or there's an error)
+        max_retries = 5
+        all_questions = []
+
+        for attempt in range(max_retries):
+            print(f"API attempt {attempt + 1}/{max_retries}")
+
+            all_questions = fetch_trivia_questions(category, difficulty_level)
+            print(f"Fetched {len(all_questions)} questions from API")
+
+            if len(all_questions) >= 6:
+                break
+
+            print(f"Not enough questions (need at least 6). Retrying...")
+
+            if attempt < max_retries - 1:
+                sleep(1)
+
+        if len(all_questions) < 6:
+            return {
+                'statusCode': 400,
+                'body': json.dumps({
+                    'error': f"Could not fetch enough questions after {max_retries} attempts. Only got {len(all_questions)} questions."
+                })
+            }
+
+        filtered_questions = [q for q in all_questions if q['id'] not in previously_answered_questions]
+        print(f"After filtering, {len(filtered_questions)} questions remain")
+
+        # If we have enough new questions, just randomly select 6
+        if len(filtered_questions) >= 6:
+            selected_questions = random.sample(filtered_questions, 6)
+        else:
+            # Not enough new questions, so we'll use all the filtered ones and supplement
+            print(f"Only {len(filtered_questions)} new questions available, supplementing with previously answered questions")
+
+            selected_questions = filtered_questions
+            needed = 6 - len(selected_questions)
+
+            previously_answered = [q for q in all_questions if q['id'] in previously_answered_questions]
+            supplement = random.sample(previously_answered, min(needed, len(previously_answered)))
+            selected_questions.extend(supplement)
+
+        random.shuffle(selected_questions)
+
+        questions = []
+        for q in selected_questions:
+            question = {
+                'id': q['id'],
+                'question': q['question'],
+                'correctAnswer': q['correctAnswer'],
+                'incorrectAnswers': q['incorrectAnswers']
+            }
+            questions.append(question)
+
+        print(f"Returning {len(questions)} questions")
         return {
             'statusCode': 200,
             'body': json.dumps({
-                'formatted_questions': formatted_questions
+                'questions': questions
             })
         }
 
