@@ -95,13 +95,12 @@ export default function BrainAuth() {
     }
     catch (error) {
       console.error('Error during auth process:', error);
+      setAuthMessages(['Sorry, an error occurred. Please try again.']);
     }
     finally {
       setTimeout(() => {
         setIsSubmitting(false);
       }, 3000);
-
-      if (authMessages[0] === "Processing...") setAuthMessages([]);
     }
   }
 
