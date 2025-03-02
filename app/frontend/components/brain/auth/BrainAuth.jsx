@@ -117,13 +117,11 @@ export default function BrainAuth() {
       currentForm.reset();
     }
 
-    setTimeout(() => {
-      setActiveTabIndex(tabRef.current);
-      setAuthMessages([]);
-      requestAnimationFrame(() => {
-        setIsFormVisible(true);
-      });
-    }, 300);
+    setActiveTabIndex(tabRef.current);
+    setAuthMessages([]);
+    requestAnimationFrame(() => {
+      setIsFormVisible(true);
+    });
   };
 
   useEffect(() => {
