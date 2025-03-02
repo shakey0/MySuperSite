@@ -4,6 +4,9 @@ class Brain::KnowledgeController < ApplicationController
   def index
   end
 
-  def show
+  def quiz
+  end
+
+  def review
   end
 end

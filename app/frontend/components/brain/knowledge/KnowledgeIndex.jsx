@@ -37,7 +37,7 @@ export default function KnowledgeIndex() {
             <div key={index} className="topic-card">
               <h2>{topic.title}</h2>
               <p>
-                <a href={`/brain/knowledge/${topic.slug}`}>Take quiz</a>
+                <a href={`/brain/knowledge/${topic.slug}/quiz`}>Take quiz</a>
                 <a href={`/brain/knowledge/${topic.slug}/review`}>Review</a>
               </p>
             </div>

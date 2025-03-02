@@ -1,9 +1,9 @@
 import '../BrainFeatures.scss';
 
-export default function KnowledgeShow() {
+export default function KnowledgeQuiz() {
   return (
     <div>
-      Hello KnowledgeShow!
+      Hello KnowledgeQuiz!
     </div>
   );
 }
