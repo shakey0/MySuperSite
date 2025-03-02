@@ -1,56 +1,5 @@
 @import '../BrainVars.scss';
-@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap');
 
 .main-container {
   @extend %center-column;
-}
-
-.topic-container {
-  @extend %center-row;
-  width: 90%;
-  max-width: 1440px;
-  flex-wrap: wrap;
-  gap: 32px;
-  margin: 32px auto;
-
-  .topic-card {
-    @extend %center-column;
-    background: var(--darker-background);
-    min-width: 270px;
-    padding: 18px;
-    border: 2px solid var(--clear-blue);
-    border-radius: 8px;
-    color: var(--standard-white);
-    gap: 14px;
-
-    h2 {
-      font-family: "Chakra Petch", serif !important;
-    }
-
-    p {
-      @extend %center-row;
-      gap: 10px;
-
-      a {
-        @extend %button-default;
-        text-decoration: none;
-        text-align: center;
-        font-family: "Chakra Petch", serif !important;
-        width: 120px;
-        background: var(--lighter-background);
-        color: var(--standard-white);
-        padding: 8px 16px;
-        border-radius: 100px;
-        box-shadow: var(--dark-shadow);
-
-        &:hover {
-          background: none;
-          color: var(--whiter-blue);
-          box-shadow: none;
-          transform: scale(1.4);
-          text-shadow: 0 0 32px var(--whiter-gray);
-        }
-      }
-    }
-  }
 }

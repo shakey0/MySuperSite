@@ -1,10 +1,16 @@
 import './SubmitButton.scoped.scss';
 
-const SubmitButton = ({ text, isSubmitting }) => {
+const SubmitButton = ({ text, disabled, manualHandling = false, onClick }) => {
   return (
-    <button className="submit-button" type="submit" disabled={isSubmitting}>
-      {text}
-    </button>
+    manualHandling ? (
+      <button className="submit-button" type="button" disabled={disabled} onClick={onClick}>
+        {text}
+      </button>
+    ) : (
+      <button className="submit-button" type="submit" disabled={disabled}>
+        {text}
+      </button>
+    )
   );
 };
 

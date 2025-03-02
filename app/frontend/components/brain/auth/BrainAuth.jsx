@@ -176,7 +176,7 @@ export default function BrainAuth() {
               >
                 Forgot password?
               </button>
-              <SubmitButton text="Log in" isSubmitting={isSubmitting} />
+              <SubmitButton text="Log in" disabled={isSubmitting} />
             </form>
 
             <form 
@@ -193,7 +193,7 @@ export default function BrainAuth() {
               </div>
               <input type="hidden" name="from_section" value="brain" />
               <AuthField field={getFormFields[1]} />
-              <SubmitButton text="Send password reset link" isSubmitting={isSubmitting} />
+              <SubmitButton text="Send password reset link" disabled={isSubmitting} />
             </form>
 
             <form 
@@ -215,7 +215,7 @@ export default function BrainAuth() {
               {getFormFields.slice(0, 2).map((field) => (
                 <AuthField key={field.name} field={field} />
               ))}
-              <SubmitButton text="Sign up" isSubmitting={isSubmitting} />
+              <SubmitButton text="Sign up" disabled={isSubmitting} />
             </form>
           </>
         ) : (
@@ -229,7 +229,7 @@ export default function BrainAuth() {
             {getFormFields.slice(2, 4).map((field) => (
               <AuthField key={field.name} field={field} />
             ))}
-            <SubmitButton text="Set password" isSubmitting={isSubmitting} />
+            <SubmitButton text="Set password" disabled={isSubmitting} />
           </form>
         )}
 
