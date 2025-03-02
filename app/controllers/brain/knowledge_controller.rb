@@ -24,12 +24,12 @@ class Brain::KnowledgeController < ApplicationController
 
     @topic = QUIZZES.find { |q| q[:slug] == params[:slug] }
   end
-  
+
   def review
     unless QUIZZES.any? { |q| q[:slug] == params[:slug] }
       redirect_to brain_knowledge_index_path
     end
 
     @topic = QUIZZES.find { |q| q[:slug] == params[:slug] }
-  end  
+  end
 end
