@@ -208,7 +208,6 @@ GEM
       racc
     pp (0.6.2)
       prettyprint
-    prettyprint (0.2.0)
     premailer (1.27.0)
       addressable
       css_parser (>= 1.19.0)
@@ -217,6 +216,7 @@ GEM
       actionmailer (>= 3)
       net-smtp
       premailer (~> 1.7, >= 1.7.9)
+    prettyprint (0.2.0)
     psych (5.2.3)
       date
       stringio
