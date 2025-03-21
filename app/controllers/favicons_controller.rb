@@ -1,5 +1,5 @@
 class FaviconsController < ApplicationController
-  FAVICONS = %w[cat_favicon default_favicon].freeze
+  FAVICONS = %w[cat_favicon brain_favicon default_favicon].freeze
 
   def show
     favicon_name = params[:name]

@@ -21,7 +21,7 @@ gem "redis", ">= 4.0.1"
 # gem "kredis"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
-# gem "bcrypt", "~> 3.1.7"
+gem "bcrypt", "~> 3.1.7"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
@@ -51,10 +51,32 @@ group :test do
   gem "selenium-webdriver"
 end
 
+group :development, :test do
+  gem "rspec-rails", "~> 6.1.0"
+  gem "rails-controller-testing"  # Helpful for controller specs
+  gem "faker"
+end
+
+group :test do
+  gem "rack-test"
+  gem "timecop"
+  gem "rspec-retry"
+end
+
+gem "rack-attack"
+
 gem "dotenv-rails", groups: [ :development, :test ]
 
 gem "vite_rails"
 
 gem "httparty"
 
+group :development do
+  gem "letter_opener"
+end
+
+gem "premailer-rails"
+
 gem "aws-sdk-cloudfront"
+gem "aws-sdk-dynamodb"
+gem "aws-sdk-lambda"

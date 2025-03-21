@@ -1,3 +1,4 @@
 
 vite: bin/vite dev
 web: bin/rails s
+dynamodb: RUBYOPT="-W0" ruby ./local_concerns/run_dynamodb.rb
