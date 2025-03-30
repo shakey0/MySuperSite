@@ -1,0 +1,8 @@
+<% content_for :head do %>
+  <%= vite_javascript_tag 'knowledge_review.jsx' %>
+  <script type="text/javascript">
+    window.topic = <%= raw(@topic.to_json) %>;
+  </script>
+<% end %>
+
+<div id="knowledge-review-root"></div>

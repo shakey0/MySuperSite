@@ -1,0 +1,9 @@
+{
+  "name": "lambda-email-sender",
+  "version": "1.0.0",
+  "description": "AWS Lambda function to send emails via Gmail SMTP",
+  "main": "index.js",
+  "dependencies": {
+    "nodemailer": "^6.9.9"
+  }
+}

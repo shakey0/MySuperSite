@@ -1,0 +1,159 @@
+@import url('https://fonts.googleapis.com/css2?family=ABeeZee:wght@400;700&ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap');
+@import './BrainVars.scss';
+
+h1, h2, h3, h4, h5, h6, p {
+  margin: 0;
+}
+
+* {
+  font-family: 'ABeeZee', sans-serif;
+  user-select: none; /* Standard syntax */
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE 10+ */
+}
+
+// SHARED ELEMENT STYLES
+
+.into-container {
+  @extend %start-column;
+  max-width: 98%;
+  background: var(--lighter-background);
+  padding: 16px;
+  border: 2px solid var(--clear-blue);
+  border-radius: 8px;
+  gap: 8px;
+  margin: 32px 0 8px;
+
+  &.darker {
+    background: var(--darker-background);
+  }
+
+  h2 {
+    color: var(--whiter-blue);
+    font-size: 24px;
+    margin-bottom: 6px;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  p {
+    position: relative;
+    color: var(--standard-white);
+    font-size: 18px;
+    padding-left: 22px;
+
+    &::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      top: -4px;
+      font-size: 1.5em;
+      color: var(--standard-white);
+    }
+
+    a {
+      @extend %button-default;
+      color: var(--clear-blue);
+      text-decoration: underline;
+
+      &:hover {
+        color: var(--whiter-blue);
+      }
+    }
+  }
+
+  &.bigger {
+    @media (min-width: 768px) {
+      padding: 24px;
+      gap: 12px;
+
+      h2 {
+        font-size: 32px;
+        margin-bottom: 12px;
+      }
+
+      p {
+        font-size: 20px;
+      }
+    }
+  }
+}
+
+.topic-container {
+  @extend %center-row;
+  width: 90%;
+  max-width: 1440px;
+  flex-wrap: wrap;
+  gap: 32px;
+  margin: 32px auto;
+
+  .topic-card {
+    @extend %center-column;
+    background: var(--darker-background);
+    min-width: 270px;
+    padding: 18px;
+    border: 2px solid var(--clear-blue);
+    border-radius: 8px;
+    color: var(--standard-white);
+    gap: 14px;
+
+    h2 {
+      font-family: "Chakra Petch", serif;
+    }
+
+    p {
+      @extend %center-row;
+      gap: 10px;
+
+      a, button {
+        @extend %button-default;
+        text-decoration: none;
+        text-align: center;
+        font-family: "Chakra Petch", serif;
+        width: 120px;
+        background: var(--lighter-background);
+        color: var(--standard-white);
+        padding: 8px 16px;
+        border-radius: 100px;
+        box-shadow: var(--dark-shadow);
+
+        &:hover {
+          background: none;
+          color: var(--whiter-blue);
+          box-shadow: none;
+          transform: scale(1.4);
+          text-shadow: 0 0 32px var(--whiter-gray);
+        }
+      }
+
+      button {
+        font-size: 20px;
+
+        &.active {
+          background: none;
+          color: var(--whiter-gray);
+          box-shadow: none;
+          transform: scale(1.4);
+          text-shadow: 0 0 32px var(--whiter-gray);
+        }
+
+        &.inactive {
+          color: var(--dull-gray);
+
+          &:hover {
+            color: var(--whiter-blue);
+          }
+        }
+      }
+      
+      &.v-mobile-column {
+        @media (max-width: 500px) {
+          flex-direction: column;
+          gap: 12px;
+        }
+      }
+    }
+  }
+}

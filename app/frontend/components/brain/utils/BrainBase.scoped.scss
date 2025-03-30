@@ -1,0 +1,94 @@
+@import '../BrainVars.scss';
+
+.brain-base {
+  background: linear-gradient(to bottom right, var(--dark-background-start), var(--dark-background-end));
+  min-height: 100vh;
+  padding: 4px;
+  padding-bottom: 60px;
+
+  .brain-base__header {
+    @extend %center-row;
+    align-items: center;
+    height: 72px;
+    position: sticky;
+    padding: 16px;
+    background: var(--darker-background);
+    color: var(--whiter-orange);
+    border: 2px solid var(--cyberpunk-orange);
+    border-radius: 4px;
+
+    h1 {
+      font-weight: 700;
+
+      @media (max-width: 768px) {
+        display: none;
+      }
+    }
+
+    .back-button, .menu-button {
+      @extend %center-row;
+      align-items: center;
+      position: absolute;
+      top: 0;
+      height: 100%;
+      width: 76px;
+      cursor: pointer;
+      transition: transform 0.2s;
+      font-family: 'ABeeZee', sans-serif;
+
+      &:hover {
+        transform: scale(1.1);
+      }
+
+      p {
+        pointer-events: none;
+      }
+    }
+
+    .back-button {
+      left: 0;
+    }
+
+    .menu-button {
+      right: 0;
+    }
+
+    @media (max-width: 768px) {
+      position: relative;
+    }
+  }
+}
+
+
+.menu {
+  @extend %center-column;
+  margin-top: 2px;
+  gap: 16px;
+  background: var(--darker-background);
+  border: 2px solid var(--cyberpunk-orange);
+  border-radius: 4px;
+  padding: 20px 18px;
+  transition: opacity 300ms ease, visibility 300ms ease;
+  z-index: 2;
+
+  .menu__option {
+    cursor: pointer;
+
+    a, button {
+      @extend %button-default;
+      text-decoration: none;
+      color: (var(--standard-white));
+      font-size: 22px;
+
+      &:focus {
+        outline: none;
+      }
+    }
+
+    &:hover {
+      a, button {
+        color: var(--whiter-orange);
+      }
+    }
+  }
+}

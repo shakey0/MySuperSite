@@ -1,0 +1,5 @@
+@import '../BrainVars.scss';
+
+.main-container {
+  @extend %center-column;
+}

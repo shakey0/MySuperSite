@@ -1,4 +1,19 @@
 Rails.application.routes.draw do
+  post "log_in", to: "auth_api#log_in", as: "auth_api_log_in"
+  delete "log_out", to: "auth_api#log_out", as: "auth_api_log_out"
+  post "sign_up", to: "auth_api#sign_up", as: "auth_api_sign_up"
+  post "set_password", to: "auth_api#set_password", as: "auth_api_set_password"
+  post "forgot_password", to: "auth_api#forgot_password", as: "auth_api_forgot_password"
+
+  get "brain", to: "brain#index", as: "brain_index"
+  get "brain/auth", to: "brain#auth", as: "brain_auth"
+
+  namespace :brain do
+    get "knowledge", to: "knowledge#index", as: "knowledge_index"
+    get "knowledge/:slug/quiz", to: "knowledge#quiz", as: "knowledge_quiz"
+    get "knowledge/:slug/review", to: "knowledge#review", as: "knowledge_review"
+  end
+
   get "cats", to: "cats#index", as: "cats_index"
   get "cats/index_data", to: "cats#index_data", as: "cats_index_data"
   get "cats/:slug", to: "cats#show", as: "cats_show"

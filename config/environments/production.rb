@@ -96,4 +96,24 @@ Rails.application.configure do
   ]
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+
+  config.action_mailer.delivery_method = :smtp
+
+  config.action_mailer.smtp_settings = {
+    address: "smtp.gmail.com",        # Gmail's SMTP server
+    port: 587,                        # Port for STARTTLS
+    domain: "shakey0.co.uk",          # Your domain (e.g., example.com)
+    user_name: ENV["GMAIL_USERNAME"], # Your Gmail address
+    password: ENV["GMAIL_APP_PASSWORD"], # App password for Gmail
+    authentication: "plain",          # Authentication type
+    enable_starttls_auto: true        # Enables STARTTLS
+  }
+
+  # Optional: Set the default 'from' address for emails
+  config.action_mailer.default_options = {
+    from: ENV["GMAIL_USERNAME"]
+  }
+
+  # Use this to preview email links in logs during development (optional)
+  config.action_mailer.default_url_options = { host: "shakey0.co.uk" }
 end
