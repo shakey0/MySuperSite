@@ -120,7 +120,7 @@ GEM
     crass (1.0.6)
     css_parser (1.21.0)
       addressable
-    csv (3.3.0)
+    csv (3.3.3)
     date (3.4.1)
     debug (1.10.0)
       irb (~> 1.10)
@@ -138,7 +138,7 @@ GEM
     globalid (1.2.1)
       activesupport (>= 6.1)
     htmlentities (4.3.4)
-    httparty (0.22.0)
+    httparty (0.23.0)
       csv
       mini_mime (>= 1.0.0)
       multi_xml (>= 0.5.2)
@@ -330,7 +330,7 @@ GEM
     ruby-progressbar (1.13.0)
     rubyzip (2.4.1)
     securerandom (0.4.1)
-    selenium-webdriver (4.29.1)
+    selenium-webdriver (4.30.1)
       base64 (~> 0.2)
       logger (~> 1.4)
       rexml (~> 3.2, >= 3.2.5)
